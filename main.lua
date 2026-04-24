@@ -762,6 +762,7 @@ STAT = {
     promotion = true,
     rold = false,
     oldTransparentCard = false,
+    unlockAll = true,
 }
 
 ACHV = {}
