@@ -294,6 +294,7 @@ local function keyTrigger(key)
                         scene.widgetList.about:resetPos()
                         scene.widgetList.conf.x = 100
                         scene.widgetList.conf:resetPos()
+                        GAME.multiplePiecesActive = false
                         GAME.enightcore = true
                         GAME.eslowmo = true
                         GAME.eglassCard = true
