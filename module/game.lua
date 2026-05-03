@@ -4112,11 +4112,11 @@ end
 
 local KBisDown = love.keyboard.isDown
 local damned = false
-function GAME.update(dt)
+function GAME.update(dt,realDT)
     GAME.spikeTimer = GAME.spikeTimer - dt
     for i = #GAME.windupAnim, 1, -1 do
         local w = GAME.windupAnim[i]
-        w.bumpTime = w.bumpTime - dt
+        w.bumpTime = w.bumpTime - realDT
         if w.lv < w.lvFin then
             if w.bumpTime <= 0 then
                 w.lv = w.lv + 1
@@ -4125,7 +4125,7 @@ function GAME.update(dt)
                 end
             end
         end
-        w.time = w.time + dt
+        w.time = w.time + realDT
         w.alpha = min((w.totalTime - w.time) * 5, 1)
         if w.time > w.totalTime then rem(GAME.windupAnim, i) end
     end
@@ -4510,20 +4510,6 @@ function GAME.update(dt)
         end
     end
 
-    -- Damage
-    -- Trevor Smithy
-    local dmgTimerMulMod = 1
-    if M.GV == -1 and GAME.eslowmo then 
-        dmgTimerMulMod = 1.5
-    elseif M.GV == -1 or GAME.eslowmo then
-        dmgTimerMulMod = 1.25
-    end
-    GAME.dmgTimer = GAME.dmgTimer - dt / (GAME.dmgTimerMul * dmgTimerMulMod)
-    if GAME.dmgTimer <= 0 then
-        GAME.dmgTimer = GAME.dmgCycle
-        GAME.takeDamage(GAME.dmgTime, 'time')
-    end
-
     -- Life leak
     if GAME.lifeLeak > 0 and GAME.height > NegFloors[9].bottom then
         local leakMod = GAME.badTime and 1 or ((M.DP == 0 and 1 or 0.5) * (GAME.eslowmo and 3/4 or 1) * (GAME.ecloseCard and 2 or 1))
@@ -4536,6 +4522,20 @@ function GAME.update(dt)
         if GAME.life <= 0 then
             GAME.takeDamage(1e99, 'wrong')
         end
+    end
+
+    -- Damage
+    -- Trevor Smithy
+    local dmgTimerMulMod = 1
+    if M.GV == -1 and GAME.eslowmo then 
+        dmgTimerMulMod = 1.5
+    elseif M.GV == -1 or GAME.eslowmo then
+        dmgTimerMulMod = 1.25
+    end
+    GAME.dmgTimer = GAME.dmgTimer - dt / (GAME.dmgTimerMul * dmgTimerMulMod)
+    if GAME.dmgTimer <= 0 then
+        GAME.dmgTimer = GAME.dmgCycle
+        GAME.takeDamage(GAME.dmgTime, 'time')
     end
 end
 
