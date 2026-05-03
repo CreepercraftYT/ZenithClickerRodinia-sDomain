@@ -216,6 +216,7 @@ local GAME = {
     yottaFloor = {},
     ronnaFloor = {},
     quettaFloor = {},
+    windupAnim = {}, ---@type Windup[]
 
     zenithTraveler = false,
     nightcore = false,
@@ -1012,6 +1013,7 @@ function GAME.genQuest()
             local pwr = #combo * 2 - 7
             if TABLE.find(combo, 'DH') then pwr = pwr + 1 end
             SFX.play('garbagewindup_' .. MATH.clamp(pwr, 1, 5), 1, 0)
+            GAME.showWindup(pwr)
         end
 
         ins(GAME.quests, {
@@ -1464,6 +1466,35 @@ function GAME.showFloorText(f, name, duration)
         x = 200, y = 350, k = 1.2, fontSize = 30,
         color = 'LY', duration = duration,
     }
+end
+
+function GAME.showWindup(lv)
+    local attempt = 0
+    local x, y
+    while true do
+        x, y = (62 + 26 * attempt) * MATH.rand(-1, 1), MATH.rand(-20, 20)
+        for i = 1, #GAME.windupAnim do
+            local w = GAME.windupAnim[i]
+            if MATH.distance(x, y, w.x, w.y) < 62 then
+                x = nil
+                break
+            end
+        end
+        if x then break end
+        attempt = attempt + 1
+    end
+    ---@class Windup
+    local w = {
+        lv = 1,
+        lvFin = lv,
+        time = 0,
+        bumpTime = .25,
+        totalTime = 2 + .5 * (lv - 1),
+        alpha = 1,
+        x = x,
+        y = y,
+    }
+    ins(GAME.windupAnim, w)
 end
 
 function GAME.upFloor()
@@ -4072,7 +4103,24 @@ local KBisDown = love.keyboard.isDown
 local damned = false
 function GAME.update(dt)
     GAME.spikeTimer = GAME.spikeTimer - dt
+    for i = #GAME.windupAnim, 1, -1 do
+        local w = GAME.windupAnim[i]
+        w.bumpTime = w.bumpTime - dt
+        if w.lv < w.lvFin then
+            if w.bumpTime <= 0 then
+                w.lv = w.lv + 1
+                if w.lv <= w.lvFin then
+                    w.bumpTime = .25
+                end
+            end
+        end
+        w.time = w.time + dt
+        w.alpha = min((w.totalTime - w.time) * 5, 1)
+        if w.time > w.totalTime then rem(GAME.windupAnim, i) end
+    end
+
     if not GAME.playing then return end
+
     if TestMode then
         if KBisDown(']') then
             GAME.addXP(dt * GAME.rank * 8)
