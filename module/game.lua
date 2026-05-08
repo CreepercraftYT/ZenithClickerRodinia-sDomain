@@ -97,8 +97,9 @@ local ins, rem = table.insert, table.remove
 ---@field maxSpike number
 ---@field maxSpikeWeak number
 ---
----@field gravDelay number?
----@field gravTimer number?
+---@field gravDelay false | number
+---@field gravTimer false | number
+---@field resetCount number
 ---
 ---@field omega boolean
 ---@field negFloor number
@@ -4106,17 +4107,6 @@ function GAME.finish(reason)
     TASK.unlock('dcTimer')
     GAME.refreshDailyChallengeText()
     GAME.prevPB = max(GAME.prevPB, GAME.height)
-
-    if unlockDuo then
-        CD.DP.lock = true
-        TASK.new(function()
-            TASK.yieldT(0.42)
-            CD.DP.lock = false
-            CD.DP:spin()
-            CD.DP:bounce(1200, .62)
-            SFX.play('supporter')
-        end)
-    end
 
     if URM and GAME.height < -10 then
         PieceSFXID = 0

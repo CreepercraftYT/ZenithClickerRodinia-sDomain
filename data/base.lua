@@ -46,7 +46,7 @@ PieceData = {
     { id = 'einvisCard', text = { COLOR.lY, "eO", }, piece = { COLOR.lY, CHAR.brik.C }, popup = { COLOR.lY, "eO - Transparent Card" } },
     { id = 'ecloseCard', text = { COLOR.lC, "eI", }, piece = { COLOR.lC, CHAR.brik.I3 }, popup = { COLOR.lC, "eI - Closer Card" } },
     --
-    { id = 'allclear',  text = { COLOR.LL, "-", }, popup = { COLOR.LL, "All Clear" } },
+    { id = 'allclear',  text = { COLOR.LL, "-", }, piece = { COLOR.LL, CHAR.brik.O1 }, popup = { COLOR.LL, "All Clear" } },
 }
 
 RevSwampName = {
