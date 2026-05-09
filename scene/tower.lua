@@ -484,7 +484,7 @@ local function generateRandomCombo()
             end
         end
     end
-    if TABLE.equal(GAME.getHand(true),{'eEX','eVL','eAS'}) then
+    if TABLE.equal(set,{'eEX','eVL','eAS'}) then
         IssueAchv('biased')
         SFX.play(set.ultra and 'zenith_split_missed' or 'zenith_split_cleared')
     end
