@@ -3232,12 +3232,9 @@ function GAME.commit(auto, falseCommit)
         if M.MS ~= -1 then GAME.dmgWrongExtra = GAME.dmgWrongExtra + .5 end
 
         -- Trevor Smithy
+        if M.EX > 0 and M.NH < 2 then GAME.cancelAll(true) end
         if M.GV ~= 0 then GAME.gravTimer = GAME.gravDelay end
-        if M.EX > 0 then
-            if M.NH < 2 then GAME.cancelAll(true) end
-        elseif M.AS == 1 then
-            GAME.cancelBurn()
-        end
+        if M.AS == 1 then GAME.cancelBurn() end
     end
 end
 
