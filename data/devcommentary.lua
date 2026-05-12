@@ -396,6 +396,19 @@ return {
         You're going too fast.... They're coming for me. Run, climb while you still can! 
         Whatever you do, DON'T STOP CLIMBIN' AND CLIMBIN' AND CLIMBIN' AND CLI—   
     ]],
+    ['eEX NH MS GV eVL DH IN eAS DP'] = STRING.trimIndent [[
+        The Swamped Smithy, beacause, well, I'm Trevor Smithy and I'm... kinda stressed out sometimes.
+        Mistakes are easy to make and hard to fix, and it's a bit much, ya know?
+    ]],
+    ['ueEX NH MS GV eVL DH IN eAS DP'] = STRING.trimIndent [[
+        The Bogged-Down Smithy
+    ]],
+    ['eEX rNH rMS rGV eVL rDH rIN eAS rDP'] = STRING.trimIndent [[
+        The Overwhelemed Smithy
+    ]],
+    ['eEX uNH uMS uGV eVL uDH uIN eAS uDP'] = STRING.trimIndent [[
+        The Paralyzed Smithy
+    ]],
     --one of mine
     ['eEX uGV eDH eAS'] = STRING.trimIndent [[
         But It Isn't One Of Mine, the Easy Mode counterpart to the Patience Is A Virtue achievement.

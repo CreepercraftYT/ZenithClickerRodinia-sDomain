@@ -483,7 +483,9 @@ TEXTURE = {
 
     logo = assets 'iconZCEM.png',
     logo_old = assets 'icon_old.png',
-    programmingsmithy = assets 'programmingsmithy.png'
+    programmingsmithy = assets 'programmingsmithy.png',
+    github = assets 'GitHub_Invertocat_White.png',
+    discord = assets 'Discord-Symbol-White.png',
 }
 TEXTURE = TABLE.linkSource({}, TEXTURE, function(path)
     if type(path) ~= 'string' then return path end
@@ -1685,6 +1687,16 @@ function WIDGET._prototype.button:draw()
     -- Drawable
     gc.setColor(self.textColor)
     WIDGET._alignDraw(self, self._text, 0, 0, 0, 1.2, 1.2 - 2.4 * GAME.revTimer)
+    if self._image then
+        local startX = self.alignX == 'center' and 0 or self.alignX == 'left' and -w * .5 + self.marginX or w * .5 - self.marginX
+        local startY = self.alignY == 'center' and 0 or self.alignY == 'top' and -h * .5 + self.marginY or h * .5 - self.marginY
+        gc.setColor(self.imageColor)
+        if self.quad then
+            WIDGET._alignDrawQ(self, self._image, self.quad, startX, startY)
+        else
+            WIDGET._alignDraw(self, self._image, startX, startY)
+        end
+    end
 
     -- Highlight
     if self._hoverTime > 0 then
