@@ -420,7 +420,7 @@ scene.widgetList = {
         sound_hover = 'menutap',
         imageColor = { .58, .58, .58 },
         alignY = 'top',
-        marginY = 5,
+        marginY = 10,
         image = TEXTURE.github,
         onClick = function() 
             SFX.play('menuconfirm')
@@ -440,7 +440,7 @@ scene.widgetList = {
         sound_hover = 'menutap',
         imageColor = { .58, .58, .58 },
         alignY = 'top',
-        marginY = 5,
+        marginY = 15,
         image = TEXTURE.discord,
         onClick = function() 
             SFX.play('menuconfirm')
