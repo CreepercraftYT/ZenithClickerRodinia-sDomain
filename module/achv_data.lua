@@ -56,7 +56,7 @@ end
 ---@field hide fun():boolean?
 
 ---@type Map<Achievement>
-local d = {
+Achievements = {
     { title = "General" },
     { -- contender
         id = 'contender',
@@ -693,16 +693,6 @@ local d = {
         scoreSimp = function(revive) return revive .. " Revives" end,
         rank = numberRank(0, 3, 5, 8, 10, 12, 15),
     },
-    { -- the_responsible_one_plus
-        ex = true,
-        id = 'the_responsible_one_plus',
-        name = "The Responsible One+",
-        desc = [[Highest amount of revivals performed, multiplied by MP]],
-        quote = [["Is this going to be a recurring theme?"]],
-        credit = "@FCSplayz",
-        scoreSimp = function(rank) return floor(rank) .. " Revive·MP" end,
-        rank = numberRank(0, 16, 26, 36, 49, 64, 81),
-    },
     { -- the_unreliable_one
         ex = true,
         id = 'the_unreliable_one',
@@ -712,6 +702,16 @@ local d = {
         scoreSimp = function(kill) return kill .. " Kills" end,
         rank = numberRank(0, 2, 3, 4, 5, 6, 8),
         hide = function() return GAME.completion.DP == 0 end,
+    },
+    { -- the_responsible_one_plus
+        ex = true,
+        id = 'the_responsible_one_plus',
+        name = "The Responsible One+",
+        desc = [[Highest amount of revivals performed, multiplied by MP]],
+        quote = [["Is this going to be a recurring theme?"]],
+        credit = "@FCSplayz",
+        scoreSimp = function(rank) return floor(rank) .. " Points" end,
+        rank = numberRank(0, 16, 26, 36, 49, 64, 81),
     },
     { -- guardian_angel
         id = 'guardian_angel',
@@ -730,33 +730,14 @@ local d = {
         credit = "@obsidian",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2000),
     },
-    { -- overprotection
+    { -- level_19_cap
         ex = true,
-        id = 'overprotection',
-        name = "Overprotection",
-        desc = [[HFD while keeping both players' HP above 10/15, with rDP]],
-        quote = [["Are you hurt? Did I hurt you?"]],
-        credit = "@obsidian",
-        rank = floorRank(1, 3, 5, 6, 7, 8, 9),
-        hide = function() return GAME.completion.DP == 0 end,
-    },
-    { -- a_mutual_agreement
-        ex = true,
-        id = 'a_mutual_agreement',
-        name = "A Mutual Agreement",
-        desc = [[HFD with DH AS DP with every commit sharing at least 1 mod with the previous one]],
-        quote = [[Signed in writing, binding hearts and hands alike.]],
-        credit = "@FCSplayz",
-        rank = floorRank(1, 3, 5, 7, 9, 10, 2200),
-    },
-    { -- the_cheaters
-        ex = true,
-        id = 'the_cheaters',
-        name = "The Cheaters",
-        desc = [[HFD with VL AS DP with commit not sharing any mod with the previous one]],
-        quote = [[Hearts broken from whom you stay with, to bond with another.]],
-        credit = "@Patrickmlg",
-        rank = floorRank(1, 3, 5, 6, 7, 8, 10),
+        id = 'level_19_cap',
+        name = "Level 19 Cap",
+        desc = [[HAR before first fatigue effect, with NH]],
+        quote = [[Another test of sustained speed and efficiency.]],
+        credit = "@Ponies",
+        rank = floorRank(1, 9, 10, 2000, 2400, 2600, 3500),
     },
     { -- the_escape_artist
         id = 'the_escape_artist',
@@ -776,14 +757,15 @@ local d = {
         rank = numberRank(0, 50, 100, 150, 200, 260, 420),
         hide = function() return GAME.completion.AS == 0 end,
     },
-    { -- level_19_cap
+    { -- fel_magic
         ex = true,
-        id = 'level_19_cap',
-        name = "Level 19 Cap",
-        desc = [[HAR before first fatigue effect, with NH]],
-        quote = [[Another test of sustained speed and efficiency.]],
-        credit = "@Ponies",
-        rank = floorRank(1, 9, 10, 2000, 2400, 2600, 3500),
+        id = 'fel_magic',
+        name = "Fel Magic",
+        desc = [[Quests passed with wounds triggered during GIGASPEED, with rAS]],
+        quote = [["And what, Gul'dan, must we give it return?"]],
+        scoreSimp = function(quest) return floor(quest) .. " Quests" end,
+        rank = numberRank(0, 6, 15, 26, 42, 62, 80),
+        hide = function() return GAME.completion.AS == 0 or STAT.totalGiga == 0 end,
     },
     { -- empurple
         ex = true,
@@ -795,27 +777,14 @@ local d = {
         rank = floorRank(1, 3, 5, 7, 9, 10, 1800),
         hide = function() return GAME.completion.IN == 0 end,
     },
-    { -- the_masterful_juggler
+    { -- patience_is_a_virtue
         ex = true,
-        id = 'the_masterful_juggler',
-        name = "The Masterful Juggler",
-        desc = [[Highest Back-to-Back chain reached, with rMS rGV rIN]],
-        quote = [[A perfect jester, putting memory, speed and technique into entertainment...]],
-        credit = "@FMichael",
-        scoreSimp = function(b2b) return "B2B x" .. b2b end,
-        rank = numberRank(0, 10, 18, 26, 42, 62, 94),
-        hide = function() return GAME.completion.MS == 0 or GAME.completion.GV == 0 or GAME.completion.IN == 0 end,
-    },
-    { -- clutch_main
-        ex = true,
-        id = 'clutch_main',
-        name = "Clutch Main",
-        desc = [[Quests passed while HP is critical, with NH rGV]],
-        quote = [[Your horses had better be held onto!]],
-        credit = "@GameTilDead",
-        scoreSimp = function(quest) return floor(quest) .. " Quests" end,
-        rank = numberRank(0, 26, 42, 62, 94, 126, 162),
-        hide = function() return GAME.completion.GV == 0 end,
+        id = 'patience_is_a_virtue',
+        name = "Patience is a Virtue",
+        desc = [[HFD without manually committing]],
+        quote = [[Opportunities always favor those who are prepared and wait.]],
+        credit = "@The_111thBlitzer",
+        rank = floorRank(1, 3, 5, 7, 9, 10, 2000),
     },
     { -- spotless
         ex = true,
@@ -827,16 +796,44 @@ local d = {
         rank = floorRank(1, 3, 5, 7, 8, 9, 10),
         hide = function() return GAME.completion.GV == 0 end,
     },
-    { -- autoplay_is_awesome
+    { -- a_mutual_agreement
         ex = true,
-        id = 'autoplay_is_awesome',
-        name = "Autoplay is Awesome",
-        desc = [[HFD without manually committing, with rNH MS rGV AS]],
-        quote = [["All the words, of a melody of rain. Resonating within ripples, Dreams of human remain."]],
+        id = 'a_mutual_agreement',
+        name = "A Mutual Agreement",
+        desc = [[HFD with DH AS DP with every commit sharing at least 1 mod with the previous one]],
+        quote = [[Signed in writing, binding hearts and hands alike.]],
+        credit = "@FCSplayz",
+        rank = floorRank(1, 3, 5, 7, 9, 10, 2200),
+    },
+    { -- the_cheaters
+        ex = true,
+        id = 'the_cheaters',
+        name = "The Cheaters",
+        desc = [[HFD with VL AS DP with commit not sharing any mod with the previous one]],
+        quote = [[Hearts broken from whom you stay with, to bond with another.]],
+        credit = "@Patrickmlg",
+        rank = floorRank(1, 3, 5, 6, 7, 8, 10),
+    },
+    { -- overprotection
+        ex = true,
+        id = 'overprotection',
+        name = "Overprotection",
+        desc = [[HFD while keeping both players' HP above 10/15, with rDP]],
+        quote = [["Are you hurt? Did I hurt you?"]],
         credit = "@obsidian",
-        rank = floorRank(1, 3, 5, 6, 7, 8, 1500),
-        hide = function() return GAME.completion.NH == 0 or GAME.completion.GV == 0 end,
-        realHide = TRUE
+        rank = floorRank(1, 3, 5, 6, 7, 8, 9),
+        hide = function() return GAME.completion.DP == 0 end,
+    },
+    { -- clutch_main
+        ex = true,
+        id = 'clutch_main',
+        name = "Clutch Main",
+        desc = [[Quests passed while HP is critical, with NH rGV]],
+        quote = [[Your horses had better be held onto!]],
+        credit = "@GameTilDead",
+        scoreSimp = function(quest) return floor(quest) .. " Quests" end,
+        rank = numberRank(0, 26, 42, 62, 94, 126, 162),
+        hide = function() return GAME.completion.GV == 0 end,
     },
     { -- sunk_cost
         ex = true,
@@ -854,6 +851,17 @@ local d = {
         quote = [["Bold in vanity, began to soar, rising upon his wings to touch the skies."]],
         credit = "@Flowerling",
         rank = floorRank(1, 3, 5, 7, 8, 9, 10),
+    },
+    { -- the_masterful_juggler
+        ex = true,
+        id = 'the_masterful_juggler',
+        name = "The Masterful Juggler",
+        desc = [[Highest Back-to-Back chain reached, with rMS rGV rIN]],
+        quote = [[A perfect jester, putting memory, speed and technique into entertainment...]],
+        credit = "@FMichael",
+        scoreSimp = function(b2b) return "B2B x" .. b2b end,
+        rank = numberRank(0, 10, 18, 26, 42, 62, 94),
+        hide = function() return GAME.completion.MS == 0 or GAME.completion.GV == 0 or GAME.completion.IN == 0 end,
     },
     { -- the_oblivious_artist
         ex = true,
@@ -886,17 +894,6 @@ local d = {
         quote = [[Three steps forward, two steps back. Six steps forward, five steps back.]],
         scoreSimp = function(kill) return kill .. " Entries" end,
         rank = numberRank(0, 2, 3, 3, 4, 4, 5),
-    },
-    { -- under_the_radar
-        ex = true,
-        id = 'under_the_radar',
-        name = "Under the Radar",
-        desc = [[Fastest time reaching F6 without entering GIGASPEED with VL IN AS]],
-        quote = [[A face, blended into the crowd of mediocrity.]],
-        comp = '<',
-        credit = "@flomikel",
-        scoreSimp = function(time) return string.format("%.2fs", time) end,
-        rank = numberRankRev(260, 180, 162, 142, 135, 126, 120),
     },
     { -- arrogance
         ex = true,
@@ -1482,16 +1479,6 @@ local d = {
         hide = TRUE,
         type = 'issued',
     },
-    { title = "Easy Mode Ex-Vanilla" },
-    { -- patience_is_a_virtue
-        ex = true,
-        id = 'patience_is_a_virtue',
-        name = "Patience is a Virtue",
-        desc = [[HFD without manually committing]],
-        quote = [[Opportunities always favor those who are prepared and wait.]],
-        credit = "@The_111thBlitzer",
-        rank = floorRank(1, 3, 5, 7, 9, 10, 2000),
-    },
     { title = "Easy Mode (v1.0) (No CR)" },
     { -- Programmer & Pro Gamer
         ex = true,
@@ -1853,7 +1840,7 @@ local d = {
         --id = 'eDHEXeNH',
         id = 'emperor_development',
         name = "Emperor's Development",
-        desc = [[Highest rank achieved on 40 quests WUT "EXPERT Mode", "Moderate Hold" and "Salvation" mods and NOT Stacker Mode]],
+        desc = [[Highest rank achieved on 40 quests WUT "EXPERT Mode", "Moderate Hold" and "Salvation" mods]],
         quote = [[Look at how much progress you've made in reforming your ways!]],
         scoreSimp = function(rank) return string.format("Rank %.2f", rank) end,
         rank = numberRank(9, 10, 11, 12, 13, 13.1, 13.2),
@@ -1863,7 +1850,7 @@ local d = {
         --id = 'eEXeMS',
         id = 'quest_feast',
         name = "Quest Feast",
-        desc = [[Lowest altitude on 40 quests WUT "Easy Mode" and "Tidiness" mods and NOT Stacker Mode]],
+        desc = [[Lowest altitude on 40 quests WUT "Easy Mode" and "Tidiness" mods]],
         quote = [[The delicate aromas of an all-you-can-eat buffet linger in the air.]],
         comp = '<',
         scoreSimp = function(roundHeight) return string.format("%.2fm", roundHeight) end,
@@ -2205,15 +2192,6 @@ local d = {
         credit = "@TrevorSmithy",
         type = 'issued',
     },
-    { -- gigaplonk
-        id = 'gigaplonk',
-        name = "Gigaplonk",
-        desc = [[Finish a run with GIGASPEED but less than 2.6 quests completed]],
-        quote = [["Normally this wouldn't count, but you did get GIGASPEED..."]],
-        credit = "@Taha",
-        type = 'issued',
-        hide = TRUE,
-    },
     { -- the_windup
         id = 'the_windup',
         name = "The Wind-Up",
@@ -2221,6 +2199,7 @@ local d = {
         quote = [["WHY DO I HEAR BOSS MUSIC?!?!?"]],
         credit = "@TrevorSmithy",
         type = 'issued',
+        hide = TRUE,
     },
     { -- im_gonna_be
         id = 'im_gonna_be',
@@ -2241,22 +2220,22 @@ local compFunc = {
 do
     local i = 1
     repeat
-        local achv = d[i]
+        local achv = Achievements[i]
         if achv.title then
             if i % 2 == 0 then
-                table.insert(d, i, {})
+                table.insert(Achievements, i, {})
                 i = i + 1
             end
-            table.insert(d, i + 1, {})
+            table.insert(Achievements, i + 1, {})
         end
         i = i + 1
-    until i > #d
+    until i > #Achievements
 end
-for i = 1, #d do
-    local achv = d[i]
+for i = 1, #Achievements do
+    local achv = Achievements[i]
     local id = achv.id
     if id then
-        d[id] = achv
+        Achievements[id] = achv
 
         assert(type(id) == 'string', "Missing field 'name' - " .. id)
         assert(type(achv.name) == 'string', "Missing field 'name' - " .. id)
@@ -2299,5 +2278,3 @@ for i = 1, #d do
     achv.hide = achv.hide or FALSE
     achv.realHide = achv.realHide or FALSE
 end
-
-return d
