@@ -1218,7 +1218,6 @@ function GAME.easyXPModifiers(xp)
     elseif M.EX == -1 and GAME.rank > 1 and GAME.rank <= 126 then
         xp = xp * (1 + (GAME.rank - 1)/(xpRankModifier*3))
     end
-    local oldXP = xp
     if GAME.ecloseCard then
         xp = roundUnit(xp * max((1-(GAME.height/1000000)), 0), 0.01)
     end
@@ -3009,7 +3008,7 @@ function GAME.commit(auto, falseCommit)
                 6.2
             )
         end
-        local baseAttack = attack
+
         -- Closer Card assistPenalty
         if GAME.ecloseCard and not falseCommit then 
             if totalAssistPenalty == 0 then
