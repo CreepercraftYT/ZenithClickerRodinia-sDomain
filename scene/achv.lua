@@ -219,7 +219,6 @@ function RefreshAchvList(canShuffle)
             end
         end
     end
-    print(TABLE.dump(overallProgress))
 end
 
 local function submit(id, score, silent, realSilent)

@@ -12,8 +12,7 @@ STRING.install()
 
 SCR.setSize(1600, 1000)
 
-for _, v in next, {
-    'customAssets',
+FILE.createDirectory({
     'customAssets/achievements',
     'customAssets/badges',
     'customAssets/card',
@@ -24,7 +23,7 @@ for _, v in next, {
     'customAssets/revive',
     'customAssets/stat',
     'customAssets/tower',
-} do love.filesystem.createDirectory(v) end
+})
 
 
 ---@return any love.Texture
@@ -165,6 +164,7 @@ TEXTURE = {
     towerBG = { assets 'tower/f1.jpg', assets 'tower/f2.jpg', assets 'tower/f3.jpg', assets 'tower/f4.jpg', assets 'tower/f5.jpg', assets 'tower/f6.jpg', assets 'tower/f7.jpg', assets 'tower/f8.jpg', assets 'tower/f9.jpg', assets 'tower/f10.png' },
     moon = assets 'tower/moon.png',
     stars = assets 'tower/stars.png',
+    warning = assets 'finalwarning.png',
 
     revive = {
         norm = assets 'revive/norm.png',
@@ -679,8 +679,9 @@ TEXTS = { -- Font size can only be 30 and 50 here !!!
     zpChange   = GC.newText(FONT.get(30)),
     dcBest     = GC.newText(FONT.get(30)),
     dcTimer    = GC.newText(FONT.get(30)),
+    srTimer    = GC.newText(FONT.get(30)),
     title      = GC.newText(FONT.get(50), "EXPERT QUICK PICK"),
-    load       = GC.newText(FONT.get(50), "JOINING ROOM..."),
+    load       = GC.newText(FONT.get(50)),
     pb         = GC.newText(FONT.get(50)),
     endResult  = GC.newText(FONT.get(30)),
     endHeight  = GC.newText(FONT.get(50)),
@@ -781,86 +782,105 @@ Metatable = {
     best_highscore = { __index = function() return 0 end },
     best_speedrun = { __index = function() return 1e99 end },
 }
-BEST = {
-    highScore = setmetatable({}, Metatable.best_highscore),
-    speedrun = setmetatable({}, Metatable.best_speedrun),
-}
 
-STAT = {
-    mod = 'easyMode',
-    version = nil, -- will be set after loading
-    system = SYSTEM,
-    joinDate = os.date("%b %Y"),
-    hid = os.date("%d%S%m%M%y%H") .. math.random(26000, 42000) .. math.random(42000, 62000),
-    uid = "ANON-" .. os.date("%d_") .. math.random(2600, 6200),
-    keybind = {
-        "q", "w", "e", "r", "t", "y", "u", "i", "o",
-        "a", "s", "d", "f", "g", "h", "j", "k", "l",
-        "space", "z", "x", "c"
-    },
-    aboutme = "Click the Zenith!",
-    maxFloor = 1,
-    maxHeight = 0,
-    heightDate = "NO DATE",
-    minTime = 2600,
-    timeDate = "NO DATE",
+-- Create BEST, STAT, ACHV tables, only used when launching and on resetall
+function INIT_DATA()
+    BEST = {
+        highScore = setmetatable({}, Metatable.best_highscore),
+        speedrun = setmetatable({}, Metatable.best_speedrun),
+    }
 
-    zp = 0,
-    dzp = 0,
-    peakZP = 0,
-    peakDZP = 0,
-    dailyBest = 0,
-    dailyMastered = false,
-    lastDay = 0,
-    vipListCount = 0,
-    clockOutCount = 0,
-    clicker = false,
+    STAT = {
+        mod = 'easyMode',
+        version = nil, -- will be set after loading
+        system = SYSTEM,
+        modTime = os.time(),
+        srTimer_life = 0,
+        srTimer_game = 0,
+        joinDate = os.date("%b %Y"),
+        hid = os.date("%d%S%m%M%y%H") .. math.random(26000, 42000) .. math.random(42000, 62000),
+        uid = "ANON-" .. os.date("%d_") .. math.random(2600, 6200),
+        keybind = {
+            "q", "w", "e", "r", "t", "y", "u", "i", "o",
+            "a", "s", "d", "f", "g", "h", "j", "k", "l",
+            "space", "z", "x", "c"
+        },
+        aboutme = "Click the Zenith!",
+        maxFloor = 1,
+        maxHeight = 0,
+        heightDate = "NO DATE",
+        minTime = 2600,
+        timeDate = "NO DATE",
 
-    totalGame = 0,
-    totalTime = 0,
-    totalQuest = 0,
-    totalPerfect = 0,
-    totalHeight = 0,
-    totalBonus = 0,
-    totalFloor = 0,
-    totalFlip = 0,
-    totalAttack = 0,
-    totalGiga = 0,
-    totalF10 = 0,
-    badge = {},
+        zp = 0,
+        dzp = 0,
+        peakZP = 0,
+        peakDZP = 0,
+        dailyBest = 0,
+        dailyMastered = false,
+        lastDay = 0,
+        vipListCount = 0,
+        clockOutCount = 0,
+        clicker = false,
 
-    fullscreen = true,
-    syscursor = false,
-    cardBrightness = 90,
-    bgBrightness = 40,
-    bg = true,
-    sfx = 60,
-    bgm = 100,
+        totalGame = 0,
+        totalTime = 0,
+        totalQuest = 0,
+        totalPerfect = 0,
+        totalHeight = 0,
+        totalBonus = 0,
+        totalFloor = 0,
+        totalFlip = 0,
+        totalAttack = 0,
+        totalGiga = 0,
+        totalF10 = 0,
+        badge = {},
 
-    autoMute = false,
-    oldHitbox = false,
-    easyName = false,
-    imperial = false,
-    promotion = true,
-    stacker = false,
-    rold = false,
-    oldTransparentCard = false,
-    unlockAll = false,
-    easyModeClicker = false,
-    greenClicker = false,
-}
+        fullscreen = true,
+        syscursor = false,
+        cardBrightness = 90,
+        bgBrightness = 40,
+        bg = true,
+        sfx = 60,
+        bgm = 100,
 
-ACHV = {}
+        autoMute = false,
+        oldHitbox = false,
+        easyName = false,
+        imperial = false,
+        promotion = true,
+        stacker = false,
+        rold = false,
+        oldTransparentCard = false,
+        unlockAll = false,
+        easyModeClicker = false,
+        greenClicker = false,
+    }
 
-AchvNotice = {}
+    ACHV = {}
+
+    AchvNotice = {}
+end
+
+INIT_DATA()
 
 TestMode = false
 
-function SaveBest() if not (TestMode or GAME.multiplePiecesActive) then love.filesystem.write('best.luaon', 'return' .. TABLE.dumpDeflate(BEST)) end end
+function SaveBest()
+    if (TestMode or GAME.multiplePiecesActive) then return end
+    love.filesystem.write('best.luaon', 'return' .. TABLE.dumpDeflate(BEST))
+end
 
-function SaveStat() if not (TestMode or GAME.multiplePiecesActive) then love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT)) end end
+function SaveStat()
+    if (TestMode or GAME.multiplePiecesActive) then return end
+    STAT.modTime = os.time()
+    love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT))
+end
 
-function SaveAchv() if not (TestMode or GAME.multiplePiecesActive) then love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV)) end end
+function SaveAchv()
+    if (TestMode or GAME.multiplePiecesActive) then return end
+    love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV))
+end
 
 local msgTime = 0
 local bufferedMsg = {}
@@ -1143,6 +1163,7 @@ BgmData = {
 }
 
 BgmPlaying = false ---@type ZC.bgmName | false
+SongNamePlaying = false -- Same as BgmPlaying, but this distinguishes f0(r) and f1(r) for album page
 BgmLooping = false
 BgmNeedSkip = false
 BgmNeedStop = false
@@ -1159,34 +1180,41 @@ end
 function PlayBGM(name, force)
     if GAME.teramusic and not force then return end
 
+    SongNamePlaying = name
     local last = BgmPlaying
 
     if GAME.playing and (RevMusicMode() or GAME.forceRev) then name = name .. 'r' end
     if name == 'fomgr' then name = 'fomg' end
-    if name:sub(1, 2) == 'f0' then
+    if name == 'f0r' then
         BgmPlaying = 'f0'
-    elseif name:sub(1, 2) == 'f1' and name:sub(1, 3) ~= 'f10' then
+    elseif name == 'f1r' then -- Note: 'f1ex' is only a track name, not musicID
         BgmPlaying = 'f1'
     else
         BgmPlaying = name
     end
 
     if not BgmData[BgmPlaying] then return end
-    BgmLooping = BgmData[BgmPlaying].loop
-    BgmNeedSkip = BgmData[BgmPlaying].teleport
+
     BgmNeedStop = false
 
     if BgmPlaying == 'f0' then
         BgmLooping = false
+        BgmNeedSkip = BgmData[BgmPlaying].teleport
+
         BGM.play(BgmSet.f0)
         RefreshBGM(name)
     elseif BgmPlaying == 'f1' then
+        BgmLooping = BgmData[BgmPlaying].loop
+        BgmNeedSkip = BgmData[BgmPlaying].teleport
+
         BGM.play(BgmSet.f1, force and '' or '-sdin')
         local start = math.random(3, 5) * BgmData.f1.introLen
         BgmNeedSkip[1] = start + BgmData.f1.introLen
         BGM.set('all', 'seek', start)
         RefreshBGM(name)
-    elseif name == 'tera' or name == 'terae' or name == 'teral' or name == 'terael'then
+    elseif name == 'tera' or name == 'terae' or name == 'teral' or name == 'terael' then
+        BgmLooping = BgmData[BgmPlaying].loop
+        BgmNeedSkip = BgmData[BgmPlaying].teleport
         BGM.play(name, '-sdin')
         local startFrom
         if last then
@@ -1198,10 +1226,10 @@ function PlayBGM(name, force)
         BgmNeedSkip[1] = start + BgmData.tera.introLen
         BGM.set('all', 'seek', start)
         RefreshBGM()
-    else
-        if BGM.play(name, force and '' or '-sdin') then
-            RefreshBGM()
-        end
+    elseif BGM.play(name, force and '' or '-sdin') then
+        BgmLooping = BgmData[BgmPlaying].loop
+        BgmNeedSkip = BgmData[BgmPlaying].teleport
+        RefreshBGM()
     end
 end
 
@@ -1625,6 +1653,8 @@ function ZENITHA.globalEvent.keyDown(key, isRep)
     end
 end
 
+function ZENITHA.globalEvent.quit() SaveStat() end
+
 do -- Auto mute when unfocused
     local function task_autoSoundOff()
         coroutine.yield()
@@ -1838,7 +1868,21 @@ function Daemon_Slow()
         end
 
         -- HTTP returns
-        local msg = ASYNC.get('submitDaily')
+        local msg = ASYNC.get('checkUpdate')
+        if msg then
+            local suc, res = pcall(JSON.decode, msg)
+            if suc and res and res.tag_name then
+                if (require 'version'.appVer):lower() == res.tag_name then
+                    LOG('info', "Already on latest version (" .. res.tag_name .. ")")
+                else
+                    SFX.play('social_notify_major')
+                    MSG('info', "New version " .. res.tag_name .. " available!", 6.26)
+                end
+            else
+                LOG('info', "Failed to check for updates")
+            end
+        end
+        msg = ASYNC.get('submitDaily')
         if msg then
             local suc, res = pcall(JSON.decode, msg)
             local duration = GAME.playing and 0 or 10
@@ -1929,6 +1973,11 @@ function Daemon_Fast()
         end
 
         local dt = yield()
+
+        -- Speedrun timer
+        if STAT.srTimer_life then
+            STAT.srTimer_life = STAT.srTimer_life + dt
+        end
 
         -- Mouse holding animation
         if not STAT.syscursor then

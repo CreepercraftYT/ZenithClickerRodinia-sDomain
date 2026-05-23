@@ -929,7 +929,7 @@ function DrawBG(brightness, showRuler)
                 end
 
                 -- Cover
-                local f10CoverAlpha = GAME.zenithTraveler and icLerp(1660, 1650, GAME.bgH) or 1 - GAME.floorTime / 2.6
+                local f10CoverAlpha = max(icLerp(1660, 1650, GAME.bgH), 1 - (love.timer.getTime() - GAME.f10Time) / 2.6)
                 if f10CoverAlpha > 0 then
                     gc_setColor(.5, .5, .5, f10CoverAlpha)
                     gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
@@ -1864,6 +1864,16 @@ function scene.overDraw()
             gc_draw(TEXTS.credit, -5, d, 0, .872, .872, TEXTS.credit:getDimensions())
         end
 
+        -- Speedrun Timer
+        if STAT.srTimer_life then
+            gc_replaceTransform(SCR.xOy_dl)
+            setFont(30)
+            gc_setColor(TextColor)
+            gc_setAlpha(.42)
+            TEXTS.srTimer:set(STRING.time(STAT.srTimer_game) .. "/ " .. STRING.time_simp(STAT.srTimer_life))
+            gc_draw(TEXTS.srTimer, 7, -70 + GAME.uiHide * 30)
+        end
+
         -- Card Info
         if not GAME.playing and FloatOnCard then
             local C = Cards[FloatOnCard]
@@ -2090,7 +2100,7 @@ function scene.overDraw()
     -- Fastleak cover
     if GAME.fastLeak then
         gc_replaceTransform(SCR.origin)
-        gc_setColor(0, 1, .42, (GAME.playing and .626 or 1) * (M.EX > 0 and .62 or .42))
+        gc_setColor(0, 1, .42, (GAME.playing and .626 or 1) * ((M.EX > 0 or M.DP == 2) and .62 or .42))
         gc_draw(TEXTURE.transition, 0, 0, 0, .42 / 128 * SCR.w, SCR.h)
         gc_draw(TEXTURE.transition, SCR.w, 0, 0, -.42 / 128 * SCR.w, SCR.h)
     end
