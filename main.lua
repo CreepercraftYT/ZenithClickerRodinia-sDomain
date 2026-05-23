@@ -1868,7 +1868,7 @@ function Daemon_Slow()
         end
 
         -- HTTP returns
-        local msg = ASYNC.get('checkUpdate')
+        --[[local msg = ASYNC.get('checkUpdate')
         if msg then
             local suc, res = pcall(JSON.decode, msg)
             if suc and res and res.tag_name then
@@ -1881,7 +1881,7 @@ function Daemon_Slow()
             else
                 LOG('info', "Failed to check for updates")
             end
-        end
+        end]]
         msg = ASYNC.get('submitDaily')
         if msg then
             local suc, res = pcall(JSON.decode, msg)
