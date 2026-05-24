@@ -13,7 +13,7 @@ d.menu = {
     { set = "EX MS",              name = "Block Rationing" },
 
     { set = "rMS AS",             name = "Naga Eyes" },
-    { set = "rGV rIN",            name = "The Grandmaster+" },
+    { set = "rGV rIN",            name = "Terror-Instinct" },
     { set = "EX NH rAS",          name = "Magic School" },
     { set = "rNH rDH IN rAS",     name = "The Spellcaster" },
     { set = "EX rGV DH",          name = "Demonic Speed" },

@@ -211,7 +211,7 @@ return {
     ]],
 
     ['rGV rIN'] = STRING.trimIndent [[
-        The Grandmaster+, reversed version of The Grandmaster, which is closer to its original meaning.
+        Formerly called "The Grandmaster+", reversed version of The Grandmaster, which is closer to its original meaning.
         Well, you can see that ZC's upright mods are kinda too easy, and the reversed mods have similar difficulty with QP2's normal mods.
         This is intended, to let everyone be able to enjoy playing with mods.
     ]],

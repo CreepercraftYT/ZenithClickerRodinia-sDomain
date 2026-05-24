@@ -524,9 +524,9 @@ local d = {
     { -- rGVrIN
         ex = true,
         id = 'rGVrIN',
-        name = "The Grandmaster+",
+        name = "Terror-Instinct",
         desc = [[HFD with rGV rIN]],
-        quote = [[Even when the universe collapses, the real grandmaster still remains at peace.]],
+        quote = [[When everything is crumbling down and the darkness wraps everything away, trust your instincts to light the path to Grand-Mastery.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         hide = function() return GAME.completion.GV == 0 or GAME.completion.IN == 0 end,
     },
