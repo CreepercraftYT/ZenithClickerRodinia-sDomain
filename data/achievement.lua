@@ -2235,7 +2235,7 @@ local d = {
     { title = "Extra Mod Achievements" },
     { -- rGVIN
         ex = true,
-        id = 'rGVIN',
+        id = 'INrGV',
         name = "Fading Instinct",
         desc = [[HFD with rGV IN]],
         quote = [["EXCELLENT, Try again to be a Grand Master!"]],

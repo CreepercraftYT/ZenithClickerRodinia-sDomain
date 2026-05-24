@@ -14,6 +14,7 @@ d.menu = {
 
     { set = "rMS AS",             name = "Naga Eyes" },
     { set = "rGV rIN",            name = "Terror-Instinct" },
+    { set = "rGV IN",             name = "Fading Instinct" },
     { set = "EX rGV rIN",         name = "Rodinia" },
     { set = "rEX rGV rIN",        name = "Ainidor" },
     { set = "EX NH rAS",          name = "Magic School" },
