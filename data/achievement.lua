@@ -526,7 +526,8 @@ local d = {
         id = 'rGVrIN',
         name = "Terror-Instinct",
         desc = [[HFD with rGV rIN]],
-        quote = [[When everything is crumbling down and the darkness wraps everything away, trust your instincts to light the path to Grand-Mastery.]],
+        quote = [[When everything is crumbling down and the darkness wraps everything away, 
+        trust your instincts to light the path to Grand-Mastery.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         hide = function() return GAME.completion.GV == 0 or GAME.completion.IN == 0 end,
     },
@@ -2231,6 +2232,16 @@ local d = {
         type = 'issued',
         hide = TRUE,
     },
+    { title = "Extra Mod Achievements" },
+    { -- EXrGVrIN
+        ex = true,
+        id = 'EXrGVrIN',
+        name = "Galactic Empress",
+        desc = [[HFD with EX rGV rIN]],
+        quote = [[She watches from the Omniverse...]],
+        rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
+        hide = function() return GAME.completion.GV == 0 or GAME.completion.IN == 0 end,
+    }
 }
 
 local compFunc = {

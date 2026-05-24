@@ -215,6 +215,9 @@ return {
         Well, you can see that ZC's upright mods are kinda too easy, and the reversed mods have similar difficulty with QP2's normal mods.
         This is intended, to let everyone be able to enjoy playing with mods.
     ]],
+    ['EX rGV rIN'] = STRING.trimIndent [[
+        The Celestial giantess, not the Supercontinent...
+    ]],
     ['rMS AS'] = STRING.trimIndent [[
         Naga Eyes, a combo ported from tetrio.
         Kinda exactly same gameplay! Make sure you've read the commentary of rMS and know how it works.

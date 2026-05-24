@@ -952,7 +952,7 @@ scene.widgetList = {
                 elseif res1.mod == "shimmer" then modText = "The Creator asks you to keep your sparkling water away from his creation"
                 elseif res1.mod == "unabstracted" then modText = "The Creator prefers his work abstract"
                 elseif res1.mod == "finalmixbeg" then modText = "The Creator rejects your chakras and magics"
-                elseif res1.mod == "easyMode" then modText = "Rodinia wants you to suffer and unlock everything again :trollface:" end
+                elseif res1.mod == "easyMode" then modText = "Rodinia thinks you shouldn't go the easy way..." end
                 MSG('dark', modText)
                 SFX.play('staffwarning')
                 return
