@@ -480,168 +480,34 @@ function GAME.getComboName(list, mode)
             end
         end
 
-        -- https://www.nationalchurchillmuseum.org/never-give-in-never-never-never.html#:~:text=You%20cannot%20tell,of%20the%20enemy.
         local colorModNumber = 1
-        local messyText = ""
+        local eINeMSAS = M.IN == -1 and M.MS == -1 and M.AS ~= 0 and not STAT.easyName
+        local modCodes = {'EX', 'NH', 'MS', 'GV', 'VL', 'DH', 'IN', 'AS', 'DP'}
         for i = 1, len - 1 do
-            if M.IN == -1 and M.MS == -1 and M.AS ~= 0 and not STAT.easyName then
-                --psuedocode: goal - get card order from CD[j].initOrder, use that to generate a new index for the MD.textColor  
-                -- forgive me lord for i have sinned        
-                if MD.name[list[i]] == 'expert' then
-                    --MSG('dark', "Current Card: " .. CD[1].initOrder)
-                    colorModNumber = CD[1].initOrder
-                elseif MD.name[list[i]] == 'nohold' then
-                    --MSG('dark', "Current Card: " .. CD[2].initOrder)
-                    colorModNumber = CD[2].initOrder
-                elseif MD.name[list[i]] == 'messy' then
-                    --MSG('dark', "Current Card: " .. CD[3].initOrder)
-                    colorModNumber = CD[3].initOrder
-                elseif MD.name[list[i]] == 'gravity' then
-                    --MSG('dark', "Current Card: " .. CD[4].initOrder)
-                    colorModNumber = CD[4].initOrder
-                elseif MD.name[list[i]] == 'volatile' then
-                    --MSG('dark', "Current Card: " .. CD[5].initOrder)
-                    colorModNumber = CD[5].initOrder
-                elseif MD.name[list[i]] == 'doublehole' then
-                    --MSG('dark', "Current Card: " .. CD[6].initOrder)
-                    colorModNumber = CD[6].initOrder
-                elseif MD.name[list[i]] == 'invisible' then
-                    --MSG('dark', "Current Card: " .. CD[7].initOrder)
-                    colorModNumber = CD[7].initOrder
-                elseif MD.name[list[i]] == 'allspin' then
-                    --MSG('dark', "Current Card: " .. CD[8].initOrder)
-                    colorModNumber = CD[8].initOrder
-                elseif MD.name[list[i]] == 'duo' then
-                    --MSG('dark', "Current Card: " .. CD[9].initOrder)
-                    colorModNumber = CD[9].initOrder
+            if eINeMSAS then 
+                for j = 1, #modCodes do
+                    if MD.name[list[i]] == MD.name[modCodes[j]] then
+                        colorModNumber = CD[j].initOrder
+                    end
                 end
-                if colorModNumber == 1 then
-                    ins(fstr, MD.textColor['EX'])
-                    messyText = "e"
-                elseif colorModNumber == 2 then
-                    ins(fstr, MD.textColor['NH'])
-                    messyText = "h"
-                elseif colorModNumber == 3 then
-                    ins(fstr, MD.textColor['MS'])
-                    messyText = "m"
-                elseif colorModNumber == 4 then
-                    ins(fstr, MD.textColor['GV'])
-                    messyText = "g"
-                elseif colorModNumber == 5 then
-                    ins(fstr, MD.textColor['VL'])
-                    messyText = "v"
-                elseif colorModNumber == 6 then
-                    ins(fstr, MD.textColor['DH'])
-                    messyText = "d"
-                elseif colorModNumber == 7 then
-                    ins(fstr, MD.textColor['IN'])
-                    messyText = "i"
-                elseif colorModNumber == 8 then
-                    ins(fstr, MD.textColor['AS'])
-                    messyText = "a"
-                elseif colorModNumber == 9 then
-                    ins(fstr, MD.textColor['DP'])
-                    messyText = "o"
-                end
-                --ins(fstr, {COLOR.HEX "C29F68FF"})
-                if STAT.easyName then
-                    ins(fstr, MD.adj[easyList[i]] .. " ")
-                else
-                    ins(fstr, MD.adj[list[i]] .. " ")
-                end
-                --ins(fstr, messyText .. MD.adj[list[i]] .. " ")
-                --MSG('dark', "Added mod to quest: " .. MD.name[list[i]])
+                ins(fstr, MD.textColor[modCodes[colorModNumber]])       
             else
-                if STAT.easyName then
-                    ins(fstr, MD.textColor[easyList[i]])
-                else
-                    ins(fstr, MD.textColor[list[i]])
-                end
-                if STAT.easyName then
-                    ins(fstr, MD.adj[easyList[i]] .. " ")
-                else
-                    ins(fstr, MD.adj[list[i]] .. " ")
-                end
+                ins(fstr, MD.textColor[STAT.easyName and easyList[i] or list[i]])
             end
+            ins(fstr, MD.adj[STAT.easyName and easyList[i] or list[i]] .. " ")
         end
-        if M.IN == -1 and M.MS == -1 and M.AS ~= 0 and not STAT.easyName then
-            --ins(fstr, {COLOR.HEX "C29F68FF"})
-            -- forgive me lord for i have sinned yet again
-            if MD.name[list[len]] == 'expert' then
-                --MSG('dark', "Current Card: " .. CD[1].initOrder)
-                colorModNumber = CD[1].initOrder
-            elseif MD.name[list[len]] == 'nohold' then
-                --MSG('dark', "Current Card: " .. CD[2].initOrder)
-                colorModNumber = CD[2].initOrder
-            elseif MD.name[list[len]] == 'messy' then
-                --MSG('dark', "Current Card: " .. CD[3].initOrder)
-                colorModNumber = CD[3].initOrder
-            elseif MD.name[list[len]] == 'gravity' then
-                --MSG('dark', "Current Card: " .. CD[4].initOrder)
-                colorModNumber = CD[4].initOrder
-            elseif MD.name[list[len]] == 'volatile' then
-                --MSG('dark', "Current Card: " .. CD[5].initOrder)
-                colorModNumber = CD[5].initOrder
-            elseif MD.name[list[len]] == 'doublehole' then
-                --MSG('dark', "Current Card: " .. CD[6].initOrder)
-                colorModNumber = CD[6].initOrder
-            elseif MD.name[list[len]] == 'invisible' then
-                --MSG('dark', "Current Card: " .. CD[7].initOrder)
-                colorModNumber = CD[7].initOrder
-            elseif MD.name[list[len]] == 'allspin' then
-                --MSG('dark', "Current Card: " .. CD[8].initOrder)
-                colorModNumber = CD[8].initOrder
-            elseif MD.name[list[len]] == 'duo' then
-                --MSG('dark', "Current Card: " .. CD[9].initOrder)
-                colorModNumber = CD[9].initOrder
+        if eINeMSAS then
+            for j = 1, #modCodes do
+                if MD.name[list[len]] == MD.name[modCodes[j]] then
+                    colorModNumber = CD[j].initOrder
+                end
             end
-            if colorModNumber == 1 then
-                ins(fstr, MD.textColor['EX'])
-                messyText = "e"
-            elseif colorModNumber == 2 then
-                ins(fstr, MD.textColor['NH'])
-                messyText = "h"
-            elseif colorModNumber == 3 then
-                ins(fstr, MD.textColor['MS'])
-                messyText = "m"
-            elseif colorModNumber == 4 then
-                ins(fstr, MD.textColor['GV'])
-                messyText = "g"
-            elseif colorModNumber == 5 then
-                ins(fstr, MD.textColor['VL'])
-                messyText = "v"
-            elseif colorModNumber == 6 then
-                ins(fstr, MD.textColor['DH'])
-                messyText = "d"
-            elseif colorModNumber == 7 then
-                ins(fstr, MD.textColor['IN'])
-                messyText = "i"
-            elseif colorModNumber == 8 then
-                ins(fstr, MD.textColor['AS'])
-                messyText = "a"
-            elseif colorModNumber == 9 then
-                ins(fstr, MD.textColor['DP'])
-                messyText = "o"
-            end
-            if STAT.easyName then
-                ins(fstr, MD.noun[easyList[len]])
-            else
-                ins(fstr, MD.noun[list[len]])
-            end
-            --ins(fstr, messyText .. MD.noun[list[len]])
-            --MSG('dark', "Added mod to quest: " .. MD.name[list[len]])
+            ins(fstr, MD.textColor[modCodes[colorModNumber]])
         else
-            if STAT.easyName then
-                ins(fstr, MD.textColor[easyList[len]])
-            else
-                ins(fstr, MD.textColor[list[len]])
-            end
-            if STAT.easyName then
-                ins(fstr, MD.noun[easyList[len]])
-            else
-                ins(fstr, MD.noun[list[len]])
-            end
+            ins(fstr, MD.textColor[STAT.easyName and easyList[len] or list[len]])
         end
+        ins(fstr, MD.noun[STAT.easyName and easyList[len] or list[len]])
+
         if M.IN > 0 then
             local r = rnd(0, 3)
             for i = 1, #fstr, 2 do
@@ -4467,16 +4333,13 @@ function GAME.update(dt)
 
     if not GAME.DPlock then
         if M.EX == 2 then
+            if GAME.eglassCard then
+                GAME.height = GAME.height + GAME.rank / 4 * (passiveClimbSpeedMod * 0.6) * dt * (GAME.einvisUI and 1 or icLerp(0.5, 3, Floors[GAME.floor].top - GAME.height))
+            end
             if not URM then
-                GAME.height = GAME.height - dt * (GAME.floor * (GAME.floor + 1) + 10) / 20
-                if GAME.eglassCard then
-                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.6 * dt * (GAME.einvisUI and 1 or icLerp(GAME.eglassCard and 0.5 or 1, GAME.eglassCard and 3 or 6, Floors[GAME.floor].top - GAME.height))
-                end
+                GAME.height = GAME.height - dt * (GAME.floor * (GAME.floor + 1) + 10) / 20              
                 GAME.height = max(GAME.height, Floors[GAME.floor - 1].top)
             else
-                if GAME.eglassCard then
-                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.6 * dt * (GAME.einvisUI and 1 or icLerp(GAME.eglassCard and 0.5 or 1, GAME.eglassCard and 3 or 6, Floors[GAME.floor].top - GAME.height))
-                end
                 if GAME.negFloor > 0 then
                     if GAME.negFloor >= 2 then
                         GAME.height = min(GAME.height, NegFloors[GAME.negFloor - 1].bottom)
@@ -4489,12 +4352,13 @@ function GAME.update(dt)
                 end
                 if GAME.height < NegFloors[GAME.negFloor].bottom and not GAME.einvisUI then GAME.downFloor() end
                 if GAME.height < NegEvents[GAME.negEvent].h then GAME.nextNegEvent() end
-                if GAME.height <= -1650 and GAME.badTime and BgmPlaying ~= "fomg" then
-                    PlayBGM('fomg', true)
-                end
-                if GAME.height <= -1800 and GAME.badTime and not STAT.greenClicker then 
-                    STAT.greenClicker = true 
-                    MSG("bright", "YOU DID A THING!")
+                -- Trevor Smithy (Bad Time)
+                if GAME.badTime then
+                    if GAME.height <= -1650 and BgmPlaying ~= "fomg" then PlayBGM('fomg', true) end
+                    if GAME.height <= -1800 and not STAT.greenClicker then 
+                        STAT.greenClicker = true 
+                        MSG("bright", "YOU DID A THING!")
+                    end
                 end
             end
         else
