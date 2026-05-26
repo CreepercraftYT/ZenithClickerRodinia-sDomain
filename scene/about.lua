@@ -30,10 +30,10 @@ end
 
 for d = .5, 2.5, .5 do
     addText({ COLOR.LD, "ZENITH CLICKER" }, 90 + d, 20 + d)
-    addText({ COLOR.LD, "EASY MODE" }, 80 + d, 95 + d)
+    addText({ COLOR.LD, "EXTRA" }, 80 + d, 95 + d)
 end
 addText("ZENITH CLICKER", 90, 20)
-addText("EASY MODE", 80, 95)
+addText("EXTRA", 80, 95)
 
 addSection(220)
 
@@ -54,7 +54,7 @@ addMajorCredit(0160, 060, { COLOR.HEX '00FF00' }, "TREVOR SMITHY", "EASY MODE PR
 addMajorCredit(-160, 160, { COLOR.HEX 'B966E3' }, "PETRTECH", "MUSIC", "F10 Music")
 addMajorCredit(0160, 160, { COLOR.HEX '9DBCFF' }, "RONEZKJ15", "MUSIC", "Extra Music")
 addMajorCredit(-320, 260, { COLOR.HEX 'DDFF80' }, "DJ  ASRIEL", "GRAPHICS", "Background Reconstruction & Game Icon")
-addMajorCredit(0000, 260, { COLOR.HEX '77DD66' }, "CREEPERCRAFTYT", "GRAPHICS", "Mod Icons")
+addMajorCredit(0000, 260, { COLOR.HEX '77DD66' }, "CREEPERCRAFTYT", "GRAPHICS AND EXTRA MOD PRODUCER", "Mod Icons")
 addMajorCredit(0320, 260, { COLOR.HEX '5792FF' }, "ZYRIXIA", "GRAPHICS", "Rank Icons")
 addMajorCredit(-320, 360, { COLOR.HEX 'DD99FF' }, "OSK", "FOUNDER & LEAD PRODUCER", "of the Original Game: TETR.IO")
 addMajorCredit(0000, 360, { COLOR.HEX 'FF99CC' }, "DOKTOROCELOT", "AUDIO & MUSIC", "of both TETR.IO and Zenith Clicker")

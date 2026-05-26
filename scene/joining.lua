@@ -44,6 +44,8 @@ function scene.update(dt)
                 for i = 1, 9 do
                     SFX.load('garbagewindup_'..i, 'assets/windup_'..i..'.ogg')
                 end
+                SFX.load('lets_go_gambling', 'assets/lets_go_gambling.ogg')
+                SFX.load('aw_dang_it','assets/aw_dang_it.ogg')
                 TASK.new(Daemon_Slow)
                 TASK.new(Daemon_Fast)
                 TEXTS.load:set("GETTING READY TO SPECTATE...")

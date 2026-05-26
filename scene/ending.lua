@@ -28,6 +28,10 @@ local h = 520
 addText("Easy Mode", -26, h-80, .42, 'right')
 addText("Trevor Smithy", 26, h-80, .42, 'left')
 
+addText("Extra Mod", -26, h, .42, 'right')
+addText("CreepercraftYT", 26, h, .42, 'left')
+
+h = h + 90
 addText("Design", -26, h, .42, 'right')
 addText("MrZ", 26, h, .42, 'left')
 

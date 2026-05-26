@@ -562,6 +562,82 @@ NegEvents = {
     },
     { h = -1e99 },
 }
+RodiniaTexts = {
+    f2 = { -- Zenith Hotel
+        desc = "A lively restaurant with a lovely atmosphere.\nThough the prices here are slightly outrageous...",
+        begin = [[The smell of food calms your senses...]],
+        effStart = [[Illusions dance before your eyes...]],
+        noVL = [[You feel yourself getting weaker...]],
+        VLoff = [[You feel your strength fading...]],
+        noIN = [[The illusion before your eyes hasn't entirely faded...]],
+        INoff = [[Your mind is becoming clearer...]],
+    },
+    b3 = { -- Underground Parking
+        desc = "A boundless parking lot for all of these visitors.",
+        begin = [[The vast lot's tranquility reassures you.]],
+        effStart = [[But a realization dawned - you were lost.]],
+        mid1 = [["Where am I?"]],
+        noGV = [[You feel like you're not going fast enough...]],
+        GVoff = [[You subconsciously quickened your pace...]],
+        mid2 = [["Where am I going?"]],
+    },
+    b4 = { -- The Bunker
+        desc = "A regular bunker...\nafter witnessing the Corruption, you definitely know why it was built.",
+        begin = [[You feel safe away from the above.]],
+        effStart = [[The barren bunker begins to feel ghostly.]],
+        noMS = [[It seems that luck was against you...]],
+        MSoff = [[You organized your thoughts...]],
+    },
+    b5 = { -- The Infirmary
+        desc = "The medical sector of the tower, filled with incomprehensible technology.\nThey look similar to the ones in the Laboratory...",
+        begin = [[Endless beeping echoes through the halls you roam.]],
+        effStart = [[One horrifying scene after another floods your vision.]],
+        noDH = [[A sinister thought crosses your mind...]],
+        DHoff = [[You shuddered while walking in this terrifying place.]],
+    },
+    b6 = { -- Decayed Catacombs
+        desc = "A complex of the dead,\nnow decaying into an even more unsettling shell of itself.",
+        begin = [[The feeling of safety slipped away.]],
+        effStart = [[Your attention strays...]],
+        mid = [[You begin to hear something calling your name...]],
+        noNH = [[You cannot ignore the voice...]],
+        NHoff = [[You overcome your fear.]],
+    },
+    b7 = { -- Sacreligious Ruins
+        desc = "The remains of a previously sacred chapel, the spirits of those,\nwho worshipped the gods above linger on...",
+        desc2 = [[Whispers of a missing artifact echo throughout the area...]],
+        begin = [[You pray that nothing dire becomes of you.]],
+        effStart = [[Spacetime ahead is heavily warped...]],
+        mid = [[You know you have to go as fast as possible.]],
+    },
+    b8 = { -- Singularity Reactor
+        desc = "Fueled by the power of the cosmos and the stolen artifact, powering something...",
+        begin = [[You are overwhelmed by the reactor's magnitude.]],
+        mid1 = [[Dizzy spells.]],
+        mid2 = [[Blurred vision.]],
+        mid3 = [[Head throbbing.]],
+        -- mid = [[The mysterious voice is growing ever nearer...]],
+    },
+    b9 = { -- Distorted Gateways
+        desc = "A hall of millions of gateways to different realities, towers and wastelands...\nThe mere thought of something like this is sickening...",
+        desc2 = [[The entrance to a false promise of paradise.]],
+        desc3 = [[You reach the bottom... or it seemed to be at first glance... one last gateway was left...]],
+        begin = [[The endless void beckons you...]],
+        mid = [[RUN.]],
+        -- begin = [[You feel nostalgia at the sight of a familiar tower.]],
+    },
+    b10 = { -- Endless Void
+        desc = "A realm of absolutely nothing, none have ever returned.",
+        desc2 = [[You look back above... yet you've already gone too far in this insane abyss for you to see anything.]],
+        -- begin = [[...and you pass the point of no return.]],
+        -- mid1 = [[Everything begins to go quiet.]],
+        end1 = [[...this is it?]],
+        end2 = [[This is what's down below all of this?]],
+        end3 = [[It's so empty... and vast...]],
+        end4 = [[Yet it feels nostalgic somehow...]],
+        end5 = [[And peaceful.]],
+    },
+}
 local lastH = -0
 for _, e in next, NegEvents do
     e.cond = e.cond or TRUE

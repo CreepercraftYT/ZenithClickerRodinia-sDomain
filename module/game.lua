@@ -730,6 +730,8 @@ function GAME.getComboName(list, mode)
             if combo and GAME.rollCheck then 
                 local displayMSG = not (ACHV.roll and ACHV.programmer_gamer)
                 IssueAchv('roll')
+                if GAME.anyRev then
+                    IssueAchv('llor') end
                 if ACHV.programmer_gamer and displayMSG then
                     MSG("bright", "Secret Achievement Available")
                     SCN.scenes.achv.unload()
@@ -3354,7 +3356,11 @@ function GAME.start()
     MSG.clear()
 
     SFX.play('menuconfirm', .8)
+    --MSG('dark', GAME.getComboName(GAME.getHand(true), 'button'))
     SFX.play((M.DP ~= 0 or VALENTINE and not GAME.anyRev) and 'zenith_start_duo' or 'zenith_start', 1, 0, Tone(0))
+    if GAME.getComboName(GAME.getHand(true), 'button') == [["LET'S GO GAMBLING!!!!!"]] then
+        SFX.play('lets_go_gambling') 
+    end
 
     GAME.playing = true
 
@@ -3559,6 +3565,10 @@ function GAME.finish(reason)
         reason == 'time' and 'losestock' or
         'shatter', .8
     )
+    --MSG('dark',GAME.getComboName(GAME.getHand(true), 'button'))
+    if GAME.getComboName(GAME.getHand(true), 'button') == [[DECEPTIVE OMNI-SPIN TYRANNY]] then
+        SFX.play('aw_dang_it') 
+    end
 
     TASK.removeTask_code(GAME.task_cancelAll)
     TASK.removeTask_code(GAME.task_uneasyTeraspeed)

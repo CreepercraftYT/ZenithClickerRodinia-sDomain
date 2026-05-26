@@ -121,6 +121,24 @@ d.menu = {
     -- Credit: F1e308
     { set = "eEX eNH eMS eGV eVL eDH eIN eAS DP",        name = "Bath With A Lover"},
     { set = "eEX eNH eMS eGV eVL eDH eIN eAS rDP",       name = "Bath With An Ex"},
+    -- Creepercraft
+    { set = "EX NH MS GV VL DH IN AS eDP",             name = "A Swamped Friendship"},
+    { set = "rEX rNH rMS rGV rVL rDH rIN rAS eDP",             name = "A Broken Friendship"},
+    { set = "EX eNH MS GV VL DH IN AS",                 name = "Moderated Swamp Water"},
+    { set = "EX eNH MS GV VL DH IN AS DP",                 name = "Moderated Swamp Water"},
+    { set = "EX NH eMS GV VL DH IN AS",                 name = "Tidy Swamp Water"},
+    { set = "EX NH eMS GV VL DH IN AS DP",                 name = "Tidy Swamp Water"},
+    { set = "EX NH MS eGV VL DH IN AS",                 name = "Lifted Swamp Water"},
+    { set = "EX NH MS eGV VL DH IN AS DP",                 name = "Lifted Swamp Water"},
+    { set = "EX NH MS GV eVL DH IN AS",                 name = "Tranquil Swamp Water"},
+    { set = "EX NH MS GV eVL DH IN AS DP",                 name = "Tranquil Swamp Water"},
+    { set = "EX NH MS GV VL eDH IN AS",                 name = "Saved Swamp Water"},
+    { set = "EX NH MS GV VL eDH IN AS DP",                 name = "Saved Swamp Water"},
+    { set = "EX NH MS GV VL DH eIN AS",                 name = "Visible Swamp Water"},
+    { set = "EX NH MS GV VL DH eIN AS DP",                 name = "Visible Swamp Water"},
+    { set = "EX NH MS GV VL DH IN eAS",                 name = "Spun Swamp Water"},
+    { set = "EX NH MS GV VL DH IN eAS DP",                 name = "Spun Swamp Water"},
+    { set = "rEX rMS rAS",           name = "LET'S GO GAMBLING!!!!!" },
     
     --misc (no dev commentary except programming smithy)
     { set = "eNH eGV",          name = "Shameless Cashgrab"},

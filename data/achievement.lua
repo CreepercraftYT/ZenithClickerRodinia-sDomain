@@ -2248,7 +2248,7 @@ local d = {
         name = "Galactic Empress",
         desc = [[HFD with EX rGV rIN]],
         quote = [[She watches from the Omniverse...]],
-        rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
+        rank = numberRank(0, 150, 450, 850, 1350, 6200, 9999),
         hide = function() return GAME.completion.GV == 0 or GAME.completion.IN == 0 end,
     },
     { -- is_one_of_mine
@@ -2276,6 +2276,42 @@ local d = {
         quote = [["Have you not learned your lesson!?"]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         hide = TRUE
+    },
+    { -- stubborn
+        id = 'stubborn',
+        name = "You're so stubborn...",
+        desc = [[Insist on importing a ZCEM save file]],
+        quote = [["Fine, there you have it... happy?"]],
+        credit = "@Rodinia",
+        type = 'issued',
+        hide = TRUE,
+    },
+    { -- llor
+        id = 'llor',
+        name = "lloR lerraB",
+        desc = [[Select a reverse named combo by using SPIN then EASY.]],
+        quote = [['"Why is this possible...?"']],
+        credit = "@Rodinia",
+        type = 'issued',
+        hide = TRUE,
+    },
+    { -- sus
+        id = 'sus',
+        name = "When The Clicker Is Sus",
+        desc = [[Finish a run with Stacker Mode, ueEX and Slowmo enabled]],
+        quote = [["That's sus!"]],
+        credit = "@Rodinia",
+        type = 'issued',
+        hide = TRUE,
+    },
+    { -- rEXrMSrAS
+        ex = true,
+        id = 'rASrEXrMS',
+        name = "LET'S GO GAMBLING!!!!!",
+        desc = [[HFD with rEX rMS rAS]],
+        quote = [["Aw, dang it!"]],
+        rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
+        hide = function() return GAME.completion.EX == 0 or GAME.completion.MS == 0 or GAME.completion.AS == 0 end,
     },
 }
 

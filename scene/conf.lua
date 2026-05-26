@@ -120,6 +120,7 @@ local ZCEMclr = {
 local bpmMode = false
 local comboTimer = 0
 local combo = 0
+local stubborn = 0
 local leftx, rightx, leftbx, rightbx = 40, 500, 220, 685
 -- Panel size
 local w, h = 900, 830
@@ -1430,14 +1431,54 @@ local page2 = {
             elseif res1.mod and res1.mod ~= 'vanilla' and res1.mod ~= 'Extra' then
                 local modText = "Cannot import data from a different modded version"
                 if res1.mod == "A Fool's Mod" then modText = "The Creator thinks you're foolish for trying to use that here"
+                    MSG('dark', modText)
+                    SFX.play('staffwarning')
+                    return
                 elseif res1.mod == "evilvile" then modText = "The Creator wants nothing to do with something that evil"
+                    MSG('dark', modText)
+                    SFX.play('staffwarning')
+                    return
                 elseif res1.mod == "shimmer" then modText = "The Creator asks you to keep your sparkling water away from his creation"
+                    MSG('dark', modText)
+                    SFX.play('staffwarning')
+                    return
                 elseif res1.mod == "unabstracted" then modText = "The Creator prefers his work abstract"
+                    MSG('dark', modText)
+                    SFX.play('staffwarning')
+                    return
                 elseif res1.mod == "finalmixbeg" then modText = "The Creator rejects your chakras and magics"
-                elseif res1.mod == "easyMode" then modText = "Rodinia thinks you shouldn't go the easy way..." end
-                MSG('dark', modText)
-                SFX.play('staffwarning')
-                return
+                    MSG('dark', modText)
+                    SFX.play('staffwarning')
+                    return
+                elseif res1.mod == "easyMode" then modText = "Rodinia thinks you shouldn't go the easy way..." 
+                    if combo == 0 then
+                        combo = combo + 1 
+                        comboTimer = 3
+                        MSG('dark', modText)
+                        SFX.play('staffwarning')
+                        return
+                    elseif combo > 0 and combo <= 7 then
+                        for i = 1, combo do modText = modText .. "." end
+                        MSG('dark', modText)
+                        SFX.play('combo_' .. combo)
+                        combo = combo + 1 
+                        comboTimer = 3
+                        return
+                    elseif combo > 7 and combo < 16 then modText = "..."
+                        for i = 1, combo do modText = modText .. "." end
+                        MSG('dark', modText)
+                        SFX.play('combo_' .. combo)
+                        combo = combo + 1 
+                        comboTimer = 3
+                        return
+                    elseif combo == 16 then
+                        if ACHV.stubborn then
+                            MSG('dark', '"ok, fine..."') end
+                        stubborn = 1
+                        combo = 0
+                        SFX.play('combo_16')
+                    end
+                end
             end
             TABLE.update(STAT, res1)
             STAT.mod = 'Extra'
@@ -1454,6 +1495,10 @@ local page2 = {
                 MSG('dark', "Progress imported, but won't be saved.")
             else
                 MSG('dark', "Progress imported!")
+            end
+            if stubborn == 1 then
+                IssueAchv('stubborn')
+                stubborn = 0
             end
             SFX.play('social_notify_major')
         end,
