@@ -416,7 +416,7 @@ return {
         I guess I'll have to just keep on going, pulling myself forward. If I wait around too long, I'll never get anything done.
     ]],
     ['eEX rNH rMS rGV eVL rDH rIN eAS rDP'] = STRING.trimIndent [[
-        The Overwhelemed Smithy, because, well, I'm Trevor Smithy and I feel like I get overwhelmed easily.
+        The Overwhelmed Smithy, because, well, I'm Trevor Smithy and I feel like I get overwhelmed easily.
         Too many things happening at once, too many conditions to handle, too many things to account for with my plans.
         Makes it necessary to step back and determine what's truly important, what truly necessitates my attention.
         Some things have to be discarded in order to clear a path to your goals.
@@ -426,6 +426,18 @@ return {
         Truly, genuinely stuck, with no idea of what you want to do next, or no idea of how you'd get to a point where you would.
         I guess, after all this, I've come to realize that eventually you just have to accept that things won't get done if...
         well, if you don't do them. And that's okay. Not every project has to finished, not every dream seen through.
+    ]],
+    ['rEX eNH eMS eGV rVL eDH eIN rAS eDP'] = STRING.trimIndent [[
+        The Underwhelmed Smithy... Is this even truly a "Smithy" if it doesn't have eEX eVL eAS?
+        Well, I found it funny, and it is an interesting run in my opinion, so here ya go.
+        The only reason this has dev commentary is because of the red text.
+    ]],
+    ['uEX eNH eMS eGV uVL eDH eIN uAS eDP'] = STRING.trimIndent [[
+        The Whelmed Smithy... Is this even truly a "Smithy" if it doesn't have eEX eVL eAS?
+        Now, I used to think that you could be overwhelmed or underwhelmed, but you could never just be
+        w h e l m e d
+        Turns out that "officially" whelmed is just a synonym of overwhelmed, although in more contemporary examples it has taken on a
+        definition of "content" or "satisfied." Which definition is more accurate for this, I am not sure. I leave that up to you, player.
     ]],
     --one of mine
     ['eEX uGV eDH eAS'] = STRING.trimIndent [[

@@ -171,7 +171,7 @@ local GAME = {
     bgLastH = 0,
     lifeShow = 0,
     lifeShow2 = 0,
-    prevPB = -260,
+    prevPB = -2600,
     modIB = GC.newSpriteBatch(TEXTURE.modIcon),
     resIB = GC.newSpriteBatch(TEXTURE.modIcon),
     comboMP = 0,
@@ -227,6 +227,7 @@ local GAME = {
     windupAnim = {}, ---@type Windup[]
 
     zenithTraveler = false,
+    pieceEffectID = 0,
     nightcore = false,
     slowmo = false,
     glassCard = false,
@@ -479,168 +480,34 @@ function GAME.getComboName(list, mode)
             end
         end
 
-        -- https://www.nationalchurchillmuseum.org/never-give-in-never-never-never.html#:~:text=You%20cannot%20tell,of%20the%20enemy.
         local colorModNumber = 1
-        local messyText = ""
+        local eINeMSAS = M.IN == -1 and M.MS == -1 and M.AS ~= 0 and not STAT.easyName
+        local modCodes = {'EX', 'NH', 'MS', 'GV', 'VL', 'DH', 'IN', 'AS', 'DP'}
         for i = 1, len - 1 do
-            if M.IN == -1 and M.MS == -1 and M.AS ~= 0 and not STAT.easyName then
-                --psuedocode: goal - get card order from CD[j].initOrder, use that to generate a new index for the MD.textColor  
-                -- forgive me lord for i have sinned        
-                if MD.name[list[i]] == 'expert' then
-                    --MSG('dark', "Current Card: " .. CD[1].initOrder)
-                    colorModNumber = CD[1].initOrder
-                elseif MD.name[list[i]] == 'nohold' then
-                    --MSG('dark', "Current Card: " .. CD[2].initOrder)
-                    colorModNumber = CD[2].initOrder
-                elseif MD.name[list[i]] == 'messy' then
-                    --MSG('dark', "Current Card: " .. CD[3].initOrder)
-                    colorModNumber = CD[3].initOrder
-                elseif MD.name[list[i]] == 'gravity' then
-                    --MSG('dark', "Current Card: " .. CD[4].initOrder)
-                    colorModNumber = CD[4].initOrder
-                elseif MD.name[list[i]] == 'volatile' then
-                    --MSG('dark', "Current Card: " .. CD[5].initOrder)
-                    colorModNumber = CD[5].initOrder
-                elseif MD.name[list[i]] == 'doublehole' then
-                    --MSG('dark', "Current Card: " .. CD[6].initOrder)
-                    colorModNumber = CD[6].initOrder
-                elseif MD.name[list[i]] == 'invisible' then
-                    --MSG('dark', "Current Card: " .. CD[7].initOrder)
-                    colorModNumber = CD[7].initOrder
-                elseif MD.name[list[i]] == 'allspin' then
-                    --MSG('dark', "Current Card: " .. CD[8].initOrder)
-                    colorModNumber = CD[8].initOrder
-                elseif MD.name[list[i]] == 'duo' then
-                    --MSG('dark', "Current Card: " .. CD[9].initOrder)
-                    colorModNumber = CD[9].initOrder
+            if eINeMSAS then 
+                for j = 1, #modCodes do
+                    if MD.name[list[i]] == MD.name[modCodes[j]] then
+                        colorModNumber = CD[j].initOrder
+                    end
                 end
-                if colorModNumber == 1 then
-                    ins(fstr, MD.textColor['EX'])
-                    messyText = "e"
-                elseif colorModNumber == 2 then
-                    ins(fstr, MD.textColor['NH'])
-                    messyText = "h"
-                elseif colorModNumber == 3 then
-                    ins(fstr, MD.textColor['MS'])
-                    messyText = "m"
-                elseif colorModNumber == 4 then
-                    ins(fstr, MD.textColor['GV'])
-                    messyText = "g"
-                elseif colorModNumber == 5 then
-                    ins(fstr, MD.textColor['VL'])
-                    messyText = "v"
-                elseif colorModNumber == 6 then
-                    ins(fstr, MD.textColor['DH'])
-                    messyText = "d"
-                elseif colorModNumber == 7 then
-                    ins(fstr, MD.textColor['IN'])
-                    messyText = "i"
-                elseif colorModNumber == 8 then
-                    ins(fstr, MD.textColor['AS'])
-                    messyText = "a"
-                elseif colorModNumber == 9 then
-                    ins(fstr, MD.textColor['DP'])
-                    messyText = "o"
-                end
-                --ins(fstr, {COLOR.HEX "C29F68FF"})
-                if STAT.easyName then
-                    ins(fstr, MD.adj[easyList[i]] .. " ")
-                else
-                    ins(fstr, MD.adj[list[i]] .. " ")
-                end
-                --ins(fstr, messyText .. MD.adj[list[i]] .. " ")
-                --MSG('dark', "Added mod to quest: " .. MD.name[list[i]])
+                ins(fstr, MD.textColor[modCodes[colorModNumber]])       
             else
-                if STAT.easyName then
-                    ins(fstr, MD.textColor[easyList[i]])
-                else
-                    ins(fstr, MD.textColor[list[i]])
-                end
-                if STAT.easyName then
-                    ins(fstr, MD.adj[easyList[i]] .. " ")
-                else
-                    ins(fstr, MD.adj[list[i]] .. " ")
-                end
+                ins(fstr, MD.textColor[STAT.easyName and easyList[i] or list[i]])
             end
+            ins(fstr, MD.adj[STAT.easyName and easyList[i] or list[i]] .. " ")
         end
-        if M.IN == -1 and M.MS == -1 and M.AS ~= 0 and not STAT.easyName then
-            --ins(fstr, {COLOR.HEX "C29F68FF"})
-            -- forgive me lord for i have sinned yet again
-            if MD.name[list[len]] == 'expert' then
-                --MSG('dark', "Current Card: " .. CD[1].initOrder)
-                colorModNumber = CD[1].initOrder
-            elseif MD.name[list[len]] == 'nohold' then
-                --MSG('dark', "Current Card: " .. CD[2].initOrder)
-                colorModNumber = CD[2].initOrder
-            elseif MD.name[list[len]] == 'messy' then
-                --MSG('dark', "Current Card: " .. CD[3].initOrder)
-                colorModNumber = CD[3].initOrder
-            elseif MD.name[list[len]] == 'gravity' then
-                --MSG('dark', "Current Card: " .. CD[4].initOrder)
-                colorModNumber = CD[4].initOrder
-            elseif MD.name[list[len]] == 'volatile' then
-                --MSG('dark', "Current Card: " .. CD[5].initOrder)
-                colorModNumber = CD[5].initOrder
-            elseif MD.name[list[len]] == 'doublehole' then
-                --MSG('dark', "Current Card: " .. CD[6].initOrder)
-                colorModNumber = CD[6].initOrder
-            elseif MD.name[list[len]] == 'invisible' then
-                --MSG('dark', "Current Card: " .. CD[7].initOrder)
-                colorModNumber = CD[7].initOrder
-            elseif MD.name[list[len]] == 'allspin' then
-                --MSG('dark', "Current Card: " .. CD[8].initOrder)
-                colorModNumber = CD[8].initOrder
-            elseif MD.name[list[len]] == 'duo' then
-                --MSG('dark', "Current Card: " .. CD[9].initOrder)
-                colorModNumber = CD[9].initOrder
+        if eINeMSAS then
+            for j = 1, #modCodes do
+                if MD.name[list[len]] == MD.name[modCodes[j]] then
+                    colorModNumber = CD[j].initOrder
+                end
             end
-            if colorModNumber == 1 then
-                ins(fstr, MD.textColor['EX'])
-                messyText = "e"
-            elseif colorModNumber == 2 then
-                ins(fstr, MD.textColor['NH'])
-                messyText = "h"
-            elseif colorModNumber == 3 then
-                ins(fstr, MD.textColor['MS'])
-                messyText = "m"
-            elseif colorModNumber == 4 then
-                ins(fstr, MD.textColor['GV'])
-                messyText = "g"
-            elseif colorModNumber == 5 then
-                ins(fstr, MD.textColor['VL'])
-                messyText = "v"
-            elseif colorModNumber == 6 then
-                ins(fstr, MD.textColor['DH'])
-                messyText = "d"
-            elseif colorModNumber == 7 then
-                ins(fstr, MD.textColor['IN'])
-                messyText = "i"
-            elseif colorModNumber == 8 then
-                ins(fstr, MD.textColor['AS'])
-                messyText = "a"
-            elseif colorModNumber == 9 then
-                ins(fstr, MD.textColor['DP'])
-                messyText = "o"
-            end
-            if STAT.easyName then
-                ins(fstr, MD.noun[easyList[len]])
-            else
-                ins(fstr, MD.noun[list[len]])
-            end
-            --ins(fstr, messyText .. MD.noun[list[len]])
-            --MSG('dark', "Added mod to quest: " .. MD.name[list[len]])
+            ins(fstr, MD.textColor[modCodes[colorModNumber]])
         else
-            if STAT.easyName then
-                ins(fstr, MD.textColor[easyList[len]])
-            else
-                ins(fstr, MD.textColor[list[len]])
-            end
-            if STAT.easyName then
-                ins(fstr, MD.noun[easyList[len]])
-            else
-                ins(fstr, MD.noun[list[len]])
-            end
+            ins(fstr, MD.textColor[STAT.easyName and easyList[len] or list[len]])
         end
+        ins(fstr, MD.noun[STAT.easyName and easyList[len] or list[len]])
+
         if M.IN > 0 then
             local r = rnd(0, 3)
             for i = 1, #fstr, 2 do
@@ -1577,40 +1444,13 @@ function GAME.upFloor()
                 IssueAchv('blazing_speed') 
                 GAME.finishTera = true
             end
-            if GAME.petaspeed then
-                IssueAchv('peta')
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load()
-            end
-            if GAME.exaspeed then
-                IssueAchv('exa') 
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load()
-            end
-            if GAME.zettaspeed then
-                IssueAchv('zetta') 
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load()
-            end
-            if GAME.yottaspeed then
-                IssueAchv('yotta') 
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load()
-            end
-            if GAME.ronnaspeed then
-                IssueAchv('ronna')
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load() 
-            end
-            if GAME.quettaspeed then
-                IssueAchv('quetta')
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load() 
-            end
-            if not GAME.smithyMode then 
-                -- don't stop my cover until we get to fomg
-                GAME.stopTeraspeed('f10')
-            end
+            if GAME.petaspeed then IssueAchv('peta') end
+            if GAME.exaspeed then IssueAchv('exa') end
+            if GAME.zettaspeed then IssueAchv('zetta') end
+            if GAME.yottaspeed then IssueAchv('yotta') end
+            if GAME.ronnaspeed then IssueAchv('ronna') end
+            if GAME.quettaspeed then IssueAchv('quetta') end
+            if not GAME.smithyMode then GAME.stopTeraspeed('f10') end -- don't stop my cover until we get to fomg
 
             local setStr = ((GAME.anyUltra or (URM and M.EX == -1 and GAME.comboStr:count('r') == 0)) and 'u' or '') .. GAME.comboStr
             local t = BEST.speedrun[setStr]
@@ -1953,7 +1793,7 @@ end
 ---@author: Trevor Smithy
 function GAME.anim_uneasyModIcon()
     -- called on game start if requirements met
-    local p = PieceSFXID
+    local p = GAME.pieceEffectID
     GAME.modIB:clear()
     local hand = GAME.getHand(true)
     table.sort(hand, modIconSorter)
@@ -1992,6 +1832,8 @@ function GAME.refreshCurrentCombo()
         comboName = '"THE OVERWHELMED SMITHY"'
     elseif comboName == "EASY INVISIBLE MESSY TRANQUIL HOLDLESS DOUBLE HOLE GRAVITY SPUN DUO" then
         comboName = '"THE SWAMPED SMITHY"'
+    elseif comboName == "VISIBLE TIDY DESPERATE MODERATE SAVED OMNI-SPIN LIFTED FRIENDLY TYRANNY" then
+        comboName = '"THE UNDERWHELMED SMITHY"'
     end
     if not GAME.playing and GAME.anyUltra and #hand > 0 then
         -- SPECIAL - Trevor Smithy
@@ -2031,6 +1873,8 @@ function GAME.refreshCurrentCombo()
             GAME.customUltraCombo = true
         elseif comboName == '"THE OVERWHELMED SMITHY"' then
             comboName = '"THE PARALYZED SMITHY"'
+        elseif comboName == '"THE UNDERWHELMED SMITHY"' then
+            comboName = '"THE WHELMED SMITHY"'
         elseif GAME.badTime and not GAME.badTimeStarted then
             SCN.scenes.tower.widgetList.reset:setVisible(false)
             SCN.scenes.tower.widgetList.help:setVisible(false)
@@ -2720,7 +2564,7 @@ function GAME.commit(auto, falseCommit)
                 totalAssistPenalty = totalAssistPenalty + CD[i].assistPenalty
             end
         end
-        --MSG("bright", "totalAssistPenalty=".. totalAssistPenalty)
+
         if not falseCommit then
             if GAME.currentTask then
                 GAME.incrementPrompt('pass')
@@ -3338,7 +3182,7 @@ function GAME.start()
 
     local attackMulMod = 1
     if GAME.eglassCard then attackMulMod = 0.5 end
-    GAME.attackMul = (GAME.isUltraRun and .62 or (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.33 or 1) * attackMulMod
+    GAME.attackMul = (GAME.isUltraRun and .62 or (M.EX == -1 and URM and not GAME.anyRev) and 0.33 or 1) * attackMulMod
     -- Trevor Smithy
     GAME.bonusRecoveryHealth = 0
     local slowMo = GAME.eslowmo and 0.5 or 0
@@ -3702,24 +3546,23 @@ function GAME.finish(reason)
                     GAME.completion[k] = v
                 end
             end
-            if unlockRev > 0 or not GAME.anyRev and MATH.roll(.1) and TABLE.countAll(GAME.completion, 2) == 0 then
+            if (unlockRev > 0 or TABLE.countAll(GAME.completion, 1) > 0 and not GAME.anyRev and MATH.roll(.1)) and TABLE.countAll(GAME.completion, 2) == 0 then
                 local hintText
                 if unlockRev == 0 then
                     hintText = "You've already unlocked REVERSED MOD!\n"
                 else
                     hintText = "You've already unlocked " .. (unlockRev == 1 and "a new REVERSED MOD!\n" or unlockRev .. " new REVERSED MODS!\n")
                 end
-                hintText = hintText .. (
-                    MOBILE and
-                    STRING.trimIndent [[
+                if MOBILE then
+                    hintText = hintText .. [[
                         To activate it, press and hold the blue area at the left side,
                         then click on a card that has a star on it.
-                    ]] or
-                    STRING.trimIndent [[
-                        Activate it by right-clicking on a card that has a star on it.
                     ]]
-                )
-                MSG('dark', hintText, 6.26)
+                else
+                    hintText = hintText .. "\nActivate it by right-clicking on a card that has a star on it."
+                end
+
+                MSG('dark', STRING.trimIndent(hintText), 6.26)
                 SFX.play('notify')
             end
             if GAME.height >= 12600 then
@@ -4186,7 +4029,7 @@ function GAME.finish(reason)
     GAME.prevPB = max(GAME.prevPB, GAME.height)
 
     if URM and GAME.height < -10 then
-        PieceSFXID = 0
+        GAME.pieceEffectID = 0
         GAME.nightcore = false
         GAME.slowmo = false
         GAME.glassCard = false
@@ -4366,8 +4209,9 @@ function GAME.update(dt)
     local uneasyMode = (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2)
     if ((GAME.slowmo and GAME.time >= 2.6) or (not GAME.slowmo and GAME.time >= 1)) and not GAME.uneasyModIconSelected then
         if uneasyMode and #GAME.getHand(true) == 2 then
-            if PieceSFXID == 1 and M.DH == -1 or PieceSFXID == 2 and (M.MS == -1 or M.GV == -1) or PieceSFXID == 3 and M.NH == -1
-            or PieceSFXID == 4 and M.AS == -1 or PieceSFXID == 5 and M.DP == -1 or PieceSFXID == 6 and M.IN == -1 or PieceSFXID == 7 and M.VL == -1 then
+            local p = GAME.pieceEffectID
+            if p == 1 and M.DH == -1 or p == 2 and (M.MS == -1 or M.GV == -1) or p == 3 and M.NH == -1
+            or p == 4 and M.AS == -1 or p == 5 and M.DP == -1 or p == 6 and M.IN == -1 or p == 7 and M.VL == -1 then
                 TASK.new(GAME.anim_uneasyModIcon)
             end
         end
@@ -4496,16 +4340,13 @@ function GAME.update(dt)
 
     if not GAME.DPlock then
         if M.EX == 2 then
+            if GAME.eglassCard then
+                GAME.height = GAME.height + GAME.rank / 4 * (passiveClimbSpeedMod * 0.6) * dt * (GAME.einvisUI and 1 or icLerp(0.5, 3, Floors[GAME.floor].top - GAME.height))
+            end
             if not URM then
-                GAME.height = GAME.height - dt * (GAME.floor * (GAME.floor + 1) + 10) / 20
-                if GAME.eglassCard then
-                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.6 * dt * (GAME.einvisUI and 1 or icLerp(GAME.eglassCard and 0.5 or 1, GAME.eglassCard and 3 or 6, Floors[GAME.floor].top - GAME.height))
-                end
+                GAME.height = GAME.height - dt * (GAME.floor * (GAME.floor + 1) + 10) / 20              
                 GAME.height = max(GAME.height, Floors[GAME.floor - 1].top)
             else
-                if GAME.eglassCard then
-                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.6 * dt * (GAME.einvisUI and 1 or icLerp(GAME.eglassCard and 0.5 or 1, GAME.eglassCard and 3 or 6, Floors[GAME.floor].top - GAME.height))
-                end
                 if GAME.negFloor > 0 then
                     if GAME.negFloor >= 2 then
                         GAME.height = min(GAME.height, NegFloors[GAME.negFloor - 1].bottom)
@@ -4518,12 +4359,13 @@ function GAME.update(dt)
                 end
                 if GAME.height < NegFloors[GAME.negFloor].bottom and not GAME.einvisUI then GAME.downFloor() end
                 if GAME.height < NegEvents[GAME.negEvent].h then GAME.nextNegEvent() end
-                if GAME.height <= -1650 and GAME.badTime and BgmPlaying ~= "fomg" then
-                    PlayBGM('fomg', true)
-                end
-                if GAME.height <= -1800 and GAME.badTime and not STAT.greenClicker then 
-                    STAT.greenClicker = true 
-                    MSG("bright", "YOU DID A THING!")
+                -- Trevor Smithy (Bad Time)
+                if GAME.badTime then
+                    if GAME.height <= -1650 and BgmPlaying ~= "fomg" then PlayBGM('fomg', true) end
+                    if GAME.height <= -1800 and not STAT.greenClicker then 
+                        STAT.greenClicker = true 
+                        MSG("bright", "YOU DID A THING!")
+                    end
                 end
             end
         else

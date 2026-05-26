@@ -251,7 +251,7 @@ end
 local sp = { f0 = 1, f1 = 1, f0r = 1, f1r = 1 }
 local function refreshSongInfo()
     if sp[SongNamePlaying] then
-        playingBgmTitle = songList[SongNamePlaying .. (RevMusicMode() and 'r' or '') .. (GAME.mod.EX > 0 and '_EX' or '')]
+        playingBgmTitle = songList[SongNamePlaying .. (GAME.mod.EX > 0 and '_EX' or '')]
     else
         playingBgmTitle = songList[SongNamePlaying] or "Rewrite"
     end
@@ -1722,7 +1722,6 @@ for i = 0, 10 do
         onClick = function()
             GAME.height = bgmHeight[i]
             PlayBGM('f' .. i)
-            refreshSongInfo()
         end,
         visibleFunc = function()
             return page == 3 and STAT.maxFloor >= i
@@ -1735,7 +1734,6 @@ for i = 0, 10 do
         onClick = function()
             GAME.height = (bgmHeight[i] + bgmHeight[i + 1]) / 2
             PlayBGM('f' .. i .. 'r')
-            refreshSongInfo()
         end,
         visibleFunc = function() return page == 3 and STAT.maxFloor >= 10 and TABLE.findAll(GAME.completion, 2) end,
     }
@@ -1746,7 +1744,6 @@ albumBtn {
     text = "TERA",
     onClick = function()
         PlayBGM('tera')
-        refreshSongInfo()
     end,
     visibleFunc = function() return page == 3 and ACHV.blazing_speed end,
 }
@@ -1758,7 +1755,6 @@ albumBtn {
     onClick = function()
         GAME.height = 6200
         PlayBGM('fomg')
-        refreshSongInfo()
     end,
     visibleFunc = function() return page == 3 and STAT.maxHeight >= 6200 end,
 }
@@ -1768,7 +1764,6 @@ albumBtn {
     text = "TERAR",
     onClick = function()
         PlayBGM('terar')
-        refreshSongInfo()
     end,
     visibleFunc = function() return page == 3 and ACHV.blazing_speed and BEST.highScore.rEX >= Floors[9].top end,
 }
@@ -2185,7 +2180,7 @@ local page4 = {
             GAME.einvisCard = false
             GAME.ecloseCard = false
             GAME.multiplePiecesActive = false
-            PieceSFXID = #PieceData
+            GAME.pieceEffectID = #PieceData
             GAME.hardMode = GAME.mod.EX > 0 or GAME.anyRev and not URM
             GAME.refreshLayout()
             GAME.refreshUltra()
@@ -2204,12 +2199,12 @@ local page4 = {
         sound_hover = 'menutap',
         fontSize = 50, text = "CYCLE PIECES", textColor = ZCEMclr.LT,
         onClick = function()
-            PieceSFXID = (PieceSFXID or 0) % #PieceData + 1
-            if PieceSFXID <= #PieceData - 1 then
-                local piece = ('zsjltoi'):sub(PieceSFXID, PieceSFXID)
+            GAME.pieceEffectID = (GAME.pieceEffectID or 0) % #PieceData + 1
+            if GAME.pieceEffectID <= #PieceData - 1 then
+                local piece = ('zsjltoi'):sub(GAME.pieceEffectID, GAME.pieceEffectID)
                 SFX.play(piece, 1, 0, Tone(6))
-                if PieceSFXID > 7 then
-                    SFX.play('combo_'..(PieceSFXID - 7)..'_power', 1, 0, Tone(0))
+                if GAME.pieceEffectID > 7 then
+                    SFX.play('combo_'..(GAME.pieceEffectID - 7)..'_power', 1, 0, Tone(0))
                 end
             else
                 SFX.play('allclear')
@@ -2218,7 +2213,7 @@ local page4 = {
             --for i = 1, 7 do
             -- Trevor Smithy
             for i = 1, #PieceData - 1 do
-                GAME[PieceData[i].id] = PieceSFXID == i
+                GAME[PieceData[i].id] = GAME.pieceEffectID == i
             end
 
             GAME.refreshLayout()
@@ -2226,10 +2221,11 @@ local page4 = {
             GAME.refreshRPC()
             -- Trevor Smithy
             GAME.refreshCurrentCombo()
+            refreshWidgets()
             GAME.multiplePiecesActive = false
             MSG({
                 cat = 'dark',
-                str = PieceData[PieceSFXID].popup,
+                str = PieceData[GAME.pieceEffectID].popup,
                 time = 1.2
             })
         end,

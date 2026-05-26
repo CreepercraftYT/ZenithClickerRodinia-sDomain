@@ -269,12 +269,13 @@ function scene.draw()
     local smithyMode = TABLE.equal(GAME.getHand(true),{'eEX','eVL','eAS'}) 
     or TABLE.equal(GAME.getHand(true),{'eEX','NH','MS','GV','eVL','DH','IN','eAS','DP'})
     or TABLE.equal(GAME.getHand(true),{'eEX','rNH','rMS','rGV','eVL','rDH','rIN','eAS','rDP'})
-    if GAME.mod.EX > 0 then
-        icon = TEXTURE.logo_old
-        kx, ky = .5, .5
-    elseif smithyMode then
+    or TABLE.equal(GAME.getHand(true),{'rEX','eNH','eMS','eGV','rVL','eDH','eIN','rAS','eDP'})
+    if smithyMode then
         icon = TEXTURE.programmingsmithy
         kx, ky = .3, .3
+    elseif GAME.mod.EX > 0 then
+        icon = TEXTURE.logo_old
+        kx, ky = .5, .5
     else
         icon = TEXTURE.logo
         kx, ky = .3, .3
@@ -409,6 +410,10 @@ scene.widgetList = {
             if link then 
                 SFX.play('menuconfirm')
                 love.system.openURL(link)
+                if MOBILE then
+                    CLIPBOARD.set(link)
+                    MSG("bright", "Link copied to clipboard!")
+                end
                 IssueAchv('www')
             end
         end,
