@@ -1442,40 +1442,13 @@ function GAME.upFloor()
                 IssueAchv('blazing_speed') 
                 GAME.finishTera = true
             end
-            if GAME.petaspeed then
-                IssueAchv('peta')
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load()
-            end
-            if GAME.exaspeed then
-                IssueAchv('exa') 
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load()
-            end
-            if GAME.zettaspeed then
-                IssueAchv('zetta') 
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load()
-            end
-            if GAME.yottaspeed then
-                IssueAchv('yotta') 
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load()
-            end
-            if GAME.ronnaspeed then
-                IssueAchv('ronna')
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load() 
-            end
-            if GAME.quettaspeed then
-                IssueAchv('quetta')
-                SCN.scenes.achv.unload()
-                SCN.scenes.achv.load() 
-            end
-            if not GAME.smithyMode then 
-                -- don't stop my cover until we get to fomg
-                GAME.stopTeraspeed('f10')
-            end
+            if GAME.petaspeed then IssueAchv('peta') end
+            if GAME.exaspeed then IssueAchv('exa') end
+            if GAME.zettaspeed then IssueAchv('zetta') end
+            if GAME.yottaspeed then IssueAchv('yotta') end
+            if GAME.ronnaspeed then IssueAchv('ronna') end
+            if GAME.quettaspeed then IssueAchv('quetta') end
+            if not GAME.smithyMode then GAME.stopTeraspeed('f10') end -- don't stop my cover until we get to fomg
 
             local setStr = ((GAME.anyUltra or (URM and M.EX == -1 and GAME.comboStr:count('r') == 0)) and 'u' or '') .. GAME.comboStr
             local t = BEST.speedrun[setStr]
@@ -2575,7 +2548,7 @@ function GAME.commit(auto, falseCommit)
                 totalAssistPenalty = totalAssistPenalty + CD[i].assistPenalty
             end
         end
-        --MSG("bright", "totalAssistPenalty=".. totalAssistPenalty)
+
         if not falseCommit then
             if GAME.currentTask then
                 GAME.incrementPrompt('pass')
@@ -3193,7 +3166,7 @@ function GAME.start()
 
     local attackMulMod = 1
     if GAME.eglassCard then attackMulMod = 0.5 end
-    GAME.attackMul = (GAME.isUltraRun and .62 or (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.33 or 1) * attackMulMod
+    GAME.attackMul = (GAME.isUltraRun and .62 or (M.EX == -1 and URM and not GAME.anyRev) and 0.33 or 1) * attackMulMod
     -- Trevor Smithy
     GAME.bonusRecoveryHealth = 0
     local slowMo = GAME.eslowmo and 0.5 or 0
