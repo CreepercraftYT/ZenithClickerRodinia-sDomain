@@ -1921,6 +1921,8 @@ function Daemon_Fast()
 
     local t1 = -.1
     local t = 0
+    local b = 10
+    local br = 20
     while true do
         if BgmPlaying then
             local bar = 2 * 60 / BgmData[BgmPlaying].bpm * 4
@@ -1936,15 +1938,24 @@ function Daemon_Fast()
                 GigaSpeed.bgAlpha = 1 - 4 * T / bar % 1
             end
 
-            -- Messy position shaking
+            -- Messy position shaking/Hyperspeed Card Bounce
             if T < t1 then t1 = -.1 end
             if T > t1 + 2 * 60 / BgmData[BgmPlaying].bpm then
                 t1 = T
-                if M.MS == 0 then
+                --MSG('dark', T .. ', ' .. t1 .. ', ' .. bar)
+                --MSG('dark', BgmPlaying, 1)
+                --MSG('dark', T, 1)
+                --MSG('dark', ((BgmPlaying == 'tera' or BgmPlaying == 'teral' or BgmPlaying == 'terae' or BgmPlaying == 'terael') and T >= 68) or (BgmPlaying == 'terar' and T >= 52))
+                if ((BgmPlaying == 'tera' or BgmPlaying == 'teral' or BgmPlaying == 'terae' or BgmPlaying == 'terael') and T >= 68) and STAT.bounceTera or (BgmPlaying == 'terar' and T >= 52) and STAT.bounceTera then
+                    
+                    for i = 1, deckSize do Cards[i].visY = (BgmPlaying == 'terar' and br or b)
+                    b = -b
+                    br = -br end
+                elseif M.MS == 0 then
                     for i = 1, deckSize do Cards[i].visY = 0 end
-                elseif URM and M.MS == 2 then
+                elseif URM and M.MS == 2 then--and ((BgmPlaying ~= tera or BgmPlaying ~= teral or BgmPlaying ~= terae or BgmPlaying ~= terael) and T < 68) or (BgmPlaying ~= terar and T < 52) then
                     for i = 1, deckSize do Cards[i].visY = math.random(-42, 42) end
-                else
+                else --((BgmPlaying ~= tera or BgmPlaying ~= teral or BgmPlaying ~= terae or BgmPlaying ~= terael) and T < 68) or (BgmPlaying ~= terar and T < 52) then
                     for i = 1, deckSize do Cards[i].visY = M.MS * math.random(-4, 4) end
                 end
                 GAME.refreshLayout()

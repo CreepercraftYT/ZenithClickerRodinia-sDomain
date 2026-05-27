@@ -3509,6 +3509,10 @@ function GAME.finish(reason)
         IssueAchv('easy_name')
     end
 
+    if STAT.stacker and (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and GAME.slowmo then
+        IssueAchv('sus')
+    end
+
     if GAME.height >= 825000 and STAT.imperial then
         IssueAchv('im_gonna_be')
     end

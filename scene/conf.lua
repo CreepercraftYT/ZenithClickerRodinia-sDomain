@@ -7,7 +7,7 @@ local scene = {}
 -- 3. Album
 -- 4. ZCEM
 local page = 1
-local maxPage = 4
+local maxPage = 5
 local uidList = {} ---@type ({uid: string, modTime?: string} | false)[]
 
 local anonUser
@@ -117,6 +117,15 @@ local ZCEMclr = {
     cbFill = { COLOR.HEX '0B0E17FF' },
     cbFrame = { COLOR.HEX '6A82A7FF' },
 }
+-- ZCEX Creepercraft
+local ZCEXclr = {
+    D = { COLOR.HEX '94B1FFFF' },
+    L = { COLOR.HEX '191919FF' },
+    T = { COLOR.HEX '191919FF' },
+    LT = { COLOR.HEX '393939FF' },
+    cbFill = { COLOR.HEX '191919FF' },
+    cbFrame = { COLOR.HEX '191919FF' },
+}
 local bpmMode = false
 local comboTimer = 0
 local combo = 0
@@ -152,6 +161,8 @@ local pieceDescriptionTable = {
 local startHour = os.date('%H')
 local startMin = os.date('%M')
 local startSec = os.date('%S')
+
+STAT.bounceTera = true
 
 local function refreshWidgets()
     for _, W in next, scene.widgetList do 
@@ -200,7 +211,7 @@ local function refreshWidgets()
                 end
             else
                 if W.name and #W.name > 2 and W.type ~= "button" and W.type ~= "hint" and W.name ~= "urm" and TABLE.find(zcem, W.name) then
-                    W.textColor = page == 4 and ZCEMclr.T or clr.T
+                    W.textColor = page == 4 and ZCEMclr.T or page == 5 and ZCEXclr.T or clr.T
                 end
             end
         end
@@ -280,6 +291,9 @@ function scene.load()
             C[1], C[3] = C[3], C[1]
         end
         for _, C in next, ZCEMclr do
+            C[1], C[3] = C[3], C[1]
+        end
+        for _, C in next, ZCEXclr do
             C[1], C[3] = C[3], C[1]
         end
     end
@@ -510,7 +524,7 @@ function scene.draw()
         gc.translate(0, dy)
         SCN.curScroll = -dy
     end
-    gc_setColor(page == 4 and ZCEMclr.D or clr.D)
+    gc_setColor(page == 4 and ZCEMclr.D or page == 5 and ZCEXclr.D or clr.D)
     if GAME.eglassCard then
         local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
         gc_setColor(bgmColors[BgmPlaying] or clr.LT)
@@ -851,35 +865,41 @@ function scene.draw()
 
     -- Top bar & title
     gc_replaceTransform(SCR.xOy_u)
-    gc_setColor(page == 4 and ZCEMclr.D or clr.D)
+    gc_setColor(page == 4 and ZCEMclr.D or page == 5 and ZCEXclr.D or clr.D)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     gc_rectangle('fill', -1300, 0, 2600, 70)
-    gc_setColor(page == 4 and ZCEMclr.L or clr.L)
+    gc_setColor(page == 4 and ZCEMclr.L or page == 5 and ZCEXclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.262 or .626)
     gc_rectangle('fill', -1300, 70, 2600, 3)
     gc_replaceTransform(SCR.xOy_ul)
-    gc_setColor(page == 4 and ZCEMclr.L or clr.L)
+    gc_setColor(page == 4 and ZCEMclr.L or page == 5 and ZCEXclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     FONT.set(50)
     if GAME.anyRev then
-        gc_print(page == 4 and "ZCEM SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
+        gc_print(page == 4 and "ZCEM SETTINGS" or page == 5 and "ZCEX SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
     else
-        gc_print(page == 4 and "ZCEM SETTINGS" or "CONFIG", 15, 0)
+        gc_print(page == 4 and "ZCEM SETTINGS" or page == 5 and "ZCEX SETTINGS" or "CONFIG", 15, 0)
     end
+    --if GAME.anyRev then
+    --    gc_print(page == 5 and "ZCEX SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
+    --else
+    --    gc_print(page == 5 and "ZCEX SETTINGS" or "CONFIG", 15, 0)
+    --end
 
     -- Bottom bar & text
     gc_replaceTransform(SCR.xOy_d)
-    gc_setColor(page == 4 and ZCEMclr.D or clr.D)
+    gc_setColor(page == 4 and ZCEMclr.D or page == 5 and ZCEXclr.D or clr.D)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     gc_rectangle('fill', -1300, 0, 2600, -50)
-    gc_setColor(page == 4 and ZCEMclr.L or clr.L)
+    gc_setColor(page == 4 and ZCEMclr.L or page == 5 and ZCEXclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.262 or .626)
     gc_rectangle('fill', -1300, -50, 2600, -3)
     gc_replaceTransform(SCR.xOy_dl)
-    gc_setColor(page == 4 and ZCEMclr.L or clr.L)
+    gc_setColor(page == 4 and ZCEMclr.L or page == 5 and ZCEXclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     FONT.set(30)
-    gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == 4 and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
+    gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == 4 and "MODDED" or page == 5 and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
+    --gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == 5 and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
 end
 
 function scene.overDraw()
@@ -2249,12 +2269,42 @@ local page4 = {
         end
     },
 }
+-- Page 5
+local page5 = {
+    -- Placeholder
+    WIDGET.new { -- title
+        type = 'text', alignX = 'left',
+        text = "PLACEHOLDER AHH",
+        color = ZCEXclr.T,
+        fontSize = 50,
+        x = baseX + 30, y = baseY + 50,
+    },
+    WIDGET.new { -- Bounce cards
+        name = 'bounceCard', type = 'checkBox',
+        fillColor = ZCEXclr.cbFill,
+        frameColor = ZCEXclr.cbFrame,
+        textColor = ZCEXclr.T, text = "BOUNCE CARDS IN TERASPEED THEME",
+        x = baseX + 40, y = baseY + 120,
+        disp = function() return STAT.bounceTera end,
+        code = function()
+            --local multiple = GAME.multiplePiecesActive
+            MSG.clear()
+            STAT.bounceTera = not STAT.bounceTera
+            SFX.play('social_dm')
+            MSG('dark', STAT.bounceTera and "Cards will bounce in Teraspeed claps" or [["You're boring..."]])
+            --GAME.multiplePiecesActive = false
+            SaveStat()
+            --if multiple then GAME.multiplePiecesActive = true end
+        end,
+    },
+}
 
 -- Apply visibility functions if not set
 for _, W in next, page1 do W.visibleFunc = W.visibleFunc or pageVisFunc[1] end
 for _, W in next, page2 do W.visibleFunc = W.visibleFunc or pageVisFunc[2] end
 for _, W in next, page3 do W.visibleFunc = W.visibleFunc or pageVisFunc[3] end
 for _, W in next, page4 do W.visibleFunc = W.visibleFunc or pageVisFunc[4] end
+for _, W in next, page5 do W.visibleFunc = W.visibleFunc or pageVisFunc[5] end
 
 -- Tabs
 local tab = {
@@ -2295,6 +2345,15 @@ local tab = {
         onPress = function() love.keypressed('4') end,
         onClick = function() love.keyreleased('4') end,
     },
+    WIDGET.new {
+        name = 'zcex', type = 'button',
+        pos = { 1, 0 }, x = -60, y = 500, w = 160, h = 60,
+        color = { .58, .69, 1 },
+        sound_hover = 'menutap',
+        fontSize = 30, text = "ZCEX   ", textColor = { .09, .09, .09 },
+        onPress = function() love.keypressed('5') end,
+        onClick = function() love.keyreleased('5') end,
+    },
 }
 
 for _, W in next, page1 do if W.type == 'button' or W.type == 'checkBox' then W.sound_hover, W.sound_release = 'menutap', 'menuclick' end end
@@ -2306,6 +2365,7 @@ TABLE.append(scene.widgetList, page1)
 TABLE.append(scene.widgetList, page2)
 TABLE.append(scene.widgetList, page3)
 TABLE.append(scene.widgetList, page4)
+TABLE.append(scene.widgetList, page5)
 TABLE.append(scene.widgetList, tab)
 
 return scene
