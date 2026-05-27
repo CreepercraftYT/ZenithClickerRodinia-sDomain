@@ -125,7 +125,6 @@ local ins, rem = table.insert, table.remove
 ---@field OSPActivated boolean
 ---@field finalFatigueOSPActivated boolean
 ---@field bonusRecoveryHealth number
----@field teraComplete boolean
 ---@field teraStartHeight number
 ---@field teraLostHeight number
 ---@field customUltraCombo boolean
@@ -1256,9 +1255,6 @@ end
 
 function GAME.stopTeraspeed(mode)
     GAME.teramusic = false
-    if mode == 'f10' then
-        GAME.teraComplete = true
-    end
     if mode == 'drop' then
         PlayBGM('f' .. max(GAME.floor, GAME.negFloor), true)
         GAME.teraLostHeight = GAME.roundHeight
@@ -3133,7 +3129,6 @@ function GAME.start()
     GAME.smithyMode = false
     GAME.OSPActivated = false
     GAME.finalFatigueOSPActivated = false
-    GAME.teraComplete = false
     GAME.teraLostHeight = 0
     GAME.achv_bestFriendQuest = 0
     GAME.achv_shamelessCashgrabQuest = 0
@@ -3416,14 +3411,14 @@ function GAME.finish(reason)
         W:reset()
     end
 
-    if GAME.smithyMode and (GAME.teramusic or GAME.teraLostHeight or GAME.teraComplete) then
+    if GAME.smithyMode and (GAME.teramusic or GAME.teraLostHeight) then
         local smithyModeHeight = GAME.roundHeight
         if GAME.teraLostHeight > 0 then
             smithyModeHeight = GAME.teraLostHeight
         end
         SubmitAchv('programmer_gamer', smithyModeHeight)
     end
-    if (GAME.teramusic or GAME.teraLostHeight or GAME.teraComplete) and M.EX == -1 and M.GV == 2 and URM and M.DH == -1 and M.AS == -1 and M.NH == 0 and M.MS == 0 and M.VL == 0 and M.IN == 0 and M.DP == 0 and GAME.enightcore then
+    if (GAME.teramusic or GAME.teraLostHeight) and URM and GAME.comboStr == "eASeDHeEXrGV" and GAME.enightcore then
         SubmitAchv('one_of_mine', GAME.achv_noManualCommitH or GAME.roundHeight) 
     end
     -- Perfectly Balanced
