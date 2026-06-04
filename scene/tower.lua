@@ -2126,6 +2126,12 @@ function scene.overDraw()
     --     GC.print(k,100,100+y)
     --     y=y+30
     -- end
+    
+    -- Lyrics
+    if STAT.lyrics and (BgmPlaying == 'teral' or BgmPlaying == 'terael') and GAME.playing and not GAME.invisUI then
+        gc_replaceTransform(SCR.xOy_m)
+        GAME.showLyric(Lyric.terael, 0, -30, BgmPlaying == 'teral' and 0.1 or 0)
+    end
 end
 
 local function button_start()

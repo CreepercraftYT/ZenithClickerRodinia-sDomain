@@ -584,6 +584,7 @@ BadgeData = require 'data/badge'
 DevScore = require 'data/devscore'
 DevCommentary = require 'data/devcommentary'
 DevCommentaryLink = require 'data/devCommentaryLink'
+Lyric = require 'data/lyric'
 
 MetricSpeedName = {
     [["PETA"]],

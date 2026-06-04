@@ -855,6 +855,7 @@ function INIT_DATA()
         unlockAll = false,
         easyModeClicker = false,
         greenClicker = false,
+        lyrics = false,
     }
 
     ACHV = {}

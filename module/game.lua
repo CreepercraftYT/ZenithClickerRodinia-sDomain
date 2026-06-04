@@ -1339,6 +1339,51 @@ function GAME.showWindup(lv)
     ins(GAME.windupAnim, w)
 end
 
+---@author: Trevor Smithy 2026-06-04
+---@param lyricSet table lyric table, see lyric.lua for example
+---@param dx number? X Offset, default is 0
+---@param dy number? Y Offset, default is 0
+---@param timeOffset number? Time offset, in seconds
+function GAME.showLyric(lyricSet, dx, dy, timeOffset)
+    local height = dy
+    local lyric = ''
+    local hlyric = ''
+    local t = love.timer.getTime()
+    local time = BGM.tell() + timeOffset
+    for _, l in next, lyricSet.lyrics do
+        if (time >= l.start and time < l.finish) or l.start2 and (time >= l.start2 and time < l.finish2) then
+            if l.harmony then 
+                hlyric = l.text 
+            else 
+                if l.start2 and time >= l.start2 and l.text2 then
+                    lyric = l.text2
+                else
+                    lyric = l.text
+                end
+            end
+            if l.dyStart then
+                if l.dyFinish then
+                    if l.start2 and time >= l.start2 then
+                        height = height + l.dyStart + (l.dyFinish)*(time-l.start2)/(l.finish2-l.start2)
+                    else
+                        height = height + l.dyStart + (l.dyFinish)*(time-l.start)/(l.finish-l.start)
+                    end
+                else
+                    height = height + l.dyStart
+                end
+            end
+        end
+    end
+    FONT.set(SCN.cur == 'conf' and 30 or lyricSet.fontSize or 45)
+    if lyricSet.color then
+        GC.setColor(lyricSet.color)
+    else
+        GC.setColor(COLOR.rainbow_light(2.6 * t))
+    end
+    GC.mStr(lyric, SCN.cur == 'conf' and 400 or dx or 0, height)
+    GC.mStr(hlyric, SCN.cur == 'conf' and 400 or dx or 0, height - 40)
+end
+
 function GAME.pieceCount()
     return ((GAME.nightcore and 1 or 0) + (GAME.enightcore and 1 or 0) + (GAME.slowmo and 1 or 0) + (GAME.eslowmo and 1 or 0) + (GAME.glassCard and 1 or 0) + (GAME.eglassCard and 1 or 0) + (GAME.fastLeak and 1 or 0) + (GAME.efastLeak and 1 or 0) + (GAME.invisUI and 1 or 0) + (GAME.einvisUI and 1 or 0) + (GAME.invisCard and 1 or 0) + (GAME.einvisCard and 1 or 0) + (GAME.closeCard and 1 or 0) + (GAME.ecloseCard and 1 or 0))
 end
