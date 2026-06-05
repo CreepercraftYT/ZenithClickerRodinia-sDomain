@@ -2816,10 +2816,6 @@ function GAME.commit(auto, falseCommit)
                 attack = attack * 3
                 xp = xp * 3
             end
-            if not falseCommit then
-                GAME.dunk = false
-                GAME.bigDunk = false
-            end
         end
         if GAME.setupCheck and not allyWasDead and correct == 1 and not falseCommit then
             if not GAME.achv_bestFriendQuest then
@@ -2996,11 +2992,14 @@ function GAME.commit(auto, falseCommit)
 
         attack = MATH.roundRnd(attack)
 
-        if not GAME.DPlock then
+        if not (GAME.DPlock or falseCommit) then
             local kc = attack == 0 and 0 or dp and 6 or 1
             if dblCorrect then kc = kc * 2 end
             kc = kc + max(surge - 260 / surge, 0)
-            if oldAllyHP == 0 then kc = kc / 2 end
+            if oldAllyHP == 0 and M.DP ~= -1 then kc = kc / 2 end
+            kc = kc * (GAME.bigDunk and 9 or GAME.dunk and 3 or 1)
+            if CONF.stacker then kc = kc * (comboXPMul/(1 + (#GAME.questStack)/4))/2 end --Yes, i know that AttackMul would be more correct here, but you get way too many kills lol
+            if GAME.badTime then kc = kc / 3 end
             GAME.koCharge = GAME.koCharge + kc
         end
 
@@ -3011,7 +3010,7 @@ function GAME.commit(auto, falseCommit)
         end
 
         if GAME.DPlock then attack = min(attack, URM and oldAllyHP * 2.6 or oldAllyHP * 4) end
-        if attack > 0 and not falseCommit then GAME.addHeight(attack * GAME.attackMul, false, oldAllyHP > 0 * comboAttackMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1)) end
+        if attack > 0 and not falseCommit then GAME.addHeight(attack * GAME.attackMul * comboAttackMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1), false, oldAllyHP > 0) end
         if not falseCommit then
             GAME.addXP((attack + xp) * comboXPMul)
         else
@@ -3130,6 +3129,11 @@ function GAME.commit(auto, falseCommit)
         end
 
         if M.MS == 1 and GAME.floor >= 10 and GAME.totalQuest % 40 == 0 then GAME.readyShuffle(4) end
+
+        if (GAME.dunk or GAME.bigDunk) and not stackCorrect then
+            GAME.dunk = false
+            GAME.bigDunk = false
+        end
     else
         if GAME.comboSFX > 3 then
             SFX.play('combobreak')
