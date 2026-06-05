@@ -787,8 +787,8 @@ function Card:draw()
                 gc_setColor(b, b, b)
             end
             if GAME.einvisCard then
-                local b = STAT.cardBrightness / 100
-                gc_setColor(b,b,b,(STAT.cardBrightness / 100) ^ 2 * 0.26)
+                local b = CONF.cardBrightness / 100
+                gc_setColor(b,b,b,(CONF.cardBrightness / 100) ^ 2 * 0.26)
             end
             gc_draw(img, -img:getWidth() / 2, -img:getHeight() / 2)
             if img2 then
@@ -797,7 +797,7 @@ function Card:draw()
         elseif GAME.glassCard or GAME.eglassCard then
             local w, h = 240, 330
             gc_setColor((faceUp and ModData.textColor or ModData.color)[self.id])
-            gc_setAlpha((STAT.cardBrightness / 100) ^ 2 * .26)
+            gc_setAlpha((CONF.cardBrightness / 100) ^ 2 * .26)
             gc_mRect('fill', 0, 0, w * 2, h * 2, 26)
 
             if self.burn then
@@ -832,7 +832,7 @@ function Card:draw()
                     if M.IN > 0 then
                         gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/temp)
                     end
-                    if STAT.oldHitbox and MOBILE then
+                    if CONF.oldHitbox and MOBILE then
                         gc_circle('fill', 0, 0, 40)
                     end
                 else
@@ -873,7 +873,7 @@ function Card:draw()
                         gc_setAlpha(min(1, 2/temp))
                         width = (9-temp)*5
                     end
-                    if STAT.oldHitbox and MOBILE then
+                    if CONF.oldHitbox and MOBILE then
                         gc_circle('fill', 0, 0, 40)
                     end
                     gc_setLineWidth(width)

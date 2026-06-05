@@ -1901,131 +1901,54 @@ function GAME.anim_uneasyModIcon()
 end
 
 --------------------------------------------------------------
+function GAME.secretComboName(comboStr)
+    for _, c in next, (GAME.anyUltra and Secret.combos.ultra or GAME.uneasyMode and Secret.combos.uneasy or Secret.combos.other) do
+        if GAME.uneasyMode then IssueAchv('uneasy') end
+        local failed = false
+        if comboStr == c.set then
+            if c.checks then
+                for i = 1, #c.checks, 2 do
+                    if GAME[c.checks[i]] ~= c.checks[i+1] then failed = true end
+                end
+            end
+            if not failed then
+                if c.customUltraCombo then GAME.customUltraCombo = true end
+                if c.peasantRevolution then GAME.peasantRevolution = true end
+                if c.forceRev and GAME.pieceCount() < 2 then GAME.forceRev = true end
+                if c.name == '"BAD TIME"' then
+                    SCN.scenes.tower.widgetList.reset:setVisible(false)
+                    SCN.scenes.tower.widgetList.help:setVisible(false)
+                    SCN.scenes.tower.widgetList.help2:setVisible(false)
+                    SCN.scenes.tower.widgetList.daily:setVisible(false)
+                end
+                return c.name
+            end
+        end
+    end
+end
 
 function GAME.refreshCurrentCombo()
     local hand = GAME.getHand(not GAME.playing)
     local comboName = GAME.getComboName(hand, 'button')
+    if not GAME.playing and GAME.anyUltra and #hand > 0 then
+        comboName = GAME.ultrafyComboName(comboName)
+    end
+    -- Trevor Smithy
     if not GAME.playing then GAME.smithyMode = (table.concat(TABLE.sort(hand)) == 'eASeEXeVL') end
+    GAME.customUltraCombo = false
     GAME.forceRev = false
     GAME.peasantRevolution = false
-    -- SECRET COMBOS
-    if comboName == "EASY BELIEVED DECEPTIVE TRANQUIL ASCENDANT DAMNED COLLAPSED PIERCING SPIN" then
-        comboName = '"THE OVERWHELMED SMITHY"'
-    elseif comboName == "EASY INVISIBLE MESSY TRANQUIL HOLDLESS DOUBLE HOLE GRAVITY SPUN DUO" then
-        comboName = '"THE SWAMPED SMITHY"'
-    elseif comboName == "VISIBLE TIDY DESPERATE MODERATE SAVED OMNI-SPIN LIFTED FRIENDLY TYRANNY" then
-        comboName = '"THE UNDERWHELMED SMITHY"'
-    end
-    if not GAME.playing and GAME.anyUltra and #hand > 0 then
-        -- SPECIAL - Trevor Smithy
-        if --[[comboName == '"PEASANT REVOLUTION"' or]] comboName == '"HOLY ASCENSION"' or comboName == '"STABILIZED ENTROPY"'
-        or comboName == '"RESTRAINED COLLAPSE"' or comboName == '"RESTORED VOLITION"' or comboName == '"DISPROVEN BLASPHEMY"'
-        or comboName == '"SOLVED PARADOX"' or comboName == '"DEMYSTIFIED GRIMOIRE"' or comboName == '"LASTING EDEN"' then  
-            GAME.customUltraCombo = true
-        elseif comboName == '"SUPER HARD BATH WATER"' or comboName == '"SUPER HARD BATH WITH A FRIEND"' then
-            comboName = comboName:gsub("SUPER", "ULTRA", 1)
-            GAME.customUltraCombo = false
-            if comboName == '"ULTRA HARD BATH WATER"' then
-                GAME.peasantRevolution = true
-                GAME.customUltraCombo = true
-            end
-        elseif comboName == '"BATH WITH AN EX"' then
-            comboName = '"BATH WITH A STALKER"'
-            GAME.customUltraCombo = false
-        elseif comboName == '"PATIENCE IS A VIRTUE"' then
-            if GAME.enightcore then
-                comboName = [["BUT IT ISN'T ONE OF MINE"]]
-                GAME.customUltraCombo = true
-            else
-                comboName = [["PATIENCE IS A VIRTUE..."]]
-                GAME.customUltraCombo = false
-            end
-        elseif comboName == '"THE OVERWHELMED SMITHY"' then
-            comboName = '"THE PARALYZED SMITHY"'
-        elseif comboName == '"THE UNDERWHELMED SMITHY"' then
-            comboName = '"THE WHELMED SMITHY"'
-        elseif GAME.badTime and not GAME.badTimeStarted then
-            SCN.scenes.tower.widgetList.reset:setVisible(false)
-            SCN.scenes.tower.widgetList.help:setVisible(false)
-            SCN.scenes.tower.widgetList.help2:setVisible(false)
-            SCN.scenes.tower.widgetList.daily:setVisible(false)
-            comboName = '"BAD TIME"'
-            GAME.customUltraCombo = true
-        -- SECRET ULTRA COMBOS (i.e. no Rev equivalent)
-        elseif comboName == 'VISIBLE TIDY MODERATE SAVED LIFTED FRIENDLY TYRANNICAL SPIN' and GAME.ecloseCard then
-            comboName = '"ULTRA HARD CRAMPED BATH WITH A FRIEND"'
-            GAME.customUltraCombo = false
-        elseif comboName == 'EASY VISIBLE TIDY ASCENDANT DAMNED LIFT' then
-            comboName = '"BLASPHEMOUS ASCENSION"'
-            GAME.forceRev = GAME.pieceCount() < 2
-            RefreshBGM()
-            GAME.customUltraCombo = true
-        elseif comboName == 'EASY BELIEVED DECEPTIVE MODERATE FRIENDLY SPIN' then
-            comboName = '"PARADOXICAL ENTROPY"'
-            GAME.forceRev = GAME.pieceCount() < 2
-            RefreshBGM()
-            GAME.customUltraCombo = true
-        elseif comboName == 'EASY TRANQUIL MODERATE OMNI-SPIN COLLAPSED FRIEND' then
-            comboName = '"DEPRAVED GALAXY"'
-            GAME.forceRev = GAME.pieceCount() < 2
-            RefreshBGM()
-            GAME.customUltraCombo = true
-        elseif comboName == 'EASY TIDY DESPERATE SAVED LIFTED HEARTACHE' then
-            comboName = '"SEVERED VOLITION"'
-            GAME.forceRev = GAME.pieceCount() < 2
-            RefreshBGM()
-            GAME.customUltraCombo = true
+    local secretComboName
+    if not GAME.playing then secretComboName = GAME.secretComboName(table.concat(TABLE.sort(hand))) end
+    if secretComboName then comboName = secretComboName end
+    if GAME.uneasyMode and comboName:count('BATH') == 1 and comboName:count('HARD') == 0 then
+        if M.DP == 0 or comboName == '"GAMER GIRL BATH WATER"' then
+            comboName = comboName:gsub("WATER", "WATER?", 1)
         else
-            GAME.customUltraCombo = false
-            comboName = GAME.ultrafyComboName(comboName)
+            comboName = comboName:gsub("FRIEND", "FRIEND?", 1)
         end
-    else
-        if comboName == '"PATIENCE IS A VIRTUE"' and GAME.enightcore then
-            comboName = [["BUT IT ISN'T ONE OF MINE"]]
-        elseif GAME.uneasyMode then -- if Uneasy Mode
-            IssueAchv('uneasy')
-            if comboName == 'EASY HOLDLESS ALL-SPIN' then
-                comboName = '"THE PIXEL ARTIST"' -- Credit: LovelyStar
-            elseif comboName == '"THE SWAMPED SMITHY"' then
-                comboName = '"THE BOGGED-DOWN SMITHY"'
-            elseif comboName == '"BATH WATER"' or comboName == '"BATH WITH A FRIEND"' then
-                comboName = comboName:gsub("BATH", "HARD BATH", 1)
-            elseif comboName:count('BATH') == 1 then
-                if M.DP == 0 or comboName == '"GAMER GIRL BATH WATER"'then
-                    comboName = comboName:gsub("WATER", "WATER?", 1)
-                else
-                    comboName = comboName:gsub("FRIEND", "FRIEND?", 1)
-                end
-            elseif comboName:count('EASY') == 1 then 
-                comboName = comboName:gsub("EASY", "UNEASY", 1)
-            elseif not GAME.playing then
-                if GAME.smithyMode then
-                    comboName = comboName:gsub("PRO G", "UNEASY PRO G", 1)
-                elseif comboName == '"SPENDING SPREE"' and GAME.glassCard then
-                    comboName = '"PROFLIGACY"'
-                elseif comboName == '"BLOCK FEAST"' and GAME.slowmo then
-                    comboName = '"DIOGENES SYNDROME"'
-                elseif comboName == '"COMFY BED"' and GAME.slowmo then
-                    comboName = '"DYSANIA"'
-                elseif comboName == '"PROFESSIONAL WEIGHTLIFTER"' and GAME.closeCard then
-                    comboName = '"SUBLUXATION"'
-                elseif comboName == '"HEAVEN"' and GAME.nightcore then
-                    comboName = '"LIMBO"'
-                elseif comboName == '"PERFECT VISION"' and GAME.invisCard then
-                    comboName = '"PRESBYOPIA"'
-                elseif comboName == '"GAMING ADDICT"' and GAME.fastLeak then
-                    comboName = '"CARPAL TUNNEL"'
-                elseif comboName == '"BEST FRIENDS"' and GAME.invisUI then
-                    comboName = '"PROSOPAGNOSIA"'
-                elseif comboName == '"GOD GAMER"' then
-                    comboName = '"THE GAMER TRINITY"'
-                else 
-                    comboName = comboName:gsub("([^\"])", "UNEASY %1", 1)
-                end 
-            end
-        end
-        GAME.customUltraCombo = false    
     end
+    --
     TEXTS.mod:set(comboName)
     if not GAME.playing then
         GAME.comboMP = GAME.getComboMP(hand)

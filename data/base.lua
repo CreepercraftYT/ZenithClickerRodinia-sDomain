@@ -588,6 +588,7 @@ DevScore = require 'data/devscore'
 DevCommentary = require 'data/devcommentary'
 DevCommentaryLink = require 'data/devCommentaryLink'
 Lyric = require 'data/lyric'
+Secret = require 'data/secret'
 
 MetricSpeedName = {
     [["PETA"]],
