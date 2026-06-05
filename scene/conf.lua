@@ -6,6 +6,7 @@ local scene = {}
 -- 2. Utils
 -- 3. Album
 -- 4. ZCEM
+local ZCEMpage = 4
 local page = 1
 local maxPage = 4
 local uidList = {} ---@type ({uid: string, modTime?: string} | false)[]
@@ -199,7 +200,7 @@ local function refreshWidgets()
                 end
             else
                 if W.name and #W.name > 2 and W.type ~= "button" and W.type ~= "hint" and W.name ~= "urm" and TABLE.find(zcem, W.name) then
-                    W.textColor = page == 4 and ZCEMclr.T or clr.T
+                    W.textColor = page == ZCEMpage and ZCEMclr.T or clr.T
                 end
             end
         end
@@ -505,12 +506,12 @@ function scene.draw()
     -- Panel
     gc_replaceTransform(SCR.xOy)
     gc.translate(baseX, baseY)
-    if bpmMode and (page == 3 or page == 4) then
+    if bpmMode and (page == 3 or page == ZCEMpage) then
         local dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416), -2.6, 2.6)
         gc.translate(0, dy)
         SCN.curScroll = -dy
     end
-    gc_setColor(page == 4 and ZCEMclr.D or clr.D)
+    gc_setColor(page == ZCEMpage and ZCEMclr.D or clr.D)
     if GAME.eglassCard then
         local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
         gc_setColor(bgmColors[BgmPlaying] or clr.LT)
@@ -664,35 +665,35 @@ function scene.draw()
 
     -- Top bar & title
     gc_replaceTransform(SCR.xOy_u)
-    gc_setColor(page == 4 and ZCEMclr.D or clr.D)
+    gc_setColor(page == ZCEMpage and ZCEMclr.D or clr.D)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     gc_rectangle('fill', -1300, 0, 2600, 70)
-    gc_setColor(page == 4 and ZCEMclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.262 or .626)
     gc_rectangle('fill', -1300, 70, 2600, 3)
     gc_replaceTransform(SCR.xOy_ul)
-    gc_setColor(page == 4 and ZCEMclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     FONT.set(50)
     if GAME.anyRev then
-        gc_print(page == 4 and "ZCEM SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
+        gc_print(page == ZCEMpage and "ZCEM SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
     else
-        gc_print(page == 4 and "ZCEM SETTINGS" or "CONFIG", 15, 0)
+        gc_print(page == ZCEMpage and "ZCEM SETTINGS" or "CONFIG", 15, 0)
     end
 
     -- Bottom bar & text
     gc_replaceTransform(SCR.xOy_d)
-    gc_setColor(page == 4 and ZCEMclr.D or clr.D)
+    gc_setColor(page == ZCEMpage and ZCEMclr.D or clr.D)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     gc_rectangle('fill', -1300, 0, 2600, -50)
-    gc_setColor(page == 4 and ZCEMclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.262 or .626)
     gc_rectangle('fill', -1300, -50, 2600, -3)
     gc_replaceTransform(SCR.xOy_dl)
-    gc_setColor(page == 4 and ZCEMclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     FONT.set(30)
-    gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == 4 and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
+    gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == ZCEMpage and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
 end
 
 function scene.overDraw()
@@ -734,12 +735,12 @@ function scene.overDraw()
     local beatLen = 0
     local dy = 0
     local t = love.timer.getTime()
-    if bpmMode and (page == 4 or page == 3) then
+    if bpmMode and (page == ZCEMpage or page == 3) then
         playTime = BGM.tell()
         beatLen = 60 / BgmData[BgmPlaying].bpm
         dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416), -2.6, 2.6)
     end
-    if page == 4 then
+    if page == ZCEMpage then
         if bpmMode then
             local bpmString = "BPM: "..tostring(MATH.floor(bpm*100)/100)
             gc_setColor(BgmPlaying ~= 'f0' and bgmColors[BgmPlaying] or ZCEMclr.LT)
