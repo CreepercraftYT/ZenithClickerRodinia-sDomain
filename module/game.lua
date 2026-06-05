@@ -273,6 +273,8 @@ local GAME = {
     achv_level19capH = nil,
     achv_totalResetCount = nil,
     achv_altFromSurge = nil,
+
+    uneasyMode = false,
 }
 
 GAME.playing = false
@@ -1090,10 +1092,10 @@ function GAME.easyXPModifiers(xp)
     if M.VL == -1 then
         xp = xp + 1
     end
-    if M.EX == -1 and GAME.rank > 1 and (GAME.rank <= 126 or GAME.dunk or GAME.bigDunk) and not (URM and GAME.comboStr:count('r') == 0) then
-        xp = xp * (1 + (GAME.rank - 1)/xpRankModifier)
-    elseif M.EX == -1 and GAME.rank > 1 and GAME.rank <= 126 then
+    if GAME.uneasyMode and GAME.rank > 1 and GAME.rank <= 126 then
         xp = xp * (1 + (GAME.rank - 1)/(xpRankModifier*3))
+    elseif M.EX == -1 and GAME.rank > 1 and (GAME.rank <= 126 or GAME.dunk or GAME.bigDunk) then
+        xp = xp * (1 + (GAME.rank - 1)/xpRankModifier)
     end
     if GAME.ecloseCard then
         xp = roundUnit(xp * max((1-(GAME.height/1000000)), 0), 0.01)
@@ -1241,11 +1243,11 @@ function GAME.startTeraAnim(notTera)
     TASK.new(GAME.task_gigaspeed)
     SFX.play('zenith_speedrun_start')
     if not notTera then
-        if GAME.smithyMode and M.EX == -1 and URM and GAME.comboStr:count('r') == 0 then --if smithyMode and ultra but no reversed and easy enabled
+        if GAME.smithyMode and GAME.uneasyMode then --if smithyMode and ultra but no reversed and easy enabled
             PlayBGM('terael', true)
         elseif GAME.smithyMode then
             PlayBGM('terae', true)
-        elseif M.EX == -1 and URM and GAME.comboStr:count('r') == 0 then
+        elseif GAME.uneasyMode then
             PlayBGM('teral', true)
             if GAME.uneasyModIconSelected then
                 TASK.removeTask_code(GAME.task_uneasyTeraspeed)
@@ -1538,7 +1540,7 @@ function GAME.upFloor()
             if GAME.quettaspeed then IssueAchv('quetta') end
             if not GAME.smithyMode then GAME.stopTeraspeed('f10') end -- don't stop my cover until we get to fomg
 
-            local setStr = ((GAME.anyUltra or (URM and M.EX == -1 and GAME.comboStr:count('r') == 0)) and 'u' or '') .. GAME.comboStr
+            local setStr = ((GAME.anyUltra or GAME.uneasyMode) and 'u' or '') .. GAME.comboStr
             local t = BEST.speedrun[setStr]
             SFX.play('applause', GAME.time < t and t < 1e99 and 1 or .42)
             if GAME.time < t then
@@ -1588,24 +1590,23 @@ function GAME.upFloor()
             comboName = GAME.getComboName(GAME.getHand(true), 'button')
             CONF.easyName = true
         end
-        if (URM and M.EX == -1 and GAME.comboStr:count('r') == 0) then
-            --MSG("bright", comboName)
-            if comboName == 'EASY' then SubmitAchv('ueEX', roundTime)
-            elseif comboName == 'EASY MODERATION' and GAME.glassCard then
+        if GAME.uneasyMode then
+            if GAME.comboStr == 'eEX' then SubmitAchv('ueEX', roundTime)
+            elseif GAME.comboStr == 'eEXeNH' and GAME.glassCard then
                 SubmitAchv('ueEXeNH', roundTime)
-            elseif comboName == 'EASY TIDINESS' and GAME.slowmo then
+            elseif GAME.comboStr == 'eEXeMS' and GAME.slowmo then
                 SubmitAchv('ueEXeMS', roundTime)
-            elseif comboName == 'EASY LIFT' and GAME.slowmo then
+            elseif GAME.comboStr == 'eEXeGV' and GAME.slowmo then
                 SubmitAchv('ueEXeGV', roundTime)
-            elseif comboName == 'EASY TRANQUILITY' and GAME.closeCard then
+            elseif GAME.comboStr == 'eEXeVL' and GAME.closeCard then
                 SubmitAchv('ueEXeVL', roundTime)
-            elseif comboName == 'EASY SALVATION' and GAME.nightcore then
+            elseif GAME.comboStr == 'eEXeDH' and GAME.nightcore then
                 SubmitAchv('ueEXeDH', roundTime)
-            elseif comboName == 'EASY VISIBILITY' and GAME.invisCard then
+            elseif GAME.comboStr == 'eEXeIN' and GAME.invisCard then
                 SubmitAchv('ueEXeIN', roundTime)
-            elseif comboName == 'EASY SPIN' and GAME.fastLeak then
+            elseif GAME.comboStr == 'eEXeAS' and GAME.fastLeak then
                 SubmitAchv('ueEXeAS', roundTime)
-            elseif comboName == 'EASY FRIEND' and GAME.invisUI then
+            elseif GAME.comboStr == 'eEXeDP' and GAME.invisUI then
                 SubmitAchv('ueEXeDP', roundTime)
             end
         end
@@ -1782,8 +1783,7 @@ function GAME.refreshModIcon()
     local hand = GAME.getHand(true)
     table.sort(hand, modIconSorter)
     local quad, w, _
-    local uneasyMode = (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2)
-    if uneasyMode then
+    if GAME.uneasyMode then
         for i = 1, #hand do
             if hand[i] == 'eEX' then hand[i] = 'ueEX' end
         end
@@ -1831,8 +1831,7 @@ function GAME.refreshResultModIcon()
     local hand = GAME.getHand(true)
     table.sort(hand, modIconSorter)
     local quad, w, _
-    local uneasyMode = (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2)
-    if uneasyMode then
+    if GAME.uneasyMode then
         for i = 1, #hand do
             if hand[i] == 'eEX' then hand[i] = 'ueEX' end
         end
@@ -1906,7 +1905,6 @@ end
 function GAME.refreshCurrentCombo()
     local hand = GAME.getHand(not GAME.playing)
     local comboName = GAME.getComboName(hand, 'button')
-    local uneasyMode = (M.EX == -1 and URM and not GAME.anyRev)
     if not GAME.playing then GAME.smithyMode = (table.concat(TABLE.sort(hand)) == 'eASeEXeVL') end
     GAME.forceRev = false
     GAME.peasantRevolution = false
@@ -1984,7 +1982,7 @@ function GAME.refreshCurrentCombo()
     else
         if comboName == '"PATIENCE IS A VIRTUE"' and GAME.enightcore then
             comboName = [["BUT IT ISN'T ONE OF MINE"]]
-        elseif uneasyMode then -- if Uneasy Mode
+        elseif GAME.uneasyMode then -- if Uneasy Mode
             IssueAchv('uneasy')
             if comboName == 'EASY HOLDLESS ALL-SPIN' then
                 comboName = '"THE PIXEL ARTIST"' -- Credit: LovelyStar
@@ -2110,7 +2108,7 @@ function GAME.unlockAll()
 end
 
 function GAME.refreshPBText()
-    local setStr = ((GAME.anyUltra or (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2)) and 'u' or '') .. table.concat(TABLE.sort(GAME.getHand(true)))
+    local setStr = ((GAME.anyUltra or GAME.uneasyMode) and 'u' or '') .. table.concat(TABLE.sort(GAME.getHand(true)))
     local height = BEST.highScore[setStr]
     if height == 0 then
         TEXTS.pb:set("No score yet")
@@ -2205,9 +2203,16 @@ function GAME.refreshEasy()
         end
     end
 end
+
+function GAME.refreshUneasy()
+    GAME.refreshRev()
+    GAME.uneasyMode = URM and M.EX == -1 and not GAME.anyRev
+    return GAME.uneasyMode
+end
 --
 
 function GAME.refreshUltra()
+    GAME.refreshUneasy()
     GAME.anyUltra = URM and GAME.anyRev
 end
 
@@ -2366,8 +2371,7 @@ function GAME.task_toggleEasy()
     local mnh = 0 -- mod no hold
     if M.NH == -1 then mnh = 1.5 else mnh = M.NH end --if easy, don't be negative because then negative interval
     local pitch = M.GV < 0 and 2^(-1/2) or M.GV > 0 and 2 ^ ((URM and M.GV == 2 and 3 or M.GV) / 12) or 1
-    local uneasy = (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and not GAME.anyRev
-    if uneasy then
+    if GAME.uneasyMode then
         pitch = pitch * 1.0145
     end
     if GAME.slowmo then pitch = pitch / 2 end
@@ -3258,7 +3262,7 @@ function GAME.start()
 
     local attackMulMod = 1
     if GAME.eglassCard then attackMulMod = 0.5 end
-    GAME.attackMul = (GAME.isUltraRun and .62 or (M.EX == -1 and URM and not GAME.anyRev) and 0.33 or 1) * attackMulMod
+    GAME.attackMul = (GAME.isUltraRun and .62 or GAME.uneasyMode and 0.33 or 1) * attackMulMod
     -- Trevor Smithy
     GAME.bonusRecoveryHealth = 0
     local slowMo = GAME.eslowmo and 0.5 or 0
@@ -3735,7 +3739,7 @@ function GAME.finish(reason)
 
         -- Best
         local hand = GAME.getHand(true)
-        local setStr = ((GAME.anyUltra or (URM and M.EX == -1 and GAME.comboStr:count('r') == 0)) and 'u' or '') .. GAME.comboStr
+        local setStr = ((GAME.anyUltra or GAME.uneasyMode) and 'u' or '') .. GAME.comboStr
         local oldPB = BEST.highScore[setStr]
         if GAME.roundHeight > oldPB then
             BEST.highScore[setStr] = GAME.roundHeight
@@ -3750,7 +3754,7 @@ function GAME.finish(reason)
                     size = GAME.comboMP == 18 and 2.6 or 1.626
                     duration = 12.6
                 else
-                    t = ((GAME.anyUltra or (URM and M.EX == -1 and GAME.comboStr:count('r') == 0)) and "U-" or GAME.anyRev and "R-" or "") .. (#hand == 1 and "MOD" or "COMBO") .. " MASTERED"
+                    t = ((GAME.anyUltra or GAME.uneasyMode) and "U-" or GAME.anyRev and "R-" or "") .. (#hand == 1 and "MOD" or "COMBO") .. " MASTERED"
                     size = 2.26
                     color = 'lC'
                     duration = 6.2
@@ -3781,7 +3785,7 @@ function GAME.finish(reason)
         if CONF.stacker then
             TABLE.append(resStr, {COLOR.dI, "S"})
         end
-        if (M.EX == -1 and GAME.comboStr:count('r') == 0 and URM) or GAME.badTime then
+        if GAME.uneasyMode or GAME.badTime then
             TABLE.append(resStr, {COLOR.DR, "U"})
         end
         for i = 1, #PieceData - 1 do
@@ -4307,9 +4311,8 @@ function GAME.update(dt)
         GAME.comboBounceTime = 0
     end
 
-    local uneasyMode = (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2)
     if ((GAME.slowmo and GAME.time >= 2.6) or (not GAME.slowmo and GAME.time >= 1)) and not GAME.uneasyModIconSelected then
-        if uneasyMode and #GAME.getHand(true) == 2 then
+        if GAME.uneasyMode and #GAME.getHand(true) == 2 then
             local p = GAME.pieceEffectID
             if p == 1 and M.DH == -1 or p == 2 and (M.MS == -1 or M.GV == -1) or p == 3 and M.NH == -1
             or p == 4 and M.AS == -1 or p == 5 and M.DP == -1 or p == 6 and M.IN == -1 or p == 7 and M.VL == -1 then
@@ -4430,7 +4433,7 @@ function GAME.update(dt)
 
     -- Height change
     -- Trevor Smithy
-    local passiveClimbSpeedMod = (GAME.badTime and -1 + (-1 * GAME.attackMul)) or (GAME.enightcore and 2 or 1) * (GAME.eglassCard and 8 or 1) * (GAME.slowmo and uneasyMode and 1.26 or 1) * 1 --if uneasy, slightly counter slowmo's reduced passive climb speed
+    local passiveClimbSpeedMod = (GAME.badTime and -1 + (-1 * GAME.attackMul)) or (GAME.enightcore and 2 or 1) * (GAME.eglassCard and 8 or 1) * (GAME.slowmo and GAME.uneasyMode and 1.26 or 1) * 1 --if uneasy, slightly counter slowmo's reduced passive climb speed
     local releaseHeight = GAME.heightBuffer
     GAME.heightBuffer = max(MATH.expApproach(GAME.heightBuffer, 0, dt * 6.3216), GAME.heightBuffer - 6000 * dt)
     releaseHeight = releaseHeight - GAME.heightBuffer

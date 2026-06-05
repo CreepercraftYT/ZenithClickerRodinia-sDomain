@@ -729,9 +729,7 @@ function scene.overDraw()
         end
     end
     local M = GAME.mod
-    if (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
-        bpm = bpm * 1.01455
-    end
+    if GAME.uneasyMode then bpm = bpm * 1.01455 end
     local playTime = 0
     local beatLen = 0
     local dy = 0

@@ -255,10 +255,7 @@ local function keyTrigger(key)
                     local hand = GAME.getHand(true)
                     local revCount = table.concat(hand):count('r')
                     local pitch = M.GV < 0 and -6 or M.GV > 0 and (URM and M.GV == 2 and 3 or M.GV) or 0
-                    local uneasy = (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and not GAME.anyRev
-                    if uneasy then
-                        pitch = pitch + 0.25
-                    end
+                    if GAME.uneasyMode then pitch = pitch + 0.25 end
                     if GAME.slowmo then pitch = pitch - 12 end
                     if GAME.nightcore then pitch = pitch + 12 end
                     -- Trevor Smithy
@@ -1834,7 +1831,7 @@ function scene.overDraw()
             gc_setColor(TextColor)
             if M.EX ~= -1 then
                 gc_draw(TEXTS.title, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
-            elseif (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
+            elseif GAME.uneasyMode then
                 gc_draw(TEXTS.uneasyTitle, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
             else
                 gc_draw(TEXTS.easyTitle, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
@@ -1894,7 +1891,7 @@ function scene.overDraw()
                 )
                 -- Trevor Smithy
             elseif M[infoID] == -1 then
-                if (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and C.id == 'EX' then
+                if GAME.uneasyMode and C.id == 'EX' then
                     setFont(70)
                     gc_strokePrint('full', 6, COLOR.Black, nil, MD.uneasyName[infoID], 130, -150 + 4, 2600, 'center', 0, .9, 1)
                     gc_strokePrint('full', 4, COLOR.DarkRed, nil, MD.uneasyName[infoID], 130, -150 + 2, 2600, 'center', 0, .9, 1)
