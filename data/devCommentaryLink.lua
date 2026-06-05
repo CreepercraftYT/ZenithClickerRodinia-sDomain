@@ -1,3 +1,9 @@
+----------------------------------------------------------------------
+--                        SPOILER WARNING                           --
+-- This file contains contents that may spoil your game experience. --
+-- Be sure you've finished the game, including Ultra Reversed Mods  --
+--                     Read at your own risk.                       --
+----------------------------------------------------------------------
 return {
     ['eEX eVL eAS'] = "https://www.youtube.com/@TrevorSmithy",
     ['ueEX eVL eAS'] = "https://youtu.be/KTc5yoCkLUk",

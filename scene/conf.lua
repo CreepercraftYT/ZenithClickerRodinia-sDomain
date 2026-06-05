@@ -6,6 +6,8 @@ local scene = {}
 -- 2. Utils
 -- 3. Album
 -- 4. ZCEM
+local ZCEMpage = 4
+local ZCEXpage = 5
 local page = 1
 local maxPage = 5
 local uidList = {} ---@type ({uid: string, modTime?: string} | false)[]
@@ -211,7 +213,7 @@ local function refreshWidgets()
                 end
             else
                 if W.name and #W.name > 2 and W.type ~= "button" and W.type ~= "hint" and W.name ~= "urm" and TABLE.find(zcem, W.name) then
-                    W.textColor = page == 4 and ZCEMclr.T or page == 5 and ZCEXclr.T or clr.T
+                    W.textColor = page == ZCEMpage and ZCEMclr.T or page == ZCEXpage and ZCEXclr.T or clr.T
                 end
             end
         end
@@ -303,7 +305,7 @@ function scene.load()
     TASK.unlock('import')
     TASK.unlock('rebind_control')
     TASK.unlock('just_saved')
-    if STAT.stacker and STAT.promotion then
+    if CONF.stacker and CONF.promotion then
         MSG("achv_badTime", "WARNING: PROMOTION and STACKER are MUTUALLY EXCLUSIVE!\nDISABLE ONE NOW OR IT WILL BE DONE AUTOMATICALLY!")
         SFX.play('hyperalert')
     end
@@ -367,9 +369,9 @@ function scene.keyDown(key, isRep)
             else
                 table.insert(bindBuffer, key)
                 if #bindBuffer >= 22 then
-                    STAT.keybind = bindBuffer
+                    CONF.keybind = bindBuffer
                     bindBuffer = nil
-                    SaveStat()
+                    SaveConf()
                     MSG('dark', "Keybinding updated.")
                     SFX.play('social_notify_major')
                 else
@@ -379,6 +381,7 @@ function scene.keyDown(key, isRep)
         end
     else
         if key == 'escape' or key == 'f1' then
+            SaveConf()
             SFX.play('menuclick')
             SCN.back('none')
             GAME.refreshCurrentCombo()
@@ -464,7 +467,7 @@ function scene.update(dt)
 end
 
 function scene.draw()
-    DrawBG(STAT.bgBrightness)
+    DrawBG(CONF.bgBrightness)
 
     local t = love.timer.getTime()
     local playTime = 0
@@ -519,12 +522,12 @@ function scene.draw()
     -- Panel
     gc_replaceTransform(SCR.xOy)
     gc.translate(baseX, baseY)
-    if bpmMode and (page == 3 or page == 4) then
+    if bpmMode and (page == 3 or page == ZCEMpage) then
         local dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416), -2.6, 2.6)
         gc.translate(0, dy)
         SCN.curScroll = -dy
     end
-    gc_setColor(page == 4 and ZCEMclr.D or page == 5 and ZCEXclr.D or clr.D)
+    gc_setColor(page == ZCEMpage and ZCEMclr.D or page == ZCEXpage and ZCEXclr.D or clr.D)
     if GAME.eglassCard then
         local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
         gc_setColor(bgmColors[BgmPlaying] or clr.LT)
@@ -553,10 +556,10 @@ function scene.draw()
 
     if page == 1 then
         -- Sliders
-        drawSliderComponents(120, "EFFECT VOLUME", "QUIET (F3)", "LOUD (F3)", STAT.sfx)
-        drawSliderComponents(200, "MUSIC VOLUME", "QUIET (F4)", "LOUD (F4)", STAT.bgm)
-        drawSliderComponents(430, "CARD  BRIGHTNESS", "DARK (F5)", "BRIGHT (F6)", STAT.cardBrightness)
-        drawSliderComponents(510, "BG  BRIGHTNESS", "DARK (F7)", "BRIGHT (F8)", STAT.bgBrightness)
+        drawSliderComponents(120, "EFFECT VOLUME", "QUIET (F3)", "LOUD (F3)", CONF.sfx)
+        drawSliderComponents(200, "MUSIC VOLUME", "QUIET (F4)", "LOUD (F4)", CONF.bgm)
+        drawSliderComponents(430, "CARD  BRIGHTNESS", "DARK (F5)", "BRIGHT (F6)", CONF.cardBrightness)
+        drawSliderComponents(510, "BG  BRIGHTNESS", "DARK (F7)", "BRIGHT (F8)", CONF.bgBrightness)
 
         -- Keybind
         if bindBuffer then
@@ -632,196 +635,9 @@ function scene.draw()
         gc_rectangle('fill', 0, 46, len, 4)
         if BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
             gc_setColor(COLOR.rainbow_light(2.6 * t))
-            local height = 245
-            local lenMod = 0
-            local lyric = ''
-            local hlyric = ''
             if BgmPlaying == 'teral' or BgmPlaying == 'terael' then
-                local time = playTime
-                local climb = playTime - 36.1 -- climb
-                local climbEnd = playTime - 36.8 -- climb end
-                local climb2 = playTime - 100.1
-                local climbEnd2 = playTime - 100.8
-                if BgmPlaying == 'teral' then
-                    time = time + 0.1
-                    climb = climb + 0.1
-                    climbEnd = climbEnd + 0.1
-                    climb2 = climb2 + 0.1
-                    climbEnd2 = climbEnd2 + 0.1
-                end
-                if time >= 20 and time < 22.8 then
-                    lyric = 'Welcome into the Zenith Tower'
-                elseif time >= 22.8 and time < 25.5 then
-                    lyric = 'where anyone can try their luck'
-                elseif time >= 25.5 and time < 28.1 then
-                    lyric = 'at the climb to the top of the floors.'
-                elseif time >= 28.1 and time < 30.8 then
-                    lyric = "But, you'll come to a realization"
-                elseif time >= 30.8 and time < 34.1 then
-                    lyric = 'that only one can truly be with the'
-                elseif time >= 34.1 and time < 36.1 then
-                    lyric = "stars at the top. So now you're"
-                elseif (climb >= 0 and climbEnd < 0) or (climb2 >= 0 and climbEnd2 < 0) then -- 1
-                    lyric = "CLIMB'IN"
-                    height = height - 0 - (time < 100 and climb or climb2) * 10
-                elseif (climbEnd >= 0 and climb < 1) or (climbEnd2 >= 0 and climb2 < 1) then
-                    lyric = "and"
-                    height = height - 10
-                elseif (climb >= 1 and climbEnd < 1) or (climb2 >= 1 and climbEnd2 < 1) then
-                    lyric = "CLIMB'IN"
-                    height = height - 10 - ((time < 100 and climb or climb2)-1) * 10
-                elseif (climbEnd >= 1 and climb < 2) or (climbEnd2 >= 1 and climb2 < 2) then
-                    lyric = "and"
-                    height = height - 20
-                elseif (climb >= 2 and climbEnd < 2) or (climb2 >= 2 and climbEnd2 < 2) then
-                    lyric = "CLIMB'IN"
-                    height = height - 20 - ((time < 100 and climb or climb2)-2) * 10
-                elseif (climbEnd >= 2 and climb < 3) or (climbEnd2 >= 2 and climb2 < 3) then
-                    lyric = "and"
-                    height = height - 30
-                elseif (climb >= 3 and climbEnd < 3) or (climb2 >= 3 and climbEnd2 < 3) then
-                    lyric = "CLIMB'IN"
-                    height = height - 30 - ((time < 100 and climb or climb2)-3) * 10
-                elseif (climbEnd >= 3 and climb < 4) or (climbEnd2 >= 3 and climb2 < 4) then
-                    lyric = "keep on"
-                    height = height - 40 + ((time < 100 and climbEnd or climbEnd2)-3) * 133
-                elseif (climb >= 4 and climbEnd < 4) or (climb2 >= 4 and climbEnd2 < 4) then -- 2
-                    lyric = "CLIMB'IN"
-                    height = height - 0 - ((time < 100 and climb or climb2)-4) * 10
-                elseif (climbEnd >= 4 and climb < 5) or (climbEnd2 >= 4 and climb2 < 5) then
-                    lyric = "and"
-                    height = height - 10
-                elseif (climb >= 5 and climbEnd < 5) or (climb2 >= 5 and climbEnd2 < 5) then
-                    lyric = "CLIMB'IN"
-                    height = height - 10 - ((time < 100 and climb or climb2)-5) * 10
-                elseif (climbEnd >= 5 and climb < 6) or (climbEnd2 >= 5 and climb2 < 6) then
-                    lyric = "and"
-                    height = height - 20
-                elseif (climb >= 6 and climbEnd < 6) or (climb2 >= 6 and climbEnd2 < 6) then
-                    lyric = "CLIMB'IN"
-                    height = height - 20 - ((time < 100 and climb or climb2)-6) * 10
-                elseif (climbEnd >= 6 and climb < 7) or (climbEnd2 >= 6 and climb2 < 7) then
-                    lyric = "and"
-                    height = height - 30
-                elseif (climb >= 7 and climb < 8) or (climb2 >= 7 and climb2 < 8) then
-                    lyric = "just keep on"
-                    height = height - 30 + ((time < 100 and climb or climb2)-7) * 30   
-                elseif (climb >= 8 and climbEnd < 8) or (climb2 >= 8 and climbEnd2 < 8) then -- 1
-                    lyric = "CLIMB'IN"
-                    height = height - 0 - ((time < 100 and climb or climb2)-8) * 10
-                elseif (climbEnd >= 8 and climb < 9) or (climbEnd2 >= 8 and climb2 < 9) then
-                    lyric = "and"
-                    height = height - 10
-                elseif (climb >= 9 and climbEnd < 9) or (climb2 >= 9 and climbEnd2 < 9) then
-                    lyric = "CLIMB'IN"
-                    height = height - 10 - ((time < 100 and climb or climb2)-9) * 10
-                elseif (climbEnd >= 9 and climb < 10) or (climbEnd2 >= 9 and climb2 < 10) then
-                    lyric = "and"
-                    height = height - 20
-                elseif (climb >= 10 and climbEnd < 10) or (climb2 >= 10 and climbEnd2 < 10) then
-                    lyric = "CLIMB'IN"
-                    height = height - 20 - ((time < 100 and climb or climb2)-10) * 10
-                elseif (climbEnd >= 10 and climb < 11) or (climbEnd2 >= 10 and climb2 < 11) then
-                    lyric = "and"
-                    height = height - 30
-                elseif (climb >= 11 and climbEnd < 11) or (climb2 >= 11 and climbEnd2 < 11) then
-                    lyric = "CLIMB'IN"
-                    height = height - 30 - ((time < 100 and climb or climb2)-11) * 10
-                elseif (climbEnd >= 11 and climb < 12) or (climbEnd2 >= 11 and climb2 < 12) then
-                    lyric = "keep on"
-                    height = height - 40 + ((time < 100 and climbEnd or climbEnd2)-11) * 133
-                elseif (climb >= 12 and climbEnd < 12) or (climb2 >= 12 and climbEnd2 < 12) then -- 2
-                    lyric = "CLIMB'IN"
-                    height = height - 0 - ((time < 100 and climb or climb2)-12) * 10
-                elseif (climbEnd >= 12 and climb < 13) or (climbEnd2 >= 12 and climb2 < 13) then
-                    lyric = "and"
-                    height = height - 10
-                elseif (climb >= 13 and climbEnd < 13) or (climb2 >= 13 and climbEnd2 < 13) then
-                    lyric = "CLIMB'IN"
-                    height = height - 10 - ((time < 100 and climb or climb2)-13) * 10
-                elseif (climbEnd >= 13 and climb < 14) or (climbEnd2 >= 13 and climb2 < 14) then
-                    lyric = "and"
-                    height = height - 20
-                elseif (climb >= 14 and climbEnd < 14) or (climb2 >= 14 and climbEnd2 < 14) then
-                    lyric = "CLIMB'IN"
-                    height = height - 20 - ((time < 100 and climb or climb2)-14) * 10
-                elseif (climbEnd >= 14 and climb < 15) or (climbEnd2 >= 14 and climb2 < 15) then
-                    lyric = "and"
-                    height = height - 30
-                elseif (climb >= 15 and climb < 16) or (climb2 >= 15 and climb2 < 16) then
-                    lyric = "don't slow down"
-                    height = height - 30 + ((time < 100 and climb or climb2)-15) * 30
-                elseif (time >= 52 and time < 84) or (time >= 116 and time < 148) then -- climb harmony
-                    local climbTime = time < 100 and (playTime-52)%4 or (playTime-116)%4
-                    if (climbTime < 1.7 and time < 142) or (time >= 146 and time < 147.5) then -- climb harmony stuff
-                        hlyric = "(cliiiiiiiiimb)"
-                    elseif ((climbTime > 2 and climbTime < 2.7) or (climbTime > 3 and climbTime < 3.7)) and time < 140 then
-                        hlyric = "(climb)"
-                    end
-                    if (time >= 52 and time < 54.8) or (time >= 52+64 and time < 54.8+64) then
-                        lyric = "Now, a piece of advice:"
-                    elseif (time >= 54.9 and time < 55.8) or (time >= 54.9+64 and time < 55.8+64) then
-                        lyric = "whateva you do,"
-                    elseif (time >= 55.8 and time < 58.5) or (time >= 55.8+64 and time < 58.5+64) then
-                        lyric = "don't stop to take a look at the sights"
-                        if time > 100 then lyric = "don't lose your view of the goal" end
-                    elseif (time > 59.0 and time < 59.7) or (time > 59.0+64 and time < 59.7+64) then
-                        lyric = "(yea)"
-                    elseif (time >= 60 and time < 62.8) or (time >= 60+64 and time < 62.8+64) then
-                        lyric = "Time to time, people will fail"
-                    elseif (time >= 63 and time < 63.7) or (time >= 63+64 and time < 63.7+64) then
-                        lyric = "cause,"
-                    elseif (time >= 64 and time < 66.7) or (time >= 64+64 and time < 66.7+64) then
-                        lyric = "they did not keep their speed"
-                    elseif (time > 67.0 and time < 67.7) or (time > 67.0+64 and time < 67.7+64) then
-                        lyric = "(high)"
-                    end
-                    local believe = time < 100 and (time-68.1) or (time-68.1-64)
-                    if believe >= 0 and believe < 2 then
-                        lyric = "But I believe"
-                    elseif believe >= 2 and believe < 2.9 then
-                        lyric = "But I believe in"
-                    elseif believe >= 2.9 and believe < 3.7 then
-                        lyric = "But I believe in you"
-                    elseif believe >= 0+4 and believe < 2+4 then
-                        lyric = "You've got what it"
-                    elseif believe >= 2+4 and believe < 2.9+4 then
-                        lyric = "You've got what it takes"
-                    elseif believe >= 2.9+4 and believe < 3.7+4 then
-                        lyric = "You've got what it takes to"
-                    elseif believe >= 0+8 and believe < 2+8 and time < 100 then
-                        lyric = "Go all the way"
-                    elseif believe >= 2+8 and believe < 2.9+8 and time < 100 then
-                        lyric = "Go all the way and"
-                    elseif believe >= 2.9+8 and believe < 3.7+8 and time < 100 then
-                        lyric = "Go all the way and to"
-                    elseif believe >= 0+12 and believe < 2+12 and time < 100 then
-                        lyric = "Get to the top"
-                    elseif believe >= 2+12 and believe < 2.9+12 and time < 100 then
-                        lyric = "Get to the top your"
-                    elseif believe >= 2.9+12 and believe < 3.7+12 and time < 100 then
-                        lyric = "Get to the top your way."
-                    elseif (believe >= 8 and believe < 9.7) or (believe >= 10 and believe < 11.7) or (believe >= 12 and believe < 13.7) or (believe >= 14 and believe < 15.7) then
-                        lyric = "Go-"
-                    end
-                elseif time >= 20+64 and time < 22.8+64 then
-                    lyric = 'As you pass through the different scenes here'
-                    --lenMod = 100
-                elseif time >= 22.8+64 and time < 25.5+64 then
-                    lyric = "you'll see many foes who now try their luck"
-                    --lenMod = 100
-                elseif time >= 25.5+64 and time < 28.1+64 then
-                    lyric = 'at the climb to the top of the floors.'
-                elseif time >= 28.1+64 and time < 30.8+64 then
-                    lyric = "But, you've come to the realization"
-                elseif time >= 30.8+64 and time < 34.1+64 then
-                    lyric = 'that only one can truly be with the'
-                elseif time >= 34.1+64 and time < 36.1+64 then
-                    lyric = "stars at the top. So you keep"
-                end
+                GAME.showLyric(Lyric.terael, 0, 245, BgmPlaying == 'teral' and 0.1 or 0)
             end
-            gc_mStr(lyric, (len - 200 + 4 * MATH.max(STAT.sfx,50)) / 2, height)
-            gc_mStr(hlyric, (len - 200 + 4 * MATH.max(STAT.sfx,50)) / 2, height - 40)
         else
             gc_setColor(bgmColors[SongNamePlaying])
         end
@@ -865,20 +681,20 @@ function scene.draw()
 
     -- Top bar & title
     gc_replaceTransform(SCR.xOy_u)
-    gc_setColor(page == 4 and ZCEMclr.D or page == 5 and ZCEXclr.D or clr.D)
+    gc_setColor(page == ZCEMpage and ZCEMclr.D or page == ZCEXpage and ZCEXclr.D or clr.D)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     gc_rectangle('fill', -1300, 0, 2600, 70)
-    gc_setColor(page == 4 and ZCEMclr.L or page == 5 and ZCEXclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCEXpage and ZCEXclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.262 or .626)
     gc_rectangle('fill', -1300, 70, 2600, 3)
     gc_replaceTransform(SCR.xOy_ul)
-    gc_setColor(page == 4 and ZCEMclr.L or page == 5 and ZCEXclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCEXpage and ZCEXclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     FONT.set(50)
     if GAME.anyRev then
-        gc_print(page == 4 and "ZCEM SETTINGS" or page == 5 and "ZCEX SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
+        gc_print(page == ZCEMpage and "ZCEM SETTINGS" or page == ZCEXpage and "ZCEX SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
     else
-        gc_print(page == 4 and "ZCEM SETTINGS" or page == 5 and "ZCEX SETTINGS" or "CONFIG", 15, 0)
+        gc_print(page == ZCEMpage and "ZCEM SETTINGS" or page == ZCEXpage and "ZCEX SETTINGS" or "CONFIG", 15, 0)
     end
     --if GAME.anyRev then
     --    gc_print(page == 5 and "ZCEX SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
@@ -888,18 +704,17 @@ function scene.draw()
 
     -- Bottom bar & text
     gc_replaceTransform(SCR.xOy_d)
-    gc_setColor(page == 4 and ZCEMclr.D or page == 5 and ZCEXclr.D or clr.D)
+    gc_setColor(page == ZCEMpage and ZCEMclr.D or page == ZCEXpage and ZCEXclr.D or clr.D)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     gc_rectangle('fill', -1300, 0, 2600, -50)
-    gc_setColor(page == 4 and ZCEMclr.L or page == 5 and ZCEXclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCEXpage and ZCEXclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.262 or .626)
     gc_rectangle('fill', -1300, -50, 2600, -3)
     gc_replaceTransform(SCR.xOy_dl)
-    gc_setColor(page == 4 and ZCEMclr.L or page == 5 and ZCEXclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCEXpage and ZCEXclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     FONT.set(30)
-    gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == 4 and "MODDED" or page == 5 and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
-    --gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == 5 and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
+    gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == ZCEMpage and "MODDED" or page == ZCEXpage and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
 end
 
 function scene.overDraw()
@@ -936,19 +751,17 @@ function scene.overDraw()
         end
     end
     local M = GAME.mod
-    if (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
-        bpm = bpm * 1.01455
-    end
+    if GAME.uneasyMode then bpm = bpm * 1.01455 end
     local playTime = 0
     local beatLen = 0
     local dy = 0
     local t = love.timer.getTime()
-    if bpmMode and (page == 4 or page == 3) then
+    if bpmMode and (page == ZCEMpage or page == 3) then
         playTime = BGM.tell()
         beatLen = 60 / BgmData[BgmPlaying].bpm
         dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416), -2.6, 2.6)
     end
-    if page == 4 then
+    if page == ZCEMpage then
         if bpmMode then
             local bpmString = "BPM: "..tostring(MATH.floor(bpm*100)/100)
             gc_setColor(BgmPlaying ~= 'f0' and bgmColors[BgmPlaying] or ZCEMclr.LT)
@@ -1007,9 +820,9 @@ local page1 = {
         x = baseX + 240 + 85, y = baseY + 110, w = 400,
         axis = { 0, 100, 10 },
         frameColor = 'dD', fillColor = clr.D,
-        disp = function() return STAT.sfx end,
+        disp = function() return CONF.sfx end,
         code = function(value)
-            STAT.sfx = value
+            CONF.sfx = value
             ApplySettings()
         end,
         sound_drag = 'rotate',
@@ -1019,9 +832,9 @@ local page1 = {
         x = baseX + 240 + 85, y = baseY + 190, w = 400,
         axis = { 0, 100, 10 },
         frameColor = 'dD', fillColor = clr.D,
-        disp = function() return STAT.bgm end,
+        disp = function() return CONF.bgm end,
         code = function(value)
-            STAT.bgm = value
+            CONF.bgm = value
             ApplySettings()
         end,
         sound_drag = 'rotate',
@@ -1032,8 +845,8 @@ local page1 = {
         frameColor = clr.cbFrame,
         textColor = clr.T, text = "MUTE ON UNFOCUS",
         x = baseX + 55, y = baseY + 280,
-        disp = function() return STAT.autoMute end,
-        code = function() STAT.autoMute = not STAT.autoMute end,
+        disp = function() return CONF.autoMute end,
+        code = function() CONF.autoMute = not CONF.autoMute end,
     },
     -- Video
     WIDGET.new { -- title
@@ -1048,8 +861,8 @@ local page1 = {
         x = baseX + 240 + 85, y = videoY + 60, w = 400,
         axis = { 80, 100, 5 },
         frameColor = 'dD', fillColor = clr.D,
-        disp = function() return STAT.cardBrightness end,
-        code = function(value) STAT.cardBrightness = value end,
+        disp = function() return CONF.cardBrightness end,
+        code = function(value) CONF.cardBrightness = value end,
         sound_drag = 'rotate',
     },
     WIDGET.new { -- bg brightness
@@ -1057,8 +870,8 @@ local page1 = {
         x = baseX + 240 + 85, y = videoY + 140, w = 400,
         axis = { 30, 80, 10 },
         frameColor = 'dD', fillColor = clr.D,
-        disp = function() return STAT.bgBrightness end,
-        code = function(value) STAT.bgBrightness = value end,
+        disp = function() return CONF.bgBrightness end,
+        code = function(value) CONF.bgBrightness = value end,
         sound_drag = 'rotate',
     },
     WIDGET.new { -- fancy
@@ -1067,7 +880,7 @@ local page1 = {
         frameColor = clr.cbFrame,
         textColor = clr.T, text = "FANCY BACKGROUND  (F9)",
         x = baseX + 55, y = videoY + 230,
-        disp = function() return STAT.bg end,
+        disp = function() return CONF.bg end,
         code = WIDGET.c_pressKey 'f9',
     },
     WIDGET.new { -- star
@@ -1076,7 +889,7 @@ local page1 = {
         frameColor = clr.cbFrame,
         textColor = clr.T, text = "STAR FORCE  (F10)",
         x = baseX + 55, y = videoY + 300,
-        disp = function() return not STAT.syscursor end,
+        disp = function() return not CONF.syscursor end,
         code = WIDGET.c_pressKey 'f10',
     },
     WIDGET.new { -- fullscreen
@@ -1085,7 +898,7 @@ local page1 = {
         frameColor = clr.cbFrame,
         textColor = clr.T, text = "FULLSCREEN  (F11)",
         x = baseX + 55, y = videoY + 370,
-        disp = function() return STAT.fullscreen end,
+        disp = function() return CONF.fullscreen end,
         code = WIDGET.c_pressKey 'f11',
     },
     -- Keybind
@@ -1104,11 +917,11 @@ local page1 = {
                     SFX.play('notify')
                     MSG('dark', {
                             "Current Keybinding:\n" ..
-                            table.concat(TABLE.sub(STAT.keybind, 1, 9), ', ') .. "\n" ..
-                            table.concat(TABLE.sub(STAT.keybind, 10, 18), ', ') .. "\n" ..
-                            "Commit: " .. STAT.keybind[19] .. "\n" ..
-                            "Reset: " .. STAT.keybind[20] .. "\n" ..
-                            "Click L/R: " .. STAT.keybind[21] .. ", " .. STAT.keybind[22] .. "\n",
+                            table.concat(TABLE.sub(CONF.keybind, 1, 9), ', ') .. "\n" ..
+                            table.concat(TABLE.sub(CONF.keybind, 10, 18), ', ') .. "\n" ..
+                            "Commit: " .. CONF.keybind[19] .. "\n" ..
+                            "Reset: " .. CONF.keybind[20] .. "\n" ..
+                            "Click L/R: " .. CONF.keybind[21] .. ", " .. CONF.keybind[22] .. "\n",
                             COLOR.F, "PRESS AGAIN TO REBIND\n",
                             COLOR.LD, "(F1-F12 ` Tab Ctrl Alt are not allowed)"
                         },
@@ -1269,10 +1082,10 @@ local page2 = {
                     SFX.play('cutin_superlobby', 1, 0, Tone(-2))
                     SCN.go('_console')
                 elseif data == 'old_hitbox' then
-                    STAT.oldHitbox = not STAT.oldHitbox
-                    MSG('dark', "Force old hitbox: " .. (STAT.oldHitbox and "ON" or "OFF"))
-                    SFX.play(STAT.oldHitbox and 'social_online' or 'social_offline')
-                    TEXTS.version:set(SYSTEM .. (STAT.oldHitbox and " T" or " V") .. (require 'version'.verStr))
+                    CONF.oldHitbox = not CONF.oldHitbox
+                    MSG('dark', "Force old hitbox: " .. (CONF.oldHitbox and "ON" or "OFF"))
+                    SFX.play(CONF.oldHitbox and 'social_online' or 'social_offline')
+                    TEXTS.version:set(SYSTEM .. (CONF.oldHitbox and " T" or " V") .. (require 'version'.verStr))
                 elseif data == 'true_ending' then
                     SFX.play('warp')
                     SCN.go('ending', 'warp')
@@ -1288,21 +1101,21 @@ local page2 = {
                     UseAltName()
                     SFX.play('social_dm')
                 elseif data == 'UseEasyName' or data == 'UseEasName' then
-                    STAT.easyName = not STAT.easyName
+                    CONF.easyName = not CONF.easyName
                     SFX.play('social_dm')
-                    MSG('dark', "Easy Names In-Game: " .. (STAT.easyName and "ON" or "OFF"))
+                    MSG('dark', "Easy Names In-Game: " .. (CONF.easyName and "ON" or "OFF"))
                 elseif data == 'imperial' or data == 'feet' then
-                    STAT.imperial = not STAT.imperial
+                    CONF.imperial = not CONF.imperial
                     SFX.play('social_dm')
-                    MSG('dark', "Imperial Units: " .. (STAT.imperial and "ON" or "OFF"))
+                    MSG('dark', "Imperial Units: " .. (CONF.imperial and "ON" or "OFF"))
                 elseif data == 'promotion' then
-                    STAT.promotion = not STAT.promotion
+                    CONF.promotion = not CONF.promotion
                     SFX.play('social_dm')
-                    MSG('dark', "Rank Promotion Gauge: " .. (STAT.promotion and "ON" or "OFF"))
+                    MSG('dark', "Rank Promotion Gauge: " .. (CONF.promotion and "ON" or "OFF"))
                 elseif data == 'old_transparent_card' or data == 'oldTransparentCard' or data == 'oldtransparentcard' or data == 'oldeO' then
-                    STAT.oldTransparentCard = not STAT.oldTransparentCard
+                    CONF.oldTransparentCard = not CONF.oldTransparentCard
                     SFX.play('social_dm')
-                    MSG('dark', "Transparent Card: " .. (STAT.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
+                    MSG('dark', "Transparent Card: " .. (CONF.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
                 elseif data == 'eZ' or data == 'ez' then
                     if not GAME.enightcore and anyPieceActive then 
                         SFX.play('damage_alert')
@@ -1389,6 +1202,10 @@ local page2 = {
                     MSG('dark', "eI: " .. (GAME.ecloseCard and "ON" or "OFF"))
                     GAME.refreshLayout()
                     GAME.refreshCurrentCombo()
+                elseif data == 'lyrics' then
+                    CONF.lyrics = not CONF.lyrics
+                    SFX.play(CONF.lyrics and 'social_online' or 'social_offline')
+                    MSG('dark', "In-Game Lyrics: " .. (CONF.lyrics and "Enabled" or " Disabled"))
                 elseif data == 'resubmit' then
                     if DAILYCMD then
                         ASYNC.runCmd('submitDaily', DAILYCMD)
@@ -1563,6 +1380,7 @@ local page2 = {
                     if clear == lastClear then
                         for _ = 1, 3 do SFX.play('wound') end
                         TASK.unlock('reset_all')
+                        SaveConf()
                         SCN.back('none')
                     end
                 end
@@ -1636,29 +1454,27 @@ local function clearSlot(i)
     MSG.clear()
     WIDGET._reset()
 end
+local slBtnTextColor = { 0, 0, 0, .62 }
 for i = 1, 3 do
     local y = profY + 330 + (i - 1) * 90
     TABLE.append(page2, {
         WIDGET.new {
             name = 'save' .. i, type = 'button',
             x = baseX + 355, y = y, w = 160, h = 50,
-            color = clr.L,
-            fontSize = 30, textColor = clr.LT, text = "BACKUP",
+            fontSize = 30, color = 'lG', textColor = slBtnTextColor, text = "BACKUP",
             onClick = function() saveSlot(i) end,
         },
         WIDGET.new {
             name = 'load' .. i, type = 'button',
             x = baseX + 555, y = y, w = 160, h = 50,
-            color = clr.L,
-            fontSize = 30, textColor = clr.LT, text = "LOAD",
+            fontSize = 30, color = 'lY', textColor = slBtnTextColor, text = "LOAD",
             onClick = function() loadSlot(i) end,
             visibleFunc = function() return page == 2 and uidList[i] end,
         },
         WIDGET.new {
             name = 'clear' .. i, type = 'button',
             x = baseX + 755, y = y, w = 160, h = 50,
-            color = clr.L,
-            fontSize = 30, textColor = clr.LT, text = "CLEAR",
+            fontSize = 30, color = 'lR', textColor = slBtnTextColor, text = "CLEAR",
             onClick = function() clearSlot(i) end,
             visibleFunc = function() return page == 2 and uidList[i] end,
         },
@@ -1840,21 +1656,21 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "PROMOTION GAUGE",
         x = baseX + 40, y = baseY + 60 + 80,
-        disp = function() return STAT.promotion end,
+        disp = function() return CONF.promotion end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.promotion = not STAT.promotion
-            MSG('dark', "Rank Promotion Gauge: " .. (STAT.promotion and "ON" or "OFF"))
-            if STAT.stacker and STAT.promotion then
-                STAT.stacker = false
+            CONF.promotion = not CONF.promotion
+            MSG('dark', "Rank Promotion Gauge: " .. (CONF.promotion and "ON" or "OFF"))
+            if CONF.stacker and CONF.promotion then
+                CONF.stacker = false
                 MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE!")
                 SFX.play('no')
             else
                 SFX.play('social_dm')
             end
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -1864,15 +1680,15 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "IMPERIAL UNITS",
         x = baseX + 500, y = baseY + 60 + 240,
-        disp = function() return STAT.imperial end,
+        disp = function() return CONF.imperial end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.imperial = not STAT.imperial
+            CONF.imperial = not CONF.imperial
             SFX.play('social_dm')
-            MSG('dark', "Imperial Units: " .. (STAT.imperial and "ON" or "OFF"))
+            MSG('dark', "Imperial Units: " .. (CONF.imperial and "ON" or "OFF"))
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -1882,15 +1698,15 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "OLD TRANSPARENT CARD",
         x = baseX + 40, y = baseY + 60 + 160,
-        disp = function() return STAT.oldTransparentCard end,
+        disp = function() return CONF.oldTransparentCard end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.oldTransparentCard = not STAT.oldTransparentCard
+            CONF.oldTransparentCard = not CONF.oldTransparentCard
             SFX.play('social_dm')
-            MSG('dark', "Transparent Card: " .. (STAT.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
+            MSG('dark', "Transparent Card: " .. (CONF.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -1908,7 +1724,7 @@ local page4 = {
             MSG('dark', "Force old hitbox: " .. (STAT.oldHitbox and "ON" or "OFF"))
             SFX.play(STAT.oldHitbox and 'social_online' or 'social_offline')
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -1918,15 +1734,15 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "USE EASY NAMES",
         x = baseX + 40, y = baseY + 60 + 240,
-        disp = function() return STAT.easyName end,
+        disp = function() return CONF.easyName end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.easyName = not STAT.easyName
+            CONF.easyName = not CONF.easyName
             SFX.play('social_dm')
-            MSG('dark', "Easy Names In-Game: " .. (STAT.easyName and "ON" or "OFF"))
+            MSG('dark', "Easy Names In-Game: " .. (CONF.easyName and "ON" or "OFF"))
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -1936,21 +1752,21 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "STACKER MODE",
         x = baseX + 500, y = baseY + 60 + 80,
-        disp = function() return STAT.stacker end,
+        disp = function() return CONF.stacker end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.stacker = not STAT.stacker
-            MSG('dark', "Stacker Mode: " .. (STAT.stacker and "ON" or "OFF"))
-            if STAT.stacker and STAT.promotion then
-                STAT.promotion = false
+            CONF.stacker = not CONF.stacker
+            MSG('dark', "Stacker Mode: " .. (CONF.stacker and "ON" or "OFF"))
+            if CONF.stacker and CONF.promotion then
+                CONF.promotion = false
                 SFX.play('no')
                 MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE!")
             else
                 SFX.play('social_dm')
             end
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },

@@ -32,7 +32,7 @@ local combo = 0
 local scene = {}
 
 local function switchVisitor(bool)
-    if not GAME.playing and GAME.zenithTraveler ~= bool and STAT.bg then
+    if not GAME.playing and GAME.zenithTraveler ~= bool and CONF.bg then
         SFX.play(bool and 'pause_exit' or 'pause_start', 1, 0, Tone(-2))
         GAME.zenithTraveler = bool
         love.mouse.setRelativeMode(bool)
@@ -49,7 +49,7 @@ local function MouseOnCard(x, y)
     if FloatOnCard and Cards[FloatOnCard]:mouseOn(x, y) then
         return FloatOnCard
     end
-    if FloatOnCard and not usingTouch or STAT.oldHitbox then
+    if FloatOnCard and not usingTouch or CONF.oldHitbox then
         local cid, dist = 0, 1e99
         for i = 1, #Cards do
             if Cards[i]:mouseOn(x, y) then
@@ -71,7 +71,7 @@ local function MouseOnCard(x, y)
 end
 
 function SetMouseVisible(bool)
-    if STAT.syscursor then
+    if CONF.syscursor then
         love.mouse.setVisible(bool)
     else
         CursorHide = not bool
@@ -135,7 +135,7 @@ local function applyCombo(set)
 end
 
 local function keyTrigger(key)
-    local bindID = TABLE.find(STAT.keybind, key)
+    local bindID = TABLE.find(CONF.keybind, key)
     if bindID and bindID <= 18 and (M.AS ~= 0 or (not GAME.playing and (bindID == 8 or bindID == 17))) then
         if bindID > 9 then bindID = bindID - 9 end
         local C = Cards[bindID]
@@ -255,10 +255,7 @@ local function keyTrigger(key)
                     local hand = GAME.getHand(true)
                     local revCount = table.concat(hand):count('r')
                     local pitch = M.GV < 0 and -6 or M.GV > 0 and (URM and M.GV == 2 and 3 or M.GV) or 0
-                    local uneasy = (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and not GAME.anyRev
-                    if uneasy then
-                        pitch = pitch + 0.25
-                    end
+                    if GAME.uneasyMode then pitch = pitch + 0.25 end
                     if GAME.slowmo then pitch = pitch - 12 end
                     if GAME.nightcore then pitch = pitch + 12 end
                     -- Trevor Smithy
@@ -491,7 +488,7 @@ function scene.load()
     end
     RevUnlocked = TABLE.countAll(GAME.completion, 0) < 9 or STAT.unlockAll
 
-    for i = 1, #MD.deck do CardHintText[i]:set(STAT.keybind[i]:upper()) end
+    for i = 1, #MD.deck do CardHintText[i]:set(CONF.keybind[i]:upper()) end
 
     GAME.refreshDailyChallengeText()
     TASK.unlock('sure_quit')
@@ -542,8 +539,8 @@ local function getBtnPressed()
     if msIsDown(4) then btnPressed = btnPressed + 1 end
     if msIsDown(5) then btnPressed = btnPressed + 1 end
     if msIsDown(6) then btnPressed = btnPressed + 1 end
-    if kbIsDown(STAT.keybind[21]) then btnPressed = btnPressed + 1 end
-    if kbIsDown(STAT.keybind[22]) then btnPressed = btnPressed + 1 end
+    if kbIsDown(CONF.keybind[21]) then btnPressed = btnPressed + 1 end
+    if kbIsDown(CONF.keybind[22]) then btnPressed = btnPressed + 1 end
     return btnPressed
 end
 
@@ -843,12 +840,16 @@ local windupColor = {
     { COLOR.HEX "79FA52FF" },
     { COLOR.HEX "C6FC4FFF" },
 }
+local koMsgColor = {
+    kill = { COLOR.HEX "FFB300FF" },
+    death = { COLOR.HEX "910000FF" },
+}
 
 function DrawBG(brightness, showRuler)
     gc_replaceTransform(SCR.origin)
     if GAME.bgH > -50 then
         local bgFloor = GAME.calculateFloor(GAME.bgH)
-        if STAT.bg and not (GAME.invisUI or GAME.einvisUI) then
+        if CONF.bg and not (GAME.invisUI or GAME.einvisUI) then
             if bgFloor < 10 then
                 gc_setColor(1, 1, 1)
                 local bottom = Floors[bgFloor - 1].top
@@ -1023,7 +1024,7 @@ function scene.draw()
         drawPBline(STAT.maxHeight, true)
         return
     else
-        DrawBG(STAT.bgBrightness, true)
+        DrawBG(CONF.bgBrightness, true)
     end
 
     if not (GAME.invisUI or GAME.einvisUI) then
@@ -1185,7 +1186,7 @@ function scene.draw()
         TABLE.clear(GAME.questStack)
     end
 
-    if STAT.stacker then stackerStartButtonColor() end
+    if CONF.stacker then stackerStartButtonColor() end
 end
 
 function scene.overDraw()
@@ -1468,13 +1469,13 @@ function scene.overDraw()
             end
 
             -- Promotion Gauge
-            if STAT.stacker and STAT.promotion then 
-                STAT.promotion = false -- forcibly disable promotion gauge with stacker
-                SaveStat()
+            if CONF.stacker and CONF.promotion then 
+                CONF.promotion = false -- forcibly disable promotion gauge with stacker
+                SaveConf()
                 SFX.play('warning')
                 MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE! \nPROMOTION GAUGE has been disabled!")
             end
-            if STAT.promotion then
+            if CONF.promotion then
                 gc_push('transform')
                 gc_translate(460, 290)
                 gc_scale(GAME.uiHide)
@@ -1555,9 +1556,9 @@ function scene.overDraw()
 
                 -- Short Text & Panel
                 gc_setColor(.3, .1, 0, .62/eTAlpha)
-                gc_mRect('fill', 800, 330 - (STAT.stacker and GAME.questStack[1] and 60 or 0), GAME.currentTask.shortObj:getWidth() * 1.6 + 50, 75, 20)
+                gc_mRect('fill', 800, 330 - (CONF.stacker and GAME.questStack[1] and 60 or 0), GAME.currentTask.shortObj:getWidth() * 1.6 + 50, 75, 20)
                 gc_setColor(1, 1, 1)
-                gc_mDraw(GAME.currentTask.shortObj, 800, 330 - (STAT.stacker and GAME.questStack[1] and 60 or 0), 0, 1.6)
+                gc_mDraw(GAME.currentTask.shortObj, 800, 330 - (CONF.stacker and GAME.questStack[1] and 60 or 0), 0, 1.6)
             end
         end
 
@@ -1585,7 +1586,7 @@ function scene.overDraw()
                 gc_mDraw(text, 800, Q.y, 0, kx, ky)
             end
         end
-        if STAT.stacker and GAME.questStack[1] then
+        if CONF.stacker and GAME.questStack[1] then
             local Q = GAME.questStack[1]
             local text = Q.name
             local kx = min(Q.k, 800 / text:getWidth())
@@ -1607,7 +1608,7 @@ function scene.overDraw()
                 gc_mDraw(text, 800, Q.y, 0, kx, ky)
             end
         end
-        if STAT.stacker and GAME.comboBounceTime > 0 then
+        if CONF.stacker and GAME.comboBounceTime > 0 then
             gc_setColor(1, 1, 1)
             local alpha = 1
             local x, y = 215, 315
@@ -1706,7 +1707,7 @@ function scene.overDraw()
         local height = GAME.height
         local miles = 0
         local feet = 0
-        if STAT.imperial then
+        if CONF.imperial then
             altitudeText[3] = 'ft'
             height = height * 3.2
             if height >= 5280 then
@@ -1714,8 +1715,8 @@ function scene.overDraw()
                 feet = height%5280
             end
         else altitudeText[3] = 'm' end
-        altitudeText[1] = ("%.1f"):format(STAT.imperial and height or GAME.roundHeight)
-        if STAT.imperial and miles > 0 then
+        altitudeText[1] = ("%.1f"):format(CONF.imperial and height or GAME.roundHeight)
+        if CONF.imperial and miles > 0 then
             altitudeText[1] = miles .. 'mi ' .. ("%.1f"):format(feet)
         end
         TEXTS.height:set(altitudeText)
@@ -1831,7 +1832,7 @@ function scene.overDraw()
             gc_setColor(TextColor)
             if M.EX ~= -1 then
                 gc_draw(TEXTS.title, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
-            elseif (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
+            elseif GAME.uneasyMode then
                 gc_draw(TEXTS.uneasyTitle, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
             else
                 gc_draw(TEXTS.easyTitle, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
@@ -1854,14 +1855,12 @@ function scene.overDraw()
         end
 
         -- Speedrun Timer
-        if STAT.srTimer_life then
-            gc_replaceTransform(SCR.xOy_dl)
-            setFont(30)
-            gc_setColor(TextColor)
-            gc_setAlpha(.42)
-            TEXTS.srTimer:set(STRING.time(STAT.srTimer_game) .. "/ " .. STRING.time_simp(STAT.srTimer_life))
-            gc_draw(TEXTS.srTimer, 7, -70 + GAME.uiHide * 30)
-        end
+        gc_replaceTransform(SCR.xOy_dl)
+        setFont(30)
+        gc_setColor(TextColor)
+        gc_setAlpha(.42)
+        TEXTS.srTimer:set(STRING.time(STAT.srTimer_game) .. "/ " .. STRING.time(STAT.srTimer_life, 2))
+        gc_draw(TEXTS.srTimer, 7, -70 + GAME.uiHide * 30)
 
         -- Card Info
         if not GAME.playing and FloatOnCard then
@@ -1893,7 +1892,7 @@ function scene.overDraw()
                 )
                 -- Trevor Smithy
             elseif M[infoID] == -1 then
-                if (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and C.id == 'EX' then
+                if GAME.uneasyMode and C.id == 'EX' then
                     setFont(70)
                     gc_strokePrint('full', 6, COLOR.Black, nil, MD.uneasyName[infoID], 130, -150 + 4, 2600, 'center', 0, .9, 1)
                     gc_strokePrint('full', 4, COLOR.DarkRed, nil, MD.uneasyName[infoID], 130, -150 + 2, 2600, 'center', 0, .9, 1)
@@ -1986,11 +1985,13 @@ function scene.overDraw()
         end
     end
 
-    -- Piece Data
-    gc_replaceTransform(SCR.xOy_m)
-    GC.setColor(1, 1, 1, .26 * GAME.uiHide)
-    local w, h = GAME.pieceFstrObj:getDimensions()
-    GC.draw(GAME.pieceFstrObj, 0, -170 - (STAT.stacker and GAME.questStack[1] and 60 or 0), 0, min(4.2, 740 / w) * (STAT.stacker and GAME.questStack[1] and 0.62 or 1), nil, w / 2, h * .57)
+    -- Piece effect
+    do
+        gc_replaceTransform(SCR.xOy_m)
+        GC.setColor(1, 1, 1, .26 * GAME.uiHide)
+        local w, h = GAME.pieceFstrObj:getDimensions()
+        GC.draw(GAME.pieceFstrObj, 0, -170 - (CONF.stacker and GAME.questStack[1] and 60 or 0), 0, min(4.2, 740 / w) * (CONF.stacker and GAME.questStack[1] and 0.62 or 1), nil, w / 2, h * .57)
+    end
 
     -- Trevor Smithy
     local gravityMod = 1
@@ -2068,6 +2069,54 @@ function scene.overDraw()
         gc_mDraw(TEXTURE.windupText[ceil(w.lv / 2)], w.x, w.y, 0, k)
     end
 
+    -- Kill animation
+    if #GAME.koAnim > 0 then
+        -- gc_replaceTransform(SCR.xOy_ur)
+        -- gc_translate(-10, 80 - GAME.uiHide * 70)
+        gc_replaceTransform(SCR.xOy_m)
+        gc_translate(400 - 10, -260)
+        gc_scale(.6)
+        for i = 1, #GAME.koAnim do
+            local k = GAME.koAnim[i]
+            local w1, w2 = k.id1:getWidth() + 20, k.id2:getWidth() + 20
+            local x1, x2 = -w2 - 40 - w1 / 2, -w2 / 2
+            gc_ucs_move(0, (k.pos - .5) * 55)
+            gc_setLineWidth(2)
+
+            local clr = k.toOppo and koMsgColor.kill or koMsgColor.death
+            gc_setColor(clr)
+            gc_setAlpha(k.a * .42)
+            if k.toOppo then
+                if k.showP1 then
+                    gc_mRect('fill', x1, 0, w1, 45, 5)
+                end
+                gc_setColor(0, 0, 0, k.a * .42)
+                gc_mRect('fill', x2, 0, w2, 45, 5)
+            else
+                gc_mRect('fill', x2, 0, w2, 45, 5)
+                if k.showP1 then
+                    gc_setColor(0, 0, 0, k.a * .42)
+                    gc_mRect('fill', x1, 0, w1, 45, 5)
+                end
+            end
+
+            gc_setColor(clr)
+            gc_setAlpha(k.a)
+            gc_mRect('line', x2, 0, w2, 45, 5)
+            gc_mDraw(k.id2, x2, 0)
+            if k.showP1 then
+                gc_mRect('line', x1, 0, w1, 45, 5)
+                gc_mDraw(k.id1, x1, 0)
+            end
+            gc_setColor(1, 1, 1, k.a)
+            local x = -40 / 2 + 9 - w2
+            gc_setLineWidth(3)
+            gc_line(x - 20, 0, x, 0)
+            gc_line(x - 12, -12, x, 0, x - 12, 12)
+            gc_ucs_back()
+        end
+    end
+
     -- Test
     if TestMode then
         -- Watermark
@@ -2119,14 +2168,30 @@ function scene.overDraw()
         gc_mDraw(TEXTS.version, GAME.invisUI and 0 or -260 * GAME.uiHide, -10, 0, .62)
     end
 
+    -- Debug: display holding buttons
     -- GC.replaceTransform(SCR.xOy)
-    -- local y=0
-    -- GC.setColor(1,1,1)
+    -- local y = 0
+    -- GC.setColor(1, 1, 1)
     -- FONT.set(20)
-    -- for k in next,HoldingButtons do
-    --     GC.print(k,100,100+y)
-    --     y=y+30
+    -- for k in next, HoldingButtons do
+    --     GC.print(k, 100, 100 + y)
+    --     y = y + 30
     -- end
+
+    -- Debug: display KO charge
+    -- gc_replaceTransform(SCR.xOy_u)
+    -- gc_translate(0, 26)
+    -- gc_setColor(1, 1, 1)
+    -- gc_setLineWidth(1)
+    -- gc_mRect('line', 0, 0, -26 * 10, 20)
+    -- gc_setColor(1, 0, 0)
+    -- gc_mRect('fill', 0, 0, -GAME.koCharge * 10, 20)
+    
+    -- Lyrics
+    if CONF.lyrics and (BgmPlaying == 'teral' or BgmPlaying == 'terael') and GAME.playing and not GAME.invisUI then
+        gc_replaceTransform(SCR.xOy_m)
+        GAME.showLyric(Lyric.terael, 0, -30, BgmPlaying == 'teral' and 0.1 or 0)
+    end
 end
 
 local function button_start()
@@ -2229,7 +2294,7 @@ scene.widgetList = {
         onPress = function(k)
             if k == 3 then return end
             HoldingButtons.startBtn = true
-            if M.EX <= 0 or STAT.stacker then
+            if M.EX <= 0 or CONF.stacker then
                 SFX.play('move')
                 button_start()
             else

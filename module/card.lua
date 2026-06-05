@@ -332,7 +332,7 @@ function Card:setActive(auto, key)
         -- Trevor Smithy
         if easyOn or wasEasy then GAME.refreshEasy() end
         if wasEasy and not easyOn then self:spin() end
-        
+        if easyOn or revOn or wasEasy or wasRev then GAME.refreshUneasy() end
         --if self.id == 'EX' then
         --    TWEEN.new(tween_expertOn):setDuration(M.EX > 0 and .26 or .1):run()
         --    TABLE.clear(HoldingButtons)
@@ -373,7 +373,7 @@ function Card:setActive(auto, key)
                 end)
             end
         else
-            if M.EX == -1 and URM and not GAME.anyRev and self.easy and not GAME.playing then
+            if GAME.uneasyMode and self.easy and not GAME.playing then
                 TASK.new(function()
                     SFX.play(toneName, toneVol*.8, 0, Tone(-3))
                     SFX.play(toneName, toneVol*.8, 0, Tone(-0))
@@ -643,8 +643,8 @@ function Card:draw()
                 if self.required or self.required2 then
                     if self.required then
                         r1, g1, b1 = 1, .26, 0
-                        if STAT.easyName then
-                            if not (URM and self.id == 'EX' and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
+                        if CONF.easyName then
+                            if not (self.id == 'EX' and GAME.uneasyMode) then
                                 r1, g1, b1 = 0, 1, 0          -- Green
                             else
                                 r1, g1, b1 = 0.626, 0, 0      -- Dark Red (for Uneasy)
@@ -706,7 +706,7 @@ function Card:draw()
     else
         if self.active then
             if self.easy then
-                if not (URM and self.id == 'EX' and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
+                if not (self.id == 'EX' and GAME.uneasyMode) then
                     r1, g1, b1 = 0, 1, 0          -- Green
                 else
                     r1, g1, b1 = 0.626, 0, 0          -- Dark Red (for Uneasy)
@@ -730,7 +730,7 @@ function Card:draw()
     if (GAME.glassCard or GAME.eglassCard) and not (GAME.einvisCard) then
         local w, h = 240, 330
         gc_setColor((faceUp and ModData.textColor or ModData.color)[self.id])
-        gc_setAlpha((STAT.cardBrightness / 100) ^ 2 * .872)
+        gc_setAlpha((CONF.cardBrightness / 100) ^ 2 * .872)
         gc_mRect('fill', 0, 0, w * 2, h * 2, 26)
 
         if self.burn then
@@ -783,12 +783,12 @@ function Card:draw()
                     )
                 end
             else
-                local b = STAT.cardBrightness / 100
+                local b = CONF.cardBrightness / 100
                 gc_setColor(b, b, b)
             end
             if GAME.einvisCard then
-                local b = STAT.cardBrightness / 100
-                gc_setColor(b,b,b,(STAT.cardBrightness / 100) ^ 2 * 0.26)
+                local b = CONF.cardBrightness / 100
+                gc_setColor(b,b,b,(CONF.cardBrightness / 100) ^ 2 * 0.26)
             end
             gc_draw(img, -img:getWidth() / 2, -img:getHeight() / 2)
             if img2 then
@@ -797,7 +797,7 @@ function Card:draw()
         elseif GAME.glassCard or GAME.eglassCard then
             local w, h = 240, 330
             gc_setColor((faceUp and ModData.textColor or ModData.color)[self.id])
-            gc_setAlpha((STAT.cardBrightness / 100) ^ 2 * .26)
+            gc_setAlpha((CONF.cardBrightness / 100) ^ 2 * .26)
             gc_mRect('fill', 0, 0, w * 2, h * 2, 26)
 
             if self.burn then
@@ -823,7 +823,7 @@ function Card:draw()
         end
 
         -- Outline (draw)
-        if STAT.oldTransparentCard then
+        if CONF.oldTransparentCard then
             if GAME.einvisCard then
                 gc_setLineWidth(20)
                 local temp = M.IN == 1 and 2 or M.IN == 2 and not URM and 3 or M.IN == 2 and URM and 4 or 1
@@ -832,7 +832,7 @@ function Card:draw()
                     if M.IN > 0 then
                         gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/temp)
                     end
-                    if STAT.oldHitbox and MOBILE then
+                    if CONF.oldHitbox and MOBILE then
                         gc_circle('fill', 0, 0, 40)
                     end
                 else
@@ -873,7 +873,7 @@ function Card:draw()
                         gc_setAlpha(min(1, 2/temp))
                         width = (9-temp)*5
                     end
-                    if STAT.oldHitbox and MOBILE then
+                    if CONF.oldHitbox and MOBILE then
                         gc_circle('fill', 0, 0, 40)
                     end
                     gc_setLineWidth(width)
