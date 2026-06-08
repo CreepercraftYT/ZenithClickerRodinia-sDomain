@@ -2233,7 +2233,7 @@ local d = {
         type = 'issued',
         hide = TRUE,
     },
-    { title = "Extra Mod Achievements" },
+    { title = "Rodinia's Domain Achievements" },
     { -- rGVIN
         ex = true,
         id = 'INrGV',

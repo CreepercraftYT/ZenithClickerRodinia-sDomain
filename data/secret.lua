@@ -23,6 +23,7 @@ local d = {
             { set = "eDHeDPeGVeINeMSeNHrASrEXrVL", name = '"THE WHELMED SMITHY"'},
             { set = "eASeDHeEXrGV", checks = {'enightcore', false}, name = '"PATIENCE IS A VIRTUE..."'},
             { set = "eASeDHeEXrGV", checks = {'enightcore', true}, name = [["BUT IT ISN'T ONE OF MINE"]], customUltraCombo = true},
+            { set = "eASeDHeEXrGV", checks = {'slowmo', true}, name = [["AND IT IS ONE OF MINE"]], customUltraCombo = true},
             -- No Named Rev Equivalent
             { set = "rASrDHrDPrEXrGVrINrMSrNHrVL", checks = {'badTime', true, 'badTimeStarted', false}, name = '"BAD TIME"', customUltraCombo = true},
             { set = "eASeDHeDPeGVeINeMSeNHrEX", checks = {'ecloseCard', true}, name = '"ULTRA HARD CRAMPED BATH WITH A FRIEND"'},
@@ -33,6 +34,12 @@ local d = {
             { set = "eDHeEXeGVeMSrDPrVL", name = '"SEVERED VOLITION"', forceRev = true, customUltraCombo = true},
             -- Smithy
             { set = "eASeEXeVLrDHrDPrGVrINrMSrNH", name = '"THE PARALYZED SMITHY"'},
+            -- Creepercraft
+            { set = "rGVrIN", name = '"ABSOLUTE-EYE"', customUltraCombo = true},
+            { set = "EXrGVrIN", name = '"RODINIA+"', customUltraCombo = true},
+            { set = "rEXrGVrIN", name = '"AINIDOR"', customUltraCombo = true},
+            { set = "eDPrASrDHrEXrGVrINrMSrNHrVL", name = '"AN ULTRA BROKEN FRIENDSHIP"', customUltraCombo = true},
+
         },
         uneasy = {
             { set = "DPeASeDHeEXeGVeINeMSeNHeVL", name = '"BATH WITH A LOVER?"'},
@@ -55,6 +62,7 @@ local d = {
         },
         other = {
             { set = "eASeDHeEXrGV", checks = {'enightcore', true}, name = [["BUT IT ISN'T ONE OF MINE"]]},
+            { set = "eASeDHeEXrGV", checks = {'slowmo', true}, name = [["AND IT IS ONE OF MINE"]]},
             -- Smithy
             { set = "DHDPGVINMSNHeASeEXeVL", name = '"THE SWAMPED SMITHY"'},
             { set = "eDHeDPeGVeINeMSeNHrASrEXrVL", name = '"THE UNDERWHELMED SMITHY"'},

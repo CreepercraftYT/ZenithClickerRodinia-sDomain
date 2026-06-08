@@ -1,8 +1,8 @@
 return {
-    ["appName"] = "Zenith Clicker Extra",
+    ["appName"] = "Zenith Clicker Rodinia's Domain",
     ["apkCode"] = 010201,
     ["verCode"] = 010201,
 
-    ["appVer"] = "EV0.00.00",
-    ["verStr"] = "0.00.00",
+    ["appVer"] = "RV0.00.01",
+    ["verStr"] = "0.00.01",
 }

@@ -125,8 +125,14 @@ local ZCEXclr = {
     L = { COLOR.HEX '191919FF' },
     T = { COLOR.HEX '191919FF' },
     LT = { COLOR.HEX '393939FF' },
+    rD = { COLOR.HEX 'BD0000FF' },
+    rL = { COLOR.HEX '330000FF' },
+    rT = { COLOR.HEX '330000FF' },
+    rLT = { COLOR.HEX '550000FF' },
     cbFill = { COLOR.HEX '191919FF' },
     cbFrame = { COLOR.HEX '191919FF' },
+    rCbFill = { COLOR.HEX '330000FF' },
+    rCbFrame = { COLOR.HEX '330000FF' },
 }
 local bpmMode = false
 local comboTimer = 0
@@ -295,9 +301,12 @@ function scene.load()
         for _, C in next, ZCEMclr do
             C[1], C[3] = C[3], C[1]
         end
-        for _, C in next, ZCEXclr do
-            C[1], C[3] = C[3], C[1]
-        end
+        ZCEXclr.D, ZCEXclr.rD = ZCEXclr.rD, ZCEXclr.D
+        ZCEXclr.L, ZCEXclr.rL = ZCEXclr.rL, ZCEXclr.L
+        ZCEXclr.T, ZCEXclr.rT = ZCEXclr.rT, ZCEXclr.T
+        ZCEXclr.LT, ZCEXclr.rLT = ZCEXclr.rLT, ZCEXclr.LT
+        ZCEXclr.cbFill, ZCEXclr.rCbFill = ZCEXclr.rCbFill, ZCEXclr.cbFill
+        ZCEXclr.cbFrame, ZCEXclr.rCbFrame = ZCEXclr.rCbFrame, ZCEXclr.cbFrame
     end
     TASK.unlock('changeName')
     TASK.unlock('changeAboutme')
@@ -2182,9 +2191,9 @@ local tab = {
     WIDGET.new {
         name = 'zcex', type = 'button',
         pos = { 1, 0 }, x = -60, y = 500, w = 160, h = 60,
-        color = { .58, .69, 1 },
+        color = (GAME.anyRev and ZCEXclr.rD or ZCEXclr.D),
         sound_hover = 'menutap',
-        fontSize = 30, text = "ZCEX   ", textColor = { .09, .09, .09 },
+        fontSize = 30, text = "ZCEX   ", textColor = (GAME.anyRev and ZCEXclr.rL or ZCEXclr.L),
         onPress = function() love.keypressed('5') end,
         onClick = function() love.keyreleased('5') end,
     },

@@ -165,7 +165,7 @@ TEXTURE = {
     revmoon = assets 'tower/revmoon.png',
     urevmoon = assets 'tower/urevmoon.png',
     stars = assets 'tower/stars.png',
-    rodinia = assets 'tower/ZCEX_Rodinia_placeholder.png',
+    rodinia = assets 'tower/ZCEX_Rodinia.png',
     warning = assets 'finalwarning.png',
 
     revive = {
@@ -817,7 +817,7 @@ function InitProfile()
     }
 
     STAT = {
-        mod = 'Extra',
+        mod = "Rodinia's Domain",
         version = nil, -- will be set after loading
         system = SYSTEM,
         modTime = os.time(),
