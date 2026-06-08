@@ -161,6 +161,7 @@ local GAME = {
     forfeitTimer = 0,
     exTimer = 0,
     anyRev = false,
+    anyEasy = false,
     revTimer = 0,
     revDeckSkin = false,
     uiHide = 0,
@@ -2117,7 +2118,6 @@ function GAME.refreshRev()
         end):setUnique('revSwitched'):setDuration(.26):run()
     end
 end
-
 ---@author: Trevor Smithy
 function GAME.refreshEasy()
     local hasEasy = false
@@ -2127,6 +2127,7 @@ function GAME.refreshEasy()
             break
         end
     end
+    if hasEasy ~= GAME.anyEasy then GAME.anyEasy = hasEasy end
 end
 
 function GAME.refreshUneasy()
@@ -3527,6 +3528,14 @@ function GAME.finish(reason)
 
     if GAME.height >= 825000 and CONF.imperial then
         IssueAchv('im_gonna_be')
+    end
+
+    if GAME.height >= 9550 then
+        if GAME.anyRev and GAME.anyEasy and comboMP <= 5 then
+            IssueAchv('Rodinia_Rev_anyEasy')
+        elseif GAME.anyEasy then
+            IssueAchv('Rodinia_anyEasy')
+        end
     end
 
     GAME.playing = false

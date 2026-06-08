@@ -2314,6 +2314,24 @@ local d = {
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         hide = function() return GAME.completion.EX == 0 or GAME.completion.MS == 0 or GAME.completion.AS == 0 end,
     },
+    { -- Rodinia_anyEasy
+        id = 'Rodinia_anyEasy',
+        name = "Really...?",
+        desc = [[See Rodinia's face with any Easy mod on]],
+        quote = [["C'mon man, do you really need Easy mods to get up here?"]],
+        credit = "@Rodinia",
+        type = 'issued',
+        hide = TRUE,
+    },
+    { -- Rodinia_Rev_anyEasy
+        id = 'Rodinia_Rev_anyEasy',
+        name = "...",
+        desc = [[See Rodinia's face with any combination of Reverse and Easy mods on, under 6 MP]],
+        quote = [["Not only do you commit heresy, but you can't even do it without help?"]],
+        credit = "@Rodinia",
+        type = 'issued',
+        hide = TRUE,
+    },
 }
 
 local compFunc = {

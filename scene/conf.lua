@@ -7,7 +7,7 @@ local scene = {}
 -- 3. Album
 -- 4. ZCEM
 local ZCEMpage = 4
-local ZCEXpage = 5
+local ZCRDpage = 5
 local page = 1
 local maxPage = 5
 local uidList = {} ---@type ({uid: string, modTime?: string} | false)[]
@@ -119,8 +119,8 @@ local ZCEMclr = {
     cbFill = { COLOR.HEX '0B0E17FF' },
     cbFrame = { COLOR.HEX '6A82A7FF' },
 }
--- ZCEX Creepercraft
-local ZCEXclr = {
+-- ZCRD Creepercraft
+local ZCRDclr = {
     D = { COLOR.HEX '94B1FFFF' },
     L = { COLOR.HEX '191919FF' },
     T = { COLOR.HEX '191919FF' },
@@ -219,7 +219,7 @@ local function refreshWidgets()
                 end
             else
                 if W.name and #W.name > 2 and W.type ~= "button" and W.type ~= "hint" and W.name ~= "urm" and TABLE.find(zcem, W.name) then
-                    W.textColor = page == ZCEMpage and ZCEMclr.T or page == ZCEXpage and ZCEXclr.T or clr.T
+                    W.textColor = page == ZCEMpage and ZCEMclr.T or page == ZCRDpage and ZCRDclr.T or clr.T
                 end
             end
         end
@@ -301,12 +301,12 @@ function scene.load()
         for _, C in next, ZCEMclr do
             C[1], C[3] = C[3], C[1]
         end
-        ZCEXclr.D, ZCEXclr.rD = ZCEXclr.rD, ZCEXclr.D
-        ZCEXclr.L, ZCEXclr.rL = ZCEXclr.rL, ZCEXclr.L
-        ZCEXclr.T, ZCEXclr.rT = ZCEXclr.rT, ZCEXclr.T
-        ZCEXclr.LT, ZCEXclr.rLT = ZCEXclr.rLT, ZCEXclr.LT
-        ZCEXclr.cbFill, ZCEXclr.rCbFill = ZCEXclr.rCbFill, ZCEXclr.cbFill
-        ZCEXclr.cbFrame, ZCEXclr.rCbFrame = ZCEXclr.rCbFrame, ZCEXclr.cbFrame
+        ZCRDclr.D, ZCRDclr.rD = ZCRDclr.rD, ZCRDclr.D
+        ZCRDclr.L, ZCRDclr.rL = ZCRDclr.rL, ZCRDclr.L
+        ZCRDclr.T, ZCRDclr.rT = ZCRDclr.rT, ZCRDclr.T
+        ZCRDclr.LT, ZCRDclr.rLT = ZCRDclr.rLT, ZCRDclr.LT
+        ZCRDclr.cbFill, ZCRDclr.rCbFill = ZCRDclr.rCbFill, ZCRDclr.cbFill
+        ZCRDclr.cbFrame, ZCRDclr.rCbFrame = ZCRDclr.rCbFrame, ZCRDclr.cbFrame
     end
     TASK.unlock('changeName')
     TASK.unlock('changeAboutme')
@@ -536,7 +536,7 @@ function scene.draw()
         gc.translate(0, dy)
         SCN.curScroll = -dy
     end
-    gc_setColor(page == ZCEMpage and ZCEMclr.D or page == ZCEXpage and ZCEXclr.D or clr.D)
+    gc_setColor(page == ZCEMpage and ZCEMclr.D or page == ZCRDpage and ZCRDclr.D or clr.D)
     if GAME.eglassCard then
         local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
         gc_setColor(bgmColors[BgmPlaying] or clr.LT)
@@ -690,40 +690,40 @@ function scene.draw()
 
     -- Top bar & title
     gc_replaceTransform(SCR.xOy_u)
-    gc_setColor(page == ZCEMpage and ZCEMclr.D or page == ZCEXpage and ZCEXclr.D or clr.D)
+    gc_setColor(page == ZCEMpage and ZCEMclr.D or page == ZCRDpage and ZCRDclr.D or clr.D)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     gc_rectangle('fill', -1300, 0, 2600, 70)
-    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCEXpage and ZCEXclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCRDpage and ZCRDclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.262 or .626)
     gc_rectangle('fill', -1300, 70, 2600, 3)
     gc_replaceTransform(SCR.xOy_ul)
-    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCEXpage and ZCEXclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCRDpage and ZCRDclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     FONT.set(50)
     if GAME.anyRev then
-        gc_print(page == ZCEMpage and "ZCEM SETTINGS" or page == ZCEXpage and "ZCEX SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
+        gc_print(page == ZCEMpage and "ZCEM SETTINGS" or page == ZCRDpage and "ZCRD SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
     else
-        gc_print(page == ZCEMpage and "ZCEM SETTINGS" or page == ZCEXpage and "ZCEX SETTINGS" or "CONFIG", 15, 0)
+        gc_print(page == ZCEMpage and "ZCEM SETTINGS" or page == ZCRDpage and "ZCRD SETTINGS" or "CONFIG", 15, 0)
     end
     --if GAME.anyRev then
-    --    gc_print(page == 5 and "ZCEX SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
+    --    gc_print(page == 5 and "ZCRD SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
     --else
-    --    gc_print(page == 5 and "ZCEX SETTINGS" or "CONFIG", 15, 0)
+    --    gc_print(page == 5 and "ZCRD SETTINGS" or "CONFIG", 15, 0)
     --end
 
     -- Bottom bar & text
     gc_replaceTransform(SCR.xOy_d)
-    gc_setColor(page == ZCEMpage and ZCEMclr.D or page == ZCEXpage and ZCEXclr.D or clr.D)
+    gc_setColor(page == ZCEMpage and ZCEMclr.D or page == ZCRDpage and ZCRDclr.D or clr.D)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     gc_rectangle('fill', -1300, 0, 2600, -50)
-    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCEXpage and ZCEXclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCRDpage and ZCRDclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.262 or .626)
     gc_rectangle('fill', -1300, -50, 2600, -3)
     gc_replaceTransform(SCR.xOy_dl)
-    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCEXpage and ZCEXclr.L or clr.L)
+    gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCRDpage and ZCRDclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     FONT.set(30)
-    gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == ZCEMpage and "MODDED" or page == ZCEXpage and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
+    gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == ZCEMpage and "MODDED" or page == ZCRDpage and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
 end
 
 function scene.overDraw()
@@ -2100,15 +2100,15 @@ local page5 = {
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
         text = "PLACEHOLDER AHH",
-        color = ZCEXclr.T,
+        color = ZCRDclr.T,
         fontSize = 50,
         x = baseX + 30, y = baseY + 50,
     },
     WIDGET.new { -- Bounce cards
         name = 'bounceCard', type = 'checkBox',
-        fillColor = ZCEXclr.cbFill,
-        frameColor = ZCEXclr.cbFrame,
-        textColor = ZCEXclr.T, text = "BOUNCE CARDS IN TERASPEED THEME",
+        fillColor = ZCRDclr.cbFill,
+        frameColor = ZCRDclr.cbFrame,
+        textColor = ZCRDclr.T, text = "BOUNCE CARDS IN TERASPEED THEME",
         x = baseX + 40, y = baseY + 120,
         disp = function() return STAT.bounceTera end,
         code = function()
@@ -2124,9 +2124,9 @@ local page5 = {
     },
     WIDGET.new { -- Bounce cards
         name = 'planetArt', type = 'checkBox',
-        fillColor = ZCEXclr.cbFill,
-        frameColor = ZCEXclr.cbFrame,
-        textColor = ZCEXclr.T, text = "USE PLANET CARD ARTS",
+        fillColor = ZCRDclr.cbFill,
+        frameColor = ZCRDclr.cbFrame,
+        textColor = ZCRDclr.T, text = "USE PLANET CARD ARTS",
         x = baseX + 40, y = baseY + 60 + 120,
         disp = function() return STAT.usePlanetArt end,
         code = function()
@@ -2189,11 +2189,11 @@ local tab = {
         onClick = function() love.keyreleased('4') end,
     },
     WIDGET.new {
-        name = 'zcex', type = 'button',
+        name = 'ZCRD', type = 'button',
         pos = { 1, 0 }, x = -60, y = 500, w = 160, h = 60,
-        color = (GAME.anyRev and ZCEXclr.rD or ZCEXclr.D),
+        color = (GAME.anyRev and ZCRDclr.rD or ZCRDclr.D),
         sound_hover = 'menutap',
-        fontSize = 30, text = "ZCEX   ", textColor = (GAME.anyRev and ZCEXclr.rL or ZCEXclr.L),
+        fontSize = 30, text = "ZCRD   ", textColor = (GAME.anyRev and ZCRDclr.rL or ZCRDclr.L),
         onPress = function() love.keypressed('5') end,
         onClick = function() love.keyreleased('5') end,
     },

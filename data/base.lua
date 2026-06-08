@@ -587,11 +587,9 @@ RodiniaTexts = {
         mid2 = [["Ok, that's enough."]],
     },
     f6 = { -- Abandoned offices
-        begin = [[The feeling of safety slipped away.]],
-        effStart = [[Your attention strays...]],
-        mid = [[You begin to hear something calling your name...]],
-        noNH = [[You cannot ignore the voice...]],
-        NHoff = [[You overcome your fear.]],
+        begin = [["I'm bored..."]],
+        mid1 = [["This is too slow..."]],
+        mid2 = [["Let's speed things up!"]],
     },
     f7 = { -- Sacreligious Ruins
         desc = "The remains of a previously sacred chapel, the spirits of those,\nwho worshipped the gods above linger on...",

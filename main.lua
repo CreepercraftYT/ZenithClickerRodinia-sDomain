@@ -1,4 +1,4 @@
-love.window.setIcon(love.image.newImageData('assets/iconZCEM.png'))
+love.window.setIcon(love.image.newImageData('assets/iconZCRD.png'))
 
 require 'Zenitha'
 
@@ -166,6 +166,8 @@ TEXTURE = {
     urevmoon = assets 'tower/urevmoon.png',
     stars = assets 'tower/stars.png',
     rodinia = assets 'tower/ZCEX_Rodinia.png',
+    rodiniaAnyEasy = assets 'tower/ZCEX_Rodinia_anyEasy.png',
+    rodiniaAnyEasyRev = assets 'tower/ZCEX_Rodinia_anyRevanyEasy.png',
     warning = assets 'finalwarning.png',
 
     revive = {
@@ -493,7 +495,7 @@ TEXTURE = {
         overDev = assets 'achievements/verified-halfmod.png',
     },
 
-    logo = assets 'iconZCEM.png',
+    logo = assets 'iconZCRD.png',
     logo_old = assets 'icon_old.png',
     programmingsmithy = assets 'programmingsmithy.png',
     github = assets 'GitHub_Invertocat_White.png',
@@ -2099,7 +2101,7 @@ RefreshDaily()
 TABLE.update(TextColor, BaseTextColor)
 TABLE.update(ShadeColor, BaseShadeColor)
 GAME.refreshCurrentCombo()
-TEXTS.version:set(SYSTEM .. (CONF.oldHitbox and " eT" or " eV") .. (require 'version'.verStr))
+TEXTS.version:set(SYSTEM .. (CONF.oldHitbox and " RT" or " RV") .. (require 'version'.verStr))
 if SYSTEM == 'Web' then
     _G[('DiscordRPC')] = { update = NULL, setEnable = NULL }
 else
