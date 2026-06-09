@@ -1661,8 +1661,8 @@ albumBtn {
     visibleFunc = function() return page == 3 and ACHV.programmer_gamer and ACHV.programmer_gamer >= 1650 end,
 }
 
--- Page 4
-local page4 = {
+-- ZCEM page
+local pageZCEM = {
     WIDGET.new { -- Game Play
         name = 'gameplay', type = 'button', 
         x = baseX + 220, y = baseY + 60, w = 410, h = 70,
@@ -2117,7 +2117,7 @@ local page4 = {
 for _, W in next, page1 do W.visibleFunc = W.visibleFunc or pageVisFunc[1] end
 for _, W in next, page2 do W.visibleFunc = W.visibleFunc or pageVisFunc[2] end
 for _, W in next, page3 do W.visibleFunc = W.visibleFunc or pageVisFunc[3] end
-for _, W in next, page4 do W.visibleFunc = W.visibleFunc or pageVisFunc[4] end
+for _, W in next, pageZCEM do W.visibleFunc = W.visibleFunc or pageVisFunc[ZCEMpage] end
 
 -- Tabs
 local tab = {
@@ -2175,7 +2175,7 @@ scene.widgetList = {}
 TABLE.append(scene.widgetList, page1)
 TABLE.append(scene.widgetList, page2)
 TABLE.append(scene.widgetList, page3)
-TABLE.append(scene.widgetList, page4)
+TABLE.append(scene.widgetList, pageZCEM)
 TABLE.append(scene.widgetList, tab)
 
 return scene
