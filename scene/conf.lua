@@ -1274,25 +1274,25 @@ local page2 = {
                 MSG('error', "Cannot import data from future versions\nPlease update your game first!")
                 SFX.play('staffwarning')
                 return
-            elseif res1.mod and res1.mod ~= 'vanilla' and res1.mod ~= 'Extra' then
+            elseif res1.mod and res1.mod ~= 'vanilla' and res1.mod ~= "Rodinia's Domain" then
                 local modText = "Cannot import data from a different modded version"
-                if res1.mod == "A Fool's Mod" then modText = "The Creator thinks you're foolish for trying to use that here"
+                if res1.mod == "A Fool's Mod" then modText = "Rodinia gets flashbacks from when she had to release her tarot cards..."
                     MSG('dark', modText)
                     SFX.play('staffwarning')
                     return
-                elseif res1.mod == "evilvile" then modText = "The Creator wants nothing to do with something that evil"
+                elseif res1.mod == "evilvile" then modText = "Rodinia doesn't want to be reminded of her... problematic past"
                     MSG('dark', modText)
                     SFX.play('staffwarning')
                     return
-                elseif res1.mod == "shimmer" then modText = "The Creator asks you to keep your sparkling water away from his creation"
+                elseif res1.mod == "shimmer" then modText = "Rodinia no longer cares for waves of water, no matter how they may shimmer"
                     MSG('dark', modText)
                     SFX.play('staffwarning')
                     return
-                elseif res1.mod == "unabstracted" then modText = "The Creator prefers his work abstract"
+                elseif res1.mod == "unabstracted" then modText = "Rodinia knows firsthand that sometimes ignorance is bliss"
                     MSG('dark', modText)
                     SFX.play('staffwarning')
                     return
-                elseif res1.mod == "finalmixbeg" then modText = "The Creator rejects your chakras and magics"
+                elseif res1.mod == "finalmixbeg" then modText = "Rodinia thinks one of her sisters would be interested in magic, but not herself"
                     MSG('dark', modText)
                     SFX.play('staffwarning')
                     return
@@ -1327,7 +1327,7 @@ local page2 = {
                 end
             end
             TABLE.update(STAT, res1)
-            STAT.mod = 'Extra'
+            STAT.mod = "Rodinia's Domain"
             BEST, ACHV = res2, res3
             setmetatable(BEST.highScore, Metatable.best_highscore)
             GAME.refreshLockState()
@@ -2099,16 +2099,16 @@ local page5 = {
     -- Placeholder
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
-        text = "PLACEHOLDER AHH",
-        color = ZCRDclr.T,
+        text = "OPTIONS",
+        color = colorRev and ZCRDclr.rT or ZCRDclr.T,
         fontSize = 50,
         x = baseX + 30, y = baseY + 50,
     },
     WIDGET.new { -- Bounce cards
         name = 'bounceCard', type = 'checkBox',
-        fillColor = ZCRDclr.cbFill,
-        frameColor = ZCRDclr.cbFrame,
-        textColor = ZCRDclr.T, text = "BOUNCE CARDS IN TERASPEED THEME",
+        fillColor = colorRev and ZCRDclr.rCbFill or ZCRDclr.cbFill,
+        frameColor = colorRev and ZCRDclr.rCbFrame or ZCRDclr.cbFrame,
+        textColor = colorRev and ZCRDclr.rT or ZCRDclr.T, text = "BOUNCE CARDS IN TERASPEED THEME",
         x = baseX + 40, y = baseY + 120,
         disp = function() return STAT.bounceTera end,
         code = function()
@@ -2124,9 +2124,9 @@ local page5 = {
     },
     WIDGET.new { -- Bounce cards
         name = 'planetArt', type = 'checkBox',
-        fillColor = ZCRDclr.cbFill,
-        frameColor = ZCRDclr.cbFrame,
-        textColor = ZCRDclr.T, text = "USE PLANET CARD ARTS",
+        fillColor = colorRev and ZCRDclr.rCbFill or ZCRDclr.cbFill,
+        frameColor = colorRev and ZCRDclr.rCbFrame or ZCRDclr.cbFrame,
+        textColor = colorRev and ZCRDclr.rT or ZCRDclr.T, text = "USE PLANET CARD ARTS",
         x = baseX + 40, y = baseY + 60 + 120,
         disp = function() return STAT.usePlanetArt end,
         code = function()
@@ -2191,9 +2191,9 @@ local tab = {
     WIDGET.new {
         name = 'ZCRD', type = 'button',
         pos = { 1, 0 }, x = -60, y = 500, w = 160, h = 60,
-        color = (GAME.anyRev and ZCRDclr.rD or ZCRDclr.D),
+        color = colorRev and ZCRDclr.rD or ZCRDclr.D,
         sound_hover = 'menutap',
-        fontSize = 30, text = "ZCRD   ", textColor = (GAME.anyRev and ZCRDclr.rL or ZCRDclr.L),
+        fontSize = 30, text = "ZCRD   ", textColor = colorRev and ZCRDclr.rL or ZCRDclr.L,
         onPress = function() love.keypressed('5') end,
         onClick = function() love.keyreleased('5') end,
     },
