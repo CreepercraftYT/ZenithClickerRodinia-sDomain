@@ -2098,6 +2098,9 @@ function GAME.refreshRev()
         W = SCN.scenes.tower.widgetList.conf
         W.fillColor[1], W.fillColor[3] = W.fillColor[3], W.fillColor[1]
         W.textColor[1], W.textColor[3] = W.textColor[3], W.textColor[1]
+        --W = CONF.scene.widgetList.page5
+        --W.fillColor[1], W.fillColor[3] = W.fillColor[3], W.fillColor[1]
+        --W.textColor[1], W.textColor[3] = W.textColor[3], W.textColor[1]
 
         if not hasRev then
             GAME.revDeckSkin = false

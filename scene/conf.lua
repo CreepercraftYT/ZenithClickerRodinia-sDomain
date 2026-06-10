@@ -125,14 +125,16 @@ local ZCRDclr = {
     L = { COLOR.HEX '191919FF' },
     T = { COLOR.HEX '191919FF' },
     LT = { COLOR.HEX '393939FF' },
-    rD = { COLOR.HEX 'BD0000FF' },
-    rL = { COLOR.HEX '330000FF' },
-    rT = { COLOR.HEX '330000FF' },
-    rLT = { COLOR.HEX '550000FF' },
     cbFill = { COLOR.HEX '191919FF' },
     cbFrame = { COLOR.HEX '191919FF' },
-    rCbFill = { COLOR.HEX '330000FF' },
-    rCbFrame = { COLOR.HEX '330000FF' },
+}
+local rZCRDclr = {
+    D = { COLOR.HEX 'BD0000FF' },
+    L = { COLOR.HEX '330000FF' },
+    T = { COLOR.HEX '330000FF' },
+    LT = { COLOR.HEX '550000FF' },
+    cbFill = { COLOR.HEX '330000FF' },
+    cbFrame = { COLOR.HEX '330000FF' },
 }
 local bpmMode = false
 local comboTimer = 0
@@ -301,12 +303,17 @@ function scene.load()
         for _, C in next, ZCEMclr do
             C[1], C[3] = C[3], C[1]
         end
-        ZCRDclr.D, ZCRDclr.rD = ZCRDclr.rD, ZCRDclr.D
-        ZCRDclr.L, ZCRDclr.rL = ZCRDclr.rL, ZCRDclr.L
-        ZCRDclr.T, ZCRDclr.rT = ZCRDclr.rT, ZCRDclr.T
-        ZCRDclr.LT, ZCRDclr.rLT = ZCRDclr.rLT, ZCRDclr.LT
-        ZCRDclr.cbFill, ZCRDclr.rCbFill = ZCRDclr.rCbFill, ZCRDclr.cbFill
-        ZCRDclr.cbFrame, ZCRDclr.rCbFrame = ZCRDclr.rCbFrame, ZCRDclr.cbFrame
+        for _, C in next, ZCRDclr do
+            --MSG(dark,C[1] .. ", " .. C[3])
+            C[1], C[3] = C[3], C[1]
+            --MSG(dark,C[1] .. ", " .. C[3])
+        end
+        --ZCRDclr.D, ZCRDclr.rD = ZCRDclr.rD, ZCRDclr.D
+        --ZCRDclr.L, ZCRDclr.rL = ZCRDclr.rL, ZCRDclr.L
+        --ZCRDclr.T, ZCRDclr.rT = ZCRDclr.rT, ZCRDclr.T
+        --ZCRDclr.LT, ZCRDclr.rLT = ZCRDclr.rLT, ZCRDclr.LT
+        --ZCRDclr.cbFill, ZCRDclr.rCbFill = ZCRDclr.rCbFill, ZCRDclr.cbFill
+        --ZCRDclr.cbFrame, ZCRDclr.rCbFrame = ZCRDclr.rCbFrame, ZCRDclr.cbFrame
     end
     TASK.unlock('changeName')
     TASK.unlock('changeAboutme')
@@ -2100,15 +2107,15 @@ local page5 = {
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
         text = "OPTIONS",
-        color = colorRev and ZCRDclr.rT or ZCRDclr.T,
+        color = ZCRDclr.T,
         fontSize = 50,
         x = baseX + 30, y = baseY + 50,
     },
     WIDGET.new { -- Bounce cards
         name = 'bounceCard', type = 'checkBox',
-        fillColor = colorRev and ZCRDclr.rCbFill or ZCRDclr.cbFill,
-        frameColor = colorRev and ZCRDclr.rCbFrame or ZCRDclr.cbFrame,
-        textColor = colorRev and ZCRDclr.rT or ZCRDclr.T, text = "BOUNCE CARDS IN TERASPEED THEME",
+        fillColor = ZCRDclr.cbFill,
+        frameColor = ZCRDclr.cbFrame,
+        textColor = ZCRDclr.T, text = "BOUNCE CARDS IN TERASPEED THEME",
         x = baseX + 40, y = baseY + 120,
         disp = function() return STAT.bounceTera end,
         code = function()
@@ -2124,9 +2131,9 @@ local page5 = {
     },
     WIDGET.new { -- Bounce cards
         name = 'planetArt', type = 'checkBox',
-        fillColor = colorRev and ZCRDclr.rCbFill or ZCRDclr.cbFill,
-        frameColor = colorRev and ZCRDclr.rCbFrame or ZCRDclr.cbFrame,
-        textColor = colorRev and ZCRDclr.rT or ZCRDclr.T, text = "USE PLANET CARD ARTS",
+        fillColor = ZCRDclr.cbFill,
+        frameColor = ZCRDclr.cbFrame,
+        textColor = ZCRDclr.T, text = "USE PLANET CARD ARTS",
         x = baseX + 40, y = baseY + 60 + 120,
         disp = function() return STAT.usePlanetArt end,
         code = function()
@@ -2189,11 +2196,11 @@ local tab = {
         onClick = function() love.keyreleased('4') end,
     },
     WIDGET.new {
-        name = 'ZCRD', type = 'button',
+        name = 'zcrd', type = 'button',
         pos = { 1, 0 }, x = -60, y = 500, w = 160, h = 60,
         color = colorRev and ZCRDclr.rD or ZCRDclr.D,
         sound_hover = 'menutap',
-        fontSize = 30, text = "ZCRD   ", textColor = colorRev and ZCRDclr.rL or ZCRDclr.L,
+        fontSize = 30, text = "ZCRD   ", textColor = ZCRDclr.L,
         onPress = function() love.keypressed('5') end,
         onClick = function() love.keyreleased('5') end,
     },
