@@ -51,7 +51,7 @@ local d = {
             { set = "eDPeEX", checks = {'invisUI', true}, name = '"PROSOPAGNOSIA"'},
             { set = "eASeDHeEXeMSeNHeVL", name = '"THE GAMER TRINITY"'},
             -- Smithy
-            { set = "eASeEXeVL", name = '"THE UNEASY PRO G(R)AM(M)ING SMITHY"'},
+            { set = "eASeEXeVL", name = '"THE UNEASY SMITHY"'},
         },
         other = {
             { set = "eASeDHeEXrGV", checks = {'enightcore', true}, name = [["BUT IT ISN'T ONE OF MINE"]]},
