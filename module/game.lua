@@ -1961,6 +1961,7 @@ function GAME.refreshCurrentCombo()
         GAME.comboMP = GAME.getComboMP(hand)
         GAME.comboZP = GAME.getComboZP(hand)
         TEXTS.mpPreview:set(GAME.comboMP .. " MP")
+        if GAME.comboZP < 1.2 and GAME.forceRev then GAME.comboZP = 1.2 end
         TEXTS.zpPreview:set(("%.2fx ZP"):format(GAME.comboZP))
         DailyActived =
             #GAME.getHand(true) == #DAILY and

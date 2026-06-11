@@ -1122,6 +1122,9 @@ function scene.draw()
         -- MP & ZP Preview
         if not GAME.playing and STAT.maxFloor >= 10 and not GAME.badTime then
             gc_setColor(TextColor)
+            if GAME.forceRev and GAME.getComboZP(GAME.getHand(true)) < 1.2 then
+                gc_setColor(COLOR.rainbow_light(2.6 * t))
+            end
             gc_setAlpha(.12 + abs(math.log(GAME.comboZP)) * (GAME.einvisUI and 1 or 2))
             gc_draw(TEXTS.zpPreview, 1370, 275, 0, 1, 1, TEXTS.zpPreview:getWidth())
             if GAME.comboMP >= 6 or GAME.comboMP <= -3 then
