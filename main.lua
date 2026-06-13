@@ -1287,6 +1287,7 @@ for _, v in next, BgmData do
     if not v.bpmData then v.bpmData = { v.bpm } end
 end
 
+MusicBPM = nil ---@type number
 BgmPlaying = false ---@type ZC.bgmName | false
 SongNamePlaying = false -- Same as BgmPlaying, but this distinguishes f0(r) and f1(r) for album page
 BgmLooping = false
@@ -1307,6 +1308,7 @@ function PlayBGM(name, force)
 
     SongNamePlaying = name
     local last = BgmPlaying
+    MusicBPM = nil -- reset the stored BPM
 
     if GAME.playing and (RevMusicMode() or GAME.forceRev) then name = name .. 'r' end
     if name == 'fomgr' then name = 'fomg' end
@@ -2061,6 +2063,7 @@ function Daemon_Fast()
                 for i = #dat - 1, 2, -2 do
                     if beatS + .1 >= dat[i] then
                         bpm = dat[i + 1]
+                        MusicBPM = bpm
                         break
                     end
                 end

@@ -51,7 +51,7 @@ local overallProgress = {
     ptText = "0/0 Pts",
 }
 
-local page = 1
+local page = 2
 local maxPage = 2
 local ZCEMpage = 2
 

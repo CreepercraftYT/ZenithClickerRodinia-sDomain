@@ -124,6 +124,7 @@ local ZCEMclr = {
     cbFrame = { COLOR.HEX '6A82A7FF' },
 }
 local bpmMode = false
+local bpmModifier = 1
 local comboTimer = 0
 local combo = 0
 local leftx, rightx, leftbx, rightbx = 40, 500, 220, 685
@@ -486,6 +487,44 @@ function scene.update(dt)
     end
 end
 
+local function modifiedBPM()
+    if BGM.tell() < 0.1 then MusicBPM = nil end
+    local bpm = MusicBPM or BgmData[BgmPlaying].bpmData[1]
+    bpmModifier = 1
+    if GAME.nightcore then 
+        bpm = bpm * 2
+        bpmModifier = bpmModifier * 2
+    end
+    if GAME.enightcore then 
+        bpm = bpm * 2
+        bpmModifier = bpmModifier * 2
+    end
+    if GAME.slowmo then 
+        bpm = bpm / 2
+        bpmModifier = bpmModifier / 2
+    end
+    if GAME.eslowmo then
+        bpm = bpm * 0.70711
+        bpmModifier = bpmModifier * 0.70711
+    end
+    if GAME.mod.GV == -1 then
+        bpm = bpm * 0.70711
+        bpmModifier = bpmModifier * 0.70711
+    elseif GAME.mod.GV == 1 then
+        bpm = bpm * 1.05946
+        bpmModifier = bpmModifier * 0.70711
+    elseif GAME.mod.GV == 2 then
+        local mult = URM and 1.18921 or 1.12246
+        bpm = bpm * mult
+        bpmModifier = bpmModifier * mult
+    end
+    if GAME.uneasyMode then 
+        bpm = bpm * 1.01455 
+        bpmModifier = bpmModifier * 1.01455
+    end
+    return bpm
+end
+
 function scene.draw()
     DrawBG(CONF.bgBrightness)
 
@@ -493,9 +532,10 @@ function scene.draw()
     local playTime = 0
     local beatLen = 0
     local beatBar = 0
+    local bpm = modifiedBPM()
     if bpmMode then
         playTime = BGM.tell()
-        beatLen = 60 / BgmData[BgmPlaying].bpm
+        beatLen = 60 / bpm
         beatBar = BgmData[BgmPlaying].bar
     end
 
@@ -543,7 +583,7 @@ function scene.draw()
     gc_replaceTransform(SCR.xOy)
     gc.translate(baseX, baseY)
     if bpmMode and (page == 3 or page == ZCEMpage) then
-        local dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416), -2.6, 2.6)
+        local dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416 / bpmModifier), -2.6, 2.6)
         gc.translate(0, dy)
         SCN.curScroll = -dy
     end
@@ -664,7 +704,7 @@ function scene.draw()
         -- Ambient Glow
         gc.push('transform')
         gc_replaceTransform(SCR.origin)
-        if BgmPlaying == 'tera' or BgmPlaying == 'terar' then
+        if BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
             gc_setAlpha(.42)
         else
             gc_setAlpha(.26 - .12 * MusicBeat)
@@ -676,7 +716,7 @@ function scene.draw()
         -- Title
         gc_setAlpha(1)
         gc_mStr(playingBgmTitle, len / 2, 0)
-        if not (BgmPlaying == 'tera' or BgmPlaying == 'terar') then
+        if not (BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael') then
             gc_setColor(1, 1, 1, MATH.lerp(.62, .26, MusicBeat))
             gc_mStr(playingBgmTitle, len / 2, -1.26)
         end
@@ -768,43 +808,26 @@ end
 
 function scene.overDraw()
     -- BPM/Speed Indicator
-    local data = BgmData[BgmPlaying]
-    local bpm = data.bpm
+    local bpm = modifiedBPM()
     local speedMod = 1
     if GAME.nightcore then 
-        bpm = bpm * 2
         speedMod = speedMod * 2.6
     end
-    if GAME.enightcore then 
-        bpm = bpm * 2
-    end
-    if GAME.slowmo then 
-        bpm = bpm / 2
-    end
     if GAME.eslowmo then
-        bpm = bpm * 0.70711
         speedMod = speedMod * 0.75
     end
     if GAME.ecloseCard then
         speedMod = speedMod * 2
     end
-    if GAME.mod.GV == -1 then
-        bpm = bpm * 0.70711
-    elseif GAME.mod.GV == 1 then
-        bpm = bpm * 1.05946
-    elseif GAME.mod.GV == 2 then
-        bpm = bpm * (URM and 1.18921 or 1.12246)
-    end
     local M = GAME.mod
-    if GAME.uneasyMode then bpm = bpm * 1.01455 end
     local playTime = 0
     local beatLen = 0
     local dy = 0
     local t = love.timer.getTime()
     if bpmMode and (page == ZCEMpage or page == 3) then
         playTime = BGM.tell()
-        beatLen = 60 / BgmData[BgmPlaying].bpm
-        dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416), -2.6, 2.6)
+        beatLen = 60 / bpm
+        dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416 / bpmModifier), -2.6, 2.6)
     end
     if page == ZCEMpage then
         if bpmMode then
@@ -1525,6 +1548,7 @@ pages[3] = {
         color = clr.L,
         fontSize = 30, textColor = clr.LT, text = "-30s",
         onClick = function()
+            MusicBPM = nil
             TASK.removeTask_code(Task_MusicEnd)
             BGM.set('all', 'seek', math.max(BGM.tell() - 30, 0))
         end,
@@ -1535,6 +1559,7 @@ pages[3] = {
         color = clr.L,
         fontSize = 30, textColor = clr.LT, text = "-5s",
         onClick = function()
+            MusicBPM = nil
             TASK.removeTask_code(Task_MusicEnd)
             BGM.set('all', 'seek', math.max(BGM.tell() - 5, 0))
         end,
@@ -1545,6 +1570,7 @@ pages[3] = {
         color = clr.L,
         fontSize = 30, textColor = clr.LT, text = "+5s",
         onClick = function()
+            MusicBPM = nil
             TASK.removeTask_code(Task_MusicEnd)
             BGM.set('all', 'seek', math.min(BGM.tell() + 5, BGM.getDuration()))
         end,
@@ -1555,6 +1581,7 @@ pages[3] = {
         color = clr.L,
         fontSize = 30, textColor = clr.LT, text = "+30s",
         onClick = function()
+            MusicBPM = nil
             TASK.removeTask_code(Task_MusicEnd)
             BGM.set('all', 'seek', math.min(BGM.tell() + 30, BGM.getDuration()))
         end,
@@ -1661,8 +1688,20 @@ albumBtn {
     visibleFunc = function() return page == 3 and ACHV.programmer_gamer and ACHV.programmer_gamer >= 1650 end,
 }
 
+-- Page 4
+pages[4] = {
+    -- SRS
+    WIDGET.new { -- title
+        type = 'text', alignX = 'left',
+        text = "SPEEDRUN SPLITS",
+        color = clr.T,
+        fontSize = 50,
+        x = baseX + 30, y = baseY + 50,
+    },
+}
+
 -- ZCEM page
-local pageZCEM = {
+pages[ZCEMpage] = {
     WIDGET.new { -- Game Play
         name = 'gameplay', type = 'button', 
         x = baseX + 220, y = baseY + 60, w = 410, h = 70,
@@ -2061,7 +2100,10 @@ local pageZCEM = {
         color = ZCEMclr.T,
         sound_hover = 'menutap',
         fontSize = 50, text = "CYCLE PIECES", textColor = ZCEMclr.LT,
-        onClick = function()
+        onClick = function(k)
+            if (k == 3 or love.keyboard.isDown('lalt', 'ralt')) and (GAME.pieceEffectID < 7 or GAME.pieceEffectID == #PieceData) then
+                GAME.pieceEffectID = 7
+            end
             GAME.pieceEffectID = (GAME.pieceEffectID or 0) % #PieceData + 1
             if GAME.pieceEffectID <= #PieceData - 1 then
                 local piece = ('zsjltoi'):sub(GAME.pieceEffectID, GAME.pieceEffectID)
@@ -2110,18 +2152,6 @@ local pageZCEM = {
             if descriptionIndex == 2 and bpmMode then scene.widgetList.description.floatText = "BPM: Shows current song's BPM, affected by Z/S/eZ/eS/all GVs/ueEX." end
             scene.widgetList.description:reset()
         end
-    },
-}
-
--- Page 4
-pages[4] = {
-    -- SRS
-    WIDGET.new { -- title
-        type = 'text', alignX = 'left',
-        text = "SPEEDRUN SPLITS",
-        color = clr.T,
-        fontSize = 50,
-        x = baseX + 30, y = baseY + 50,
     },
 }
 
