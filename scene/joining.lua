@@ -47,8 +47,8 @@ function scene.update(dt)
             end
             if not initialized then
                 BGM.setMaxSources(42)
-                BGM.load(FILE.load('data/bgm.lua', '-luaon'))
-                SFX.load('assets/sfx.ogg', FILE.load('data/sfx.lua', '-luaon'))
+                BGM.load(FILE.isSafe('data/bgm.lua') and FILE.safeLoad('data/bgm.lua', '-luaon') or {})
+                SFX.load('assets/sfx.ogg', FILE.isSafe('data/sfx.lua') and FILE.safeLoad('data/sfx.lua', '-luaon') or {})
                 for i = 1, 9 do
                     SFX.load('garbagewindup_'..i, 'assets/windup_'..i..'.ogg')
                 end

@@ -391,7 +391,6 @@ function scene.load()
             TEXTURE.achievement.icons:release()
         end)
     end
-    SetMouseVisible(true)
     if GAME.anyRev ~= colorRev then
         colorRev = GAME.anyRev
         for _, C in next, clr do
@@ -500,7 +499,7 @@ local gc_replaceTransform, gc_translate = gc.replaceTransform, gc.translate
 local gc_setColor, gc_rectangle, gc_polygon, gc_print, gc_printf = gc.setColor, gc.rectangle, gc.polygon, gc.print, gc.printf
 local gc_ucs_move, gc_ucs_back = GC.ucs_move, GC.ucs_back
 local gc_setAlpha, gc_mRect, gc_mDraw, gc_mDrawQ = GC.setAlpha, GC.mRect, GC.mDraw, GC.mDrawQ
-local gc_stc_setComp, gc_stc_arc, gc_stc_stop = GC.stc_setComp, GC.stc_arc, GC.stc_stop
+local gc_stc_reset, gc_stc_arc, gc_stc_stop = GC.stc_reset, GC.stc_arc, GC.stc_stop
 local gc_setBlendMode = GC.setBlendMode
 function scene.draw()
     DrawBG(26)
@@ -599,24 +598,24 @@ function scene.draw()
                     gc_setColor(1, 1, 1)
                     gc_mDraw(texture.frame[a.rank], 65, 65, 0, .42)
 
-                    -- Progress ring
-                    if a.progress > 0 then
-                        if colorRev then gc_setColor(COLOR.lR) end
-                        if a.progress < 1 then
-                            gc_stc_setComp()
-                            gc_stc_arc('pie', 65, 65,
-                                ea + -2.0944,
-                                ea + -2.0944 + ka * a.progress,
-                                63, 26)
-                            gc_stc_arc('pie', 65, 65,
-                                ea + 1.0472,
-                                ea + 1.0472 + ka * a.progress,
-                                63, 26)
-                        end
-                        gc_mDraw(texture.ring, 65, 65, 0, .42)
-                        gc_mDraw(texture.ring, 65, 65, 3.1416, .42)
-                        gc_stc_stop()
+                -- Progress ring
+                if a.progress > 0 then
+                    gc_stc_reset()
+                    if colorRev then gc_setColor(COLOR.lR) end
+                    if a.progress < 1 then
+                        gc_stc_arc('pie', 65, 65,
+                            ea + -2.0944,
+                            ea + -2.0944 + ka * a.progress,
+                            63, 26)
+                        gc_stc_arc('pie', 65, 65,
+                            ea + 1.0472,
+                            ea + 1.0472 + ka * a.progress,
+                            63, 26)
                     end
+                    gc_mDraw(texture.ring, 65, 65, 0, .42)
+                    gc_mDraw(texture.ring, 65, 65, 3.1416, .42)
+                    gc_stc_stop()
+                end
 
                     -- Glint
                     if a.rank >= 1 then
@@ -731,11 +730,10 @@ function scene.draw()
     gc_setColor(clr.L)
     FONT.set(50)
     if colorRev then
-        gc_print("ACHIEVEMENTS", 15, 68, 0, 1, -1)
+        gc_print("CHNL / ACHV", 15, 68, 0, 1, -1)
     else
-        gc_print("ACHIEVEMENTS", 15, 0)
+        gc_print("CHNL / ACHV", 15, 0)
     end
-
     -- Badge (wreath) count
     if STAT.maxFloor >= 10 and not whenItsReady and not TestMode then
         gc_replaceTransform(SCR.xOy_ur)

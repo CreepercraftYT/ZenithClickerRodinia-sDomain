@@ -633,8 +633,8 @@ function GAME.anim_setMenuHide(t)
     ---@cast w -nil
     w.stat.x = cLerp(60, -90, t * 1.5 - .5)
     w.stat:resetPos()
-    w.achv.x = cLerp(60, -90, t * 1.5)
-    w.achv:resetPos()
+    w.chnl.x = cLerp(60, -90, t * 1.5)
+    w.chnl:resetPos()
     w.easy.x = cLerp(60, -90, t * 1.5)
     w.easy:resetPos()
     w.conf.x = cLerp(-60, 90, t * 1.5 - .5)
@@ -1421,7 +1421,15 @@ function GAME.getRandomUID()
 end
 
 function GAME.awardKO(id1, id2, valid, toOppo)
-    if GAME.playing and valid then GAME.addHeight((M.EX == 2 and 8 or 15) * (M.EX == -1 and 1 or .26) * GAME.attackMul) end
+    if valid then
+        if GAME.playing then
+            GAME.addHeight((M.EX == 2 and 8 or 15) * (M.EX == -1 and 1 or .26) * GAME.attackMul)
+        end
+        if toOppo then
+            if not id2:match("^GHOST%-") then GAME.koCount = GAME.koCount + 1 end
+            SFX.play('elim', .5)
+        end
+    end
     ins(GAME.koAnim, 1, {
         id1 = GC.newText(FONT.get(30), id1),
         id2 = GC.newText(FONT.get(30), id2),
@@ -1431,10 +1439,6 @@ function GAME.awardKO(id1, id2, valid, toOppo)
         showP1 = id1 ~= id2,
         toOppo = toOppo,
     })
-    if toOppo then
-        if not id2:match("^GHOST%-") then GAME.koCount = GAME.koCount + 1 end
-        SFX.play('elim', .5)
-    end
 end
 
 function GAME.upFloor()
@@ -2097,7 +2101,7 @@ function GAME.refreshRev()
         W = SCN.scenes.tower.widgetList.stat
         W.fillColor[1], W.fillColor[2] = W.fillColor[2], W.fillColor[1]
         W.textColor[1], W.textColor[2] = W.textColor[2], W.textColor[1]
-        W = SCN.scenes.tower.widgetList.achv
+        W = SCN.scenes.tower.widgetList.chnl
         W.fillColor[1], W.fillColor[2] = W.fillColor[2], W.fillColor[1]
         W.textColor[1], W.textColor[2] = W.textColor[2], W.textColor[1]
         W = SCN.scenes.tower.widgetList.conf

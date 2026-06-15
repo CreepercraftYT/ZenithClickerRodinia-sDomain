@@ -5,16 +5,11 @@ local scene = {}
 -- 1. Video & Audio
 -- 2. User
 -- 3. Album
--- 4. Speedrun
--- 5. ZCEM
-local ZCEMpage = 5
+-- 4. ZCEM
+local ZCEMpage = 4
 local page = 1
-local maxPage = 5
+local maxPage = 4
 local uidList = {} ---@type ({uid: string, modTime?: string} | false)[]
-SRSplitText1 = {} ---@type love.Text[]
-SRSplitText2 = {} ---@type love.Text[]
-SRSplitText3 = {} ---@type love.Text[]
-local SRrank = {}
 
 local anonUser
 local resetall_cnt, resetall_anim, lastClear
@@ -245,12 +240,8 @@ local function refreshUID()
     TABLE.clear(uidList)
     uidList[0] = { uid = "Active Profile:   " .. STAT.uid, modTime = "just now" }
     for i = 1, 3 do
-        if FILE.exist('save' .. i) then
-            local dat = FILE.load('save' .. i .. "/stat.luaon")
-            uidList[i] = { uid = dat.uid, modTime = timePast(dat.modTime, os.time()) }
-        else
-            uidList[i] = false
-        end
+        local dat = FILE.safeLoad('save' .. i .. "/stat.luaon")
+        uidList[i] = dat and { uid = dat.uid, modTime = timePast(dat.modTime, os.time()) } or false
     end
 end
 
@@ -279,36 +270,7 @@ function scene.load()
     MSG.clear()
     bindBuffer = nil
     resetall_cnt, resetall_anim, lastClear = 0, 0, false
-    for i = 1, #SpeedrunData do
-        local id = SpeedrunData[i].id
-        if not SRSplitText1[i] then
-            SRSplitText1[i] = GC.newText(FONT.get(50), "")
-            SRSplitText2[i] = GC.newText(FONT.get(50), "")
-            SRSplitText3[i] = GC.newText(FONT.get(30), "")
-            SRrank[i] = 0
-        end
-        SRSplitText1[i]:set(SpeedrunData[i].name)
-        local t = STAT.srMilestone[id]
-        if not t then
-            SRSplitText2[i]:set("N/A")
-        elseif t < 0 then
-            SRSplitText2[i]:set("*" .. STRING.time(-t))
-        else
-            SRSplitText2[i]:set(STRING.time(t))
-        end
-        if SR[id] then
-            SRSplitText3[i]:set(STRING.time(SR[id]))
-            if SR[id] <= DevScore.srMilestone[id] then
-                SRrank[i] = 3
-            elseif SR[id] <= SpeedrunData[i].par1 then
-                SRrank[i] = 2
-            elseif SR[id] <= SpeedrunData[i].par2 then
-                SRrank[i] = 1
-            end
-        else
-            SRSplitText3[i]:set("N/A")
-        end
-    end
+
     SetMouseVisible(true)
     if GAME.anyRev ~= colorRev then
         colorRev = GAME.anyRev
@@ -438,7 +400,6 @@ scene.resize = refreshWidgets
 
 local gc = love.graphics
 local gc_replaceTransform = gc.replaceTransform
-local gc_line, gc_setLineWidth = gc.line, gc.setLineWidth
 local gc_draw, gc_setColor, gc_rectangle = gc.draw, gc.setColor, gc.rectangle
 local gc_print, gc_printf = gc.print, gc.printf
 local gc_ucs_move, gc_ucs_back = GC.ucs_move, GC.ucs_back
@@ -735,42 +696,6 @@ function scene.draw()
             gc_mRect('fill', len * BgmNeedSkip[2] / playingBgmLength, 48, 2, 9)
         end
         gc_ucs_back()
-    elseif page == 4 then
-        -- Glowing Background
-        gc_setColor(COLOR.rainbow_light(t, .26))
-        gc_draw(TEXTURE.transition, 0, 0, 0, .42 / 128 * w, h)
-        gc_draw(TEXTURE.transition, w, 0, 0, -.42 / 128 * w, h)
-
-        gc_setLineWidth(2)
-        setFont(30)
-        local textH = SRSplitText1[1]:getHeight()
-        local x1 = 130
-        local x2 = w - 130
-        local achv = TEXTURE.achievement
-        for i = 1, #SpeedrunData do
-            local y = 40 + i * 110
-            gc_setColor(clr.T)
-            gc_draw(SRSplitText1[i], x1, y, 0, 1, 1, 0, textH / 2)
-            gc_draw(SRSplitText2[i], x2, y, 0, 1, 1, SRSplitText2[i]:getWidth(), textH / 2)
-            gc_setAlpha(.62)
-            gc_line(x1 + SRSplitText1[i]:getWidth() + 20, y, x2 - SRSplitText2[i]:getWidth() - 20, y)
-            gc_setColor(clr.L)
-            gc_print(SpeedrunData[i].desc, x1, y + 26, 0, .626)
-            gc_setAlpha(.62)
-            local w3 = SRSplitText3[i]:getWidth()
-            gc_draw(SRSplitText3[i], x2, y + 26, 0, .626, .626, w3)
-            if SRrank[i] > 0 then
-                if SRrank[i] >= 3 then
-                    gc_setColor(1, 1, 1, .16)
-                    GC.mDraw(achv.overDev, x2 - 42, y + 12, 0, .36)
-                end
-                gc_setColor(clr.LT)
-                GC.mDraw(achv.frame[5], x2 - w3 * .626 - 18, y + 38, 0, .1)
-                if SRrank[i] >= 2 then
-                    GC.mDraw(achv.wreath[6], x2 - w3 * .626 - 18, y + 38, 0, .1)
-                end
-            end
-        end
     end
 
     -- Top bar & title
@@ -869,15 +794,11 @@ function scene.overDraw()
     end
 end
 
-local pageVisFunc = {}
-for p = 1, maxPage do pageVisFunc[p] = function() return page == p end end
-
+-- widget lists of each page, will be registered to scene.widgetList at the end
 local pages = {}
 
--- Page 1
 local videoY = baseY + 360
 pages[1] = {
-    -- Audio
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
         text = "AUDIO",
@@ -1007,10 +928,8 @@ pages[1] = {
     },
 }
 
--- Page 2
 local profY = baseY + 220
 pages[2] = {
-    -- Account
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
         text = "ACCOUNT",
@@ -1105,7 +1024,6 @@ pages[2] = {
             SFX.play('staffwarning')
         end,
     },
-    -- Profile
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
         text = "PROFILE",
@@ -1168,9 +1086,6 @@ pages[2] = {
                     SFX.play('maintenance')
                 elseif data == 'dev' then
                     MSG('dark', OverDevProgressText)
-                elseif data == 'repo' then
-                    SFX.play('menuconfirm')
-                    love.system.openURL("https://github.com/MrZ626/ZenithClicker")
                 elseif data == 'UseAltName' then
                     UseAltName()
                     SFX.play('social_dm')
@@ -1531,10 +1446,8 @@ for i = 1, 3 do
     })
 end
 
--- Page 3
 local albumY = baseY + 250
 pages[3] = {
-    -- Album
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
         text = "ALBUM",
@@ -1686,18 +1599,6 @@ albumBtn {
         refreshSongInfo()
     end,
     visibleFunc = function() return page == 3 and ACHV.programmer_gamer and ACHV.programmer_gamer >= 1650 end,
-}
-
--- Page 4
-pages[4] = {
-    -- SRS
-    WIDGET.new { -- title
-        type = 'text', alignX = 'left',
-        text = "SPEEDRUN SPLITS",
-        color = clr.T,
-        fontSize = 50,
-        x = baseX + 30, y = baseY + 50,
-    },
 }
 
 -- ZCEM page
@@ -2155,8 +2056,22 @@ pages[ZCEMpage] = {
     },
 }
 
+local function newTabBtn(text, y, key, btnClr, txtClr)
+    return WIDGET.new {
+        type = 'button',
+        pos = { 1, 0 }, x = -60, y = y, w = 160, h = 60,
+        color = btnClr or { COLOR.HEX '383838' },
+        fontSize = 30, text = text, textColor = txtClr or 'DL',
+        onClick = function() love.keypressed(key) end,
+    }
+end
+
 -- Tabs
 local tab = {
+    newTabBtn("CONF   ", 140 + 90 * 0, '1'),
+    newTabBtn("USER   ", 140 + 90 * 1, '2'),
+    newTabBtn("ALB   ", 140 + 90 * 2, '3'),
+    newTabBtn("ZCEM   ", 140 + 90 * (ZCEMpage - 1), tostring(ZCEMpage), 'DG', { .15, .75, .15 }),
     WIDGET.new {
         name = 'back', type = 'button',
         pos = { 0, 0 }, x = 60, y = 140, w = 160, h = 60,
@@ -2164,46 +2079,11 @@ local tab = {
         fontSize = 30, text = "    BACK", textColor = 'DL',
         onClick = function() love.keypressed('escape') end,
     },
-    WIDGET.new {
-        name = 'conf', type = 'button',
-        pos = { 1, 0 }, x = -60, y = 140, w = 160, h = 60,
-        color = { COLOR.HEX '383838' },
-        fontSize = 30, text = "CONF   ", textColor = 'DL',
-        onClick = function() love.keypressed('1') end,
-    },
-    WIDGET.new {
-        name = 'utils', type = 'button',
-        pos = { 1, 0 }, x = -60, y = 230, w = 160, h = 60,
-        color = { COLOR.HEX '383838' },
-        fontSize = 30, text = "USER   ", textColor = 'DL',
-        onClick = function() love.keypressed('2') end,
-    },
-    WIDGET.new {
-        name = 'album', type = 'button',
-        pos = { 1, 0 }, x = -60, y = 320, w = 160, h = 60,
-        color = { COLOR.HEX '383838' },
-        fontSize = 30, text = "ALB   ", textColor = 'DL',
-        onClick = function() love.keypressed('3') end,
-    },
-    WIDGET.new {
-        type = 'button',
-        pos = { 1, 0 }, x = -60, y = 410, w = 160, h = 60,
-        color = { COLOR.HEX '383838' },
-        fontSize = 30, text = "SRS   ", textColor = 'DL',
-        onClick = function() love.keypressed('4') end,
-    },
-    WIDGET.new {
-        name = 'zcem', type = 'button',
-        pos = { 1, 0 }, x = -60, y = 500, w = 160, h = 60,
-        color = 'DG',
-        sound_hover = 'menutap',
-        fontSize = 30, text = "ZCEM   ", textColor = { .15, .75, .15 },
-        onPress = function() love.keypressed(tostring(ZCEMpage)) end,
-        onClick = function() love.keyreleased(tostring(ZCEMpage)) end,
-    },
 }
 
 -- Apply dafault visibility functions
+local pageVisFunc = {}
+for p = 1, maxPage do pageVisFunc[p] = function() return page == p end end
 for i = 1, #pages do
     for _, W in next, pages[i] do
         W.visibleFunc = W.visibleFunc or pageVisFunc[i]
