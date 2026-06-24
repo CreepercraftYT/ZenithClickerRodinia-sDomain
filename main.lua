@@ -187,11 +187,11 @@ WIDGET.setDefaultOption {
 }
 
 function WIDGET._prototype.button:draw()
-    gc_push('transform')
-    gc_translate(self._x, self._y + (SCN.cur == 'tower' and self.pos[1] == .5 and DeckPress or 0))
+    gc.push('transform')
+    gc.translate(self._x, self._y + (SCN.cur == 'tower' and self.pos[1] == .5 and DeckPress or 0))
 
     if self._pressTime > 0 then
-        gc_scale(1 - self._pressTime / self._pressTimeMax * .0626)
+        gc.scale(1 - self._pressTime / self._pressTimeMax * .0626)
     end
     local w, h = self.w, self.h
 
@@ -212,6 +212,16 @@ function WIDGET._prototype.button:draw()
     -- Drawable
     gc_setColor(self.textColor)
     WIDGET._alignDraw(self, self._text, 0, 0, 0, 1.2, 1.2 - 2.4 * GAME.revTimer)
+    if self._image then
+        local startX = self.alignX == 'center' and 0 or self.alignX == 'left' and -w * .5 + self.marginX or w * .5 - self.marginX
+        local startY = self.alignY == 'center' and 0 or self.alignY == 'top' and -h * .5 + self.marginY or h * .5 - self.marginY
+        gc_setColor(self.imageColor)
+        if self.quad then
+            WIDGET._alignDrawQ(self, self._image, self.quad, startX, startY)
+        else
+            WIDGET._alignDraw(self, self._image, startX, startY)
+        end
+    end
 
     -- Highlight
     if self._hoverTime > 0 then
@@ -426,6 +436,10 @@ BgmData = {
     fomg  = { meta = '4|4  180 & 200 BPM  Bb Minor    ', bar = 4, bpm = 200, toneFix = 3.0, bpmData = { 90, 10.667, 180, 25.333, 200 }, loop = { 38.4 - 11.862, 144 - 11.862 } },
     tera  = { meta = '4|4  240 BPM  C# Minor          ', bar = 4, bpm = 240, toneFix = 1.0, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 } }, -- 4 endings at 140/142/144/146
     terar = { meta = '4|4  240 BPM  C# Minor          ', bar = 4, bpm = 240, toneFix = 1.0, loop = { 84 - 15.565, 172 - 15.565 }, teleport = { 0, 18 - 15.565 } },
+    terae = { meta = '4|4  240 BPM  C# Minor          ', bar = 4, bpm = 240, toneFix = 1,   loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
+    teral = { meta = '4|4  240 BPM  C# Minor          ', bar = 4, bpm = 240, toneFix = 1,   loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
+    terael = { meta = '4|4  240 BPM  C# Minor         ', bar = 4, bpm = 240, toneFix = 1,   loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
+
 }
 for _, v in next, BgmData do
     v.meta = STRING.trim(v.meta)
@@ -775,7 +789,7 @@ end
 -- Functions: Music
 
 function Tone(pitch)
-    return pitch + (URM and M.GV == 2 and 3 or M.GV) + BgmData[BgmPlaying].toneFix
+    return pitch + (M.GV == -1 and -6 or URM and M.GV == 2 and 3 or M.GV) + BgmData[BgmPlaying].toneFix
 end
 
 function RevMusicMode()
@@ -1177,7 +1191,9 @@ local curlAvailable = SYSTEM == 'Windows' or SYSTEM == 'Linux' or (function()
     end
 end)()
 function TryOpenLeaderboard()
-    if not curlAvailable then
+    MSG('warn', "Leaderboard is not supported with Zenith Clicker: Easy Mode")
+    LOG('error', "TryOpenLeaderboard blocked!")
+    --[[if not curlAvailable then
         SFX.play('no')
         MSG('warn', "Leaderboard is not supported on this device (no cUrl)")
     elseif STAT.maxFloor < 10 then
@@ -1186,7 +1202,7 @@ function TryOpenLeaderboard()
     else
         SFX.play('menuhit2')
         SCN.go('leaderboard', 'none')
-    end
+    end]]
 end
 
 local function genCurlCMD(data)
@@ -1272,7 +1288,7 @@ function Daemon_Slow()
             else
                 LOG('info', "Failed to check for updates")
             end
-        end]]
+        end
         msg = ASYNC.get('submitDaily')
         if msg then
             local suc, res = pcall(JSON.decode, msg)
@@ -1322,7 +1338,7 @@ function Daemon_Slow()
                 MSG('warn', "Daily Challenge leaderboard fetch failed")
                 SFX.play('pause_retry', 1, 0, Tone(-5))
             end
-        end
+        end]]
 
         TASK.yieldT(.6)
     end
@@ -1534,6 +1550,12 @@ if os.date("%d%m") - 1 == 400 then UseAltName() end
 UTIL.time("Create util global vars & functions", true)
 --------------------------------------------------------------
 
+TABLE.update(CONF, FILE.safeLoad('conf.luaon', '-luaon') or NONE)
+TABLE.update(SR, FILE.safeLoad('speedrun.luaon', '-luaon') or NONE)
+TABLE.update(LB, FILE.safeLoad('leaderboard.luaon', '-luaon') or NONE)
+InitProfile()
+LoadSave()
+
 for i = 1, #ModData.deck do table.insert(Cards, require 'module/card'.new(ModData.deck[i])) end
 for _, C in ipairs(Cards) do Cards[C.id] = C end
 
@@ -1546,11 +1568,6 @@ for _, v in next, love.filesystem.getDirectoryItems('scene') do
     end
 end
 
-TABLE.update(CONF, FILE.safeLoad('conf.luaon', '-luaon') or NONE)
-TABLE.update(SR, FILE.safeLoad('speedrun.luaon', '-luaon') or NONE)
-TABLE.update(LB, FILE.safeLoad('leaderboard.luaon', '-luaon') or NONE)
-InitProfile()
-LoadSave()
 Initialize()
 
 TABLE.update(TextColor, BaseTextColor)

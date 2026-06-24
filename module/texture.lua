@@ -17,14 +17,14 @@ local function q(oy, n, size)
     return GC.newQuad(
         n * size, oy,
         size, size,
-        2178, 1663
+        2178*2, 1663
     )
 end
 local function q2(ox, oy, w, h)
     return GC.newQuad(
         ox, oy,
         w, h,
-        2178, 1663
+        2178*2, 1663
     )
 end
 local function aq(x, y) return GC.newQuad((x - 1) % 16 * 256, (y - 1) % 16 * 256, 256, 256, 4096, 2048) end
@@ -38,7 +38,7 @@ TEXTURE = {
         throb_a = assets 'panel/throb-a.png',
         throb_b = assets 'panel/throb-b.png',
     },
-    modIcon = assets 'mod_icon.png',
+    modIcon = assets 'mod_icon_easy.png',
     modQuad_ig = {
         VL = q(0, 0, 225),
         NH = q(0, 1, 225),
@@ -58,6 +58,28 @@ TEXTURE = {
         rDP = q(225, 6, 242),
         rDH = q(225, 7, 242),
         rAS = q(225, 8, 242),
+        eVL = q(0, 9, 225),
+        eNH = q(0, 10, 225),
+        eMS = q(0, 11, 225),
+        eIN = q(0, 12, 225),
+        eGV = q(0, 13, 225),
+        eEX = q(0, 14, 225),
+        eDP = q(0, 15, 225),
+        eDH = q(0, 16, 225),
+        eAS = q(0, 17, 225),
+        ueEX = q2(3303, 233, 225, 225),
+        --
+    },
+    modQuad_uneasy_ig = {
+        eVL = q2(2178, 233, 225, 225),
+        eNH = q2(2178+225, 233, 225, 225),
+        eMS = q2(2178+225*2, 233, 225, 225),
+        eIN = q2(2178+225*3, 233, 225, 225),
+        eGV = q2(2178+225*4, 233, 225, 225),
+        eEX = q2(3303, 233, 225, 225),
+        eDP = q2(2178+225*6, 233, 225, 225),
+        eDH = q2(2178+225*7, 233, 225, 225),
+        eAS = q2(2178+225*8, 233, 225, 225),
     },
     modQuad_res = {
         VL = q(467, 0, 183),
@@ -78,6 +100,16 @@ TEXTURE = {
         rDP = q(650, 6, 183),
         rDH = q(650, 7, 183),
         rAS = q(650, 8, 183),
+        eVL = q(467, 9, 183),
+        eNH = q(467, 10, 183),
+        eMS = q(467, 11, 183),
+        eIN = q(467, 12, 183),
+        eGV = q(467, 13, 183),
+        eEX = q(467, 14, 183),
+        eDP = q(467, 15, 183),
+        eDH = q(467, 16, 183),
+        eAS = q(467, 17, 183),
+        ueEX = q(650, 14, 183),
     },
     modQuad_ultra_res = {
         rVL = q(833, 0, 183),
@@ -336,6 +368,92 @@ TEXTURE = {
             return_to_the_light = aq(1, 2),
             smooth_dismount = aq(4, 1),
             knifes_edge = aq(5, 5),
+
+            -- Trevor Smithy
+            programmer_gamer = aq(10, 8), -- smithy ball
+            one_of_mine = aq(10, 6),
+            ggbw = aq(9, 8),  -- fan
+            perfect_speedrun_plus = aq(15, 5),
+            perfectly_balanced = aq(11, 8), -- thanos knife
+            peasant_revolution = aq(15, 1),
+            holy_ascention = aq(11, 1),
+            stabilized_entropy = aq(12, 1),
+            restrained_collapse = aq(10, 1),
+            restored_volition = aq(9, 1),
+            disproven_blasphemy = aq(16, 1),
+            solved_paradox = aq(13, 1),
+            demystified_grimoire = aq(14, 1),
+            restored_eden = aq(7, 7),
+            your_too_fast = aq(13, 8), --scared jackenstein
+            your_long = aq(12, 8), --jackenstein
+            cheat_death = aq(5, 5),
+            trip_to_hell = aq(5, 7),
+            -- easy mods
+            eEX = aq(3, 3),
+            eNH = aq(7, 3),
+            eMS = aq(8, 3),
+            eGV = aq(6, 3),
+            eVL = aq(5, 3),
+            eDH = aq(4, 3),
+            eIN = aq(1, 4),
+            eAS = aq(2, 4),
+            eDP = aq(3, 4),
+            -- Uneasy Mods (v1.1) (No CR)
+            ueEX = aq(15, 1),
+            ueEXeNH = aq(11, 1),
+            ueEXeMS = aq(12, 1),
+            ueEXeGV = aq(10, 1),
+            ueEXeVL = aq(9, 1),
+            ueEXeDH = aq(16, 1),
+            ueEXeIN = aq(13, 1),
+            ueEXeAS = aq(14, 1),
+            ueEXeDP = aq(7, 7),
+            -- Easy Mode - Special (v1.1) (No CR)
+            humble_pupil = aq(6, 4),
+            overweight_gamer = aq(4, 6),
+            best_friends = aq(8, 5),
+            shameless_cashgrab = aq(4, 4),
+            clean_break = aq(5, 4),
+            emperor_development = aq(7, 4),
+            professional_cleaner = aq(8, 4),
+            rold_smythy = aq(1, 7),
+            quest_feast = aq(2, 7),
+            clean_gamer = aq(1, 5),
+            -- Easy Mode - Why (v1.1) (No CR)
+            ["-3"] = aq(0,0),
+            ["-4"] = aq(0,0),
+            ["-5"] = aq(0,0),
+            ["-6"] = aq(0,0),
+            ["-7"] = aq(0,0),
+            ["-8"] = aq(0,0),
+            ["-9"] = aq(0,0),
+            -- Easy Mode - Issued (v1.1) (No CR)
+            inefficiency = aq(15, 6),
+            could_you_not = aq(3, 2),
+            oh_no_you_dont = aq(10, 2),
+            uneasy = aq(6, 5),
+            roll = aq(9,4),
+            alleyoop = aq(15,7),
+            slamdunk = aq(15,7),
+            www = aq(16,7),
+            peta = aq(0, 0),
+            exa = aq(0, 0),
+            zetta = aq(0, 0),
+            yotta = aq(0, 0),
+            ronna = aq(0, 0),
+            quetta = aq(0, 0),
+            -- Easy Mode - Issued (v1.2) (No CR)
+            patience_is_a_virtue = aq(10, 6),
+            multiple_pieces = aq(1,3),
+            hyperplonk = aq(6, 1),
+            gigaplonk = aq(7, 1),
+            the_windup = aq(8, 1),
+            what_have_you_done = aq(14, 8),
+            music_man = aq(15, 8),
+            im_gonna_be = aq(6, 7),
+            lazy_bastard = aq(16, 8),
+            easy_name = aq(16, 1),
+            biased = aq(4, 5),
         },
         frame = {
             [0] = assets 'achievements/frames/none.png',
@@ -366,8 +484,11 @@ TEXTURE = {
         overDev = assets 'achievements/verified-halfmod.png',
     },
 
-    logo = assets 'icon.png',
+    logo = assets 'iconZCEM.png',
     logo_old = assets 'icon_old.png',
+    programmingsmithy = assets 'programmingsmithy.png',
+    github = assets 'GitHub_Invertocat_White.png',
+    discord = assets 'Discord-Symbol-White.png',
 }
 TEXTURE = TABLE.linkSource({}, TEXTURE, function(path)
     if type(path) ~= 'string' then return path end
@@ -469,6 +590,8 @@ do
     local w = 13
     local d1 = 20
     local d2 = 16
+    local d3 = 30
+    local d4 = 15
     TEXTURE.windupText = {
         GC.initCanvas(128, 128, function()
             GC.clear(1, 1, 1, 0)
@@ -488,14 +611,19 @@ do
         GC.initCanvas(128, 128, function()
             local w = w - 2
             GC.clear(1, 1, 1, 0)
-            FONT.set(70, '_mono')
-            GC.rectangle('fill', 64 - w / 2 - 19, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - 19, 64 + 31, w, -w)
-            GC.print("?", 53, 5, 0, 1.1, 1.26) -- Not very fitting, but this is not used
+            GC.rectangle('fill', 64 - w / 2 - d1 - 1, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - d1 - 1, 64 + 31, w, -w)
+            GC.rectangle('fill', 64 - w / 2 - d4 / 2, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - d4 / 2, 64 + 31, w, -w)
+            GC.rectangle('fill', 64 - w / 2 + d4 / 2, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + d4 / 2, 64 + 31, w, -w)
+            GC.rectangle('fill', 64 - w / 2 + d1 + 1, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + d1 + 1, 64 + 31, w, -w)
         end),
         GC.initCanvas(128, 128, function()
+            w = 12
             GC.clear(1, 1, 1, 0)
-            FONT.set(70, '_mono')
-            GC.print("?", 39, 6, 0, 1.26) -- Not very fitting, but this is not used
+            GC.rectangle('fill', 64 - w / 2 - d3, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - d3, 64 + 31, w, -w)
+            GC.rectangle('fill', 64 - w / 2 - d4, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - d4, 64 + 31, w, -w)
+            GC.rectangle('fill', 64 - w / 2 + 00, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + 00, 64 + 31, w, -w)
+            GC.rectangle('fill', 64 - w / 2 + d4, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + d4, 64 + 31, w, -w)
+            GC.rectangle('fill', 64 - w / 2 + d3, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + d3, 64 + 31, w, -w)
         end),
     }
 end
@@ -508,6 +636,13 @@ end)
 TEXTURE.recRevLight = GC.initCanvas(165, 120, function()
     GC.clear(1, .1, .1, 0)
     GC.setColor(1, .1, .1)
+    GC.blurCircle(-.2, 60, 60, 60)
+    GC.blurCircle(-.6, 105, 60, 60)
+end)
+
+TEXTURE.recEasyLight = GC.initCanvas(165, 120, function()
+    GC.clear(1, .1, .1, 0)
+    GC.setColor(.1, 1, .1)
     GC.blurCircle(-.2, 60, 60, 60)
     GC.blurCircle(-.6, 105, 60, 60)
 end)
@@ -612,7 +747,44 @@ TEXTS = { -- Font size should only be 30 50 70 here, to reduce memory usage of f
     devNoteText = GC.newText(FONT.get(30)),
     aboutText   = GC.newText(FONT.get(70)),
     test        = GC.newText(FONT.get(70), "TEST"),
+    -- Trevor Smithy
+    comboText  = GC.newText(FONT.get(50), "COMBO"),
+    combo      = GC.newText(FONT.get(50)),
+    easyTitle  = GC.newText(FONT.get(50), "EASY QUICK PICK"),
+    uneasyTitle= GC.newText(FONT.get(50), "UNEASY QUICK PICK"),
+    easyModeVersion = GC.newText(FONT.get(30)),
+    petaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "P", COLOR.O, "E", COLOR.Y, "T",
+        COLOR.K, "A", COLOR.G, "S", COLOR.J, "P",
+        COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
+    }),
+    exaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "E", COLOR.O, "X", COLOR.Y, "A",
+        COLOR.G, "S", COLOR.J, "P",
+        COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
+    }),
+    zettaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "Z", COLOR.O, "E", COLOR.Y, "T",
+        COLOR.K, "T", COLOR.G, "A", COLOR.J, "S",
+        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
+    }),
+    yottaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "Y", COLOR.O, "O", COLOR.Y, "T",
+        COLOR.K, "T", COLOR.G, "A", COLOR.J, "S",
+        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
+    }),
+    ronnaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "R", COLOR.O, "O", COLOR.Y, "N",
+        COLOR.K, "N", COLOR.G, "A", COLOR.J, "S",
+        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
+    }),
+    quettaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "Q", COLOR.O, "U", COLOR.Y, "E",
+        COLOR.K, "T", COLOR.G, "T", COLOR.J, "A",
+        COLOR.C, "S", COLOR.S, "P", COLOR.B, "E", COLOR.P, "E", COLOR.M, "D",
+    }),
 }
+
 if not FontLoaded then
     TASK.new(function()
         local loadTime = love.timer.getTime() + (MATH.roll(.9626) and MATH.rand(2.6, 6.26) or 26)

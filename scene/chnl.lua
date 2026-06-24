@@ -9,7 +9,7 @@ local clr = {
     button = { COLOR.HEX '1F4E2C' },
 }
 local colorRev = false
-local disableLeaderboard = true
+local disableLBDiscAndGit = true -- disable leaderboard, discord, and github widgets in CHNL, since no modded Daily, and there are better buttons in ABOUT for the other two
 
 function scene.load()
     SetMouseVisible(true)
@@ -35,9 +35,9 @@ function scene.keyDown(key, isRep)
     elseif key == '3' then
         SFX.play('menuhit2')
         SCN.go('splits', 'none')
-    elseif key == '4' and not disableLeaderboard then
+    elseif key == '4' and not disableLBDiscAndGit then
         TryOpenLeaderboard()
-    elseif key == '5' then
+    elseif key == '5' and not disableLBDiscAndGit then
         if TASK.lock('discord_confirm', 2.6) then
             SFX.play('menuhit2')
             MSG('info', "Check discord server in browser?\nPress again to confirm", 2.6)
@@ -47,7 +47,7 @@ function scene.keyDown(key, isRep)
             love.system.openURL("https://discord.gg/thqhzSn72j")
         end
         TASK.unlock('github_confirm')
-    elseif key == '6' then
+    elseif key == '6' and not disableLBDiscAndGit then
         if TASK.lock('github_confirm', 2.6) then
             SFX.play('menuhit2')
             MSG('info', "Open GitHub repo in browser?\nPress again to confirm", 2.6)
@@ -232,22 +232,23 @@ function scene.overDraw()
     gc_setLineWidth(10)
     gc_setColor(1, 0, 0)
     for i = 1, #buttonContent do
-        if i == 4 and disableLeaderboard then break end
-        local W = scene.widgetList[i]
-        gc_push()
-        gc_translate(W._x, W._y)
-        if W._pressTime > 0 then gc_scale(1 - W._pressTime / W._pressTimeMax * .0626) end
-        gc_translate(-W.w / 2, -W.h / 2)
-        gc_stc_reset()
-        gc_stc_rect(0, 0, W.w, W.h)
-        setFont(50)
-        buttonContent[i](W.w, W.h)
-        if W._hoverTime > 0 then
-            gc_setColor(1, 1, 1, W._hoverTime / W._hoverTimeMax * .0626)
-            gc_rectangle('fill', 0, 0, W.w, W.h)
+        if i < 4 or not disableLBDiscAndGit then
+            local W = scene.widgetList[i]
+            gc_push()
+            gc_translate(W._x, W._y)
+            if W._pressTime > 0 then gc_scale(1 - W._pressTime / W._pressTimeMax * .0626) end
+            gc_translate(-W.w / 2, -W.h / 2)
+            gc_stc_reset()
+            gc_stc_rect(0, 0, W.w, W.h)
+            setFont(50)
+            buttonContent[i](W.w, W.h)
+            if W._hoverTime > 0 then
+                gc_setColor(1, 1, 1, W._hoverTime / W._hoverTimeMax * .0626)
+                gc_rectangle('fill', 0, 0, W.w, W.h)
+            end
+            gc_stc_stop()
+            gc_pop()
         end
-        gc_stc_stop()
-        gc_pop()
     end
 end
 
@@ -273,7 +274,7 @@ scene.widgetList = {
     },
     WIDGET.new {
         type = 'button',
-        pos = { .5, .5 }, x = disableLeaderboard and 0 or (-btnW - gap) / 4, y = btnY + 2 * btnH, w = disableLeaderboard and btnW or (btnW - gap) / 2, h = btnH - gap,
+        pos = { .5, .5 }, x = disableLBDiscAndGit and 0 or (-btnW - gap) / 4, y = btnY + 2 * btnH, w = disableLBDiscAndGit and btnW or (btnW - gap) / 2, h = btnH - gap,
         color = clr.button,
         sound_hover = 'menutap',
         onClick = function() love.keypressed('3') end,
@@ -309,6 +310,10 @@ scene.widgetList = {
     },
 }
 
-if disableLeaderboard then TABLE.remove(scene.widgetList, 4) end
+if disableLBDiscAndGit then 
+    for i = 1, 3 do
+        TABLE.remove(scene.widgetList, 4) 
+    end
+end
 
 return scene

@@ -1975,10 +1975,10 @@ function GAME.refreshCurrentCombo()
         TEXTS.mpPreview:set(GAME.comboMP .. " MP")
         if GAME.comboZP < 1.2 and GAME.forceRev then GAME.comboZP = 1.2 end
         TEXTS.zpPreview:set(("%.2fx ZP"):format(GAME.comboZP))
-        Daily.actived =
+        --[[Daily.actived =
             #GAME.getHand(true) == #Daily.combo and
             TABLE.equal(TABLE.sort(GAME.getHand(true)), TABLE.sort(TABLE.copy(Daily.combo)))
-
+        ]]
         RefreshHelpText()
     end
 end
