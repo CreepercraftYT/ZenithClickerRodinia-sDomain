@@ -598,6 +598,7 @@ end, function(msg)
     }
 end)
 STAT.usePlanetArt = false
+STAT.useHumanRodinia = false
 function Card:draw()
     local texture = TEXTURE[self.id]
     local playing = GAME.playing

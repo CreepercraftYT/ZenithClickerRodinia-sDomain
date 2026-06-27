@@ -484,7 +484,7 @@ TEXTURE = {
         overDev = assets 'achievements/verified-halfmod.png',
     },
 
-    logo = assets 'iconZCEM.png',
+    logo = assets 'iconZCRD.png',
     logo_old = assets 'icon_old.png',
     programmingsmithy = assets 'programmingsmithy.png',
     github = assets 'GitHub_Invertocat_White.png',

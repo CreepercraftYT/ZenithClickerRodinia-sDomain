@@ -3515,6 +3515,9 @@ function GAME.finish(reason)
     if M.EX == 2 and M.GV == 2 and URM and M.DH == 0 and M.AS == 0 and M.NH == 0 and M.MS == 0 and M.VL == 0 and M.IN == 2 and M.DP == 0 then
         SubmitAchv('ainidor', GAME.roundHeight) 
     end
+    if M.EX == 1 and M.GV == 1 and URM and M.DH == 1 and M.AS == 2 and M.NH == 0 and M.MS == 0 and M.VL == 2 and M.IN == 0 and M.DP == 0 and GAME.slowmo then
+        SubmitAchv('patience_is_a_virtue_2', GAME.roundHeight) 
+    end
     -- Perfectly Balanced...
     if GAME.comboMP == 4 then
         local revCount = GAME.comboStr:count('r')
@@ -3565,7 +3568,7 @@ function GAME.finish(reason)
         IssueAchv('easy_name')
     end
 
-    if STAT.stacker and (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and GAME.slowmo then
+    if CONF.stacker and GAME.uneasyMode and GAME.slowmo then
         IssueAchv('sus')
     end
 
@@ -3574,10 +3577,14 @@ function GAME.finish(reason)
     end
 
     if GAME.height >= 9550 then
-        if GAME.anyRev and GAME.anyEasy and comboMP <= 5 then
+         if GAME.anyRev and GAME.anyEasy and GAME.comboMP <= 5 then
             IssueAchv('Rodinia_Rev_anyEasy')
-        elseif GAME.anyEasy then
+        elseif GAME.anyEasy and not GAME.uneasyMode then
             IssueAchv('Rodinia_anyEasy')
+        elseif GAME.uneasyMode then
+            IssueAchv('Rodinia_uneasy')
+        else
+            IssueAchv('Rodinia_Vanilla')
         end
     end
 

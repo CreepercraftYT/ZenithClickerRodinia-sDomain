@@ -268,8 +268,8 @@ function Initialize(save)
         MSG('dark', "Achievements lost due to update:\n" .. achvLost:sub(1, #achvLost - 1), 6.26)
     end
     if STAT.mod == 'vanilla' then
-        STAT.mod = 'easyMode'
-        MSG('dark', "Save fixed to correctly be for mod:'easyMode'")
+        STAT.mod = "Rodinia's Domain"
+        MSG('dark', "Save fixed to correctly be for mod:'Rodinia's Domain'")
         SaveStat()
     end
     if STAT.easyModeClicker then

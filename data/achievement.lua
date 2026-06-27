@@ -2389,10 +2389,10 @@ local d = {
     { -- ainidor
         id = 'ainidor',
         name = "Ainidor",
-        desc = [[HFD with uEX uGV uIN]],
+        desc = [[Lowest floor discovered with uEX uGV uIN]],
         quote = [["Have you not learned your lesson!?"]],
-        rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
-        hide = TRUE
+        rank = numberRankRev(0, -150, -450, -850, -1350, -6200, -9999),
+        realHide = TRUE
     },
     { -- stubborn
         id = 'stubborn',
@@ -2401,7 +2401,7 @@ local d = {
         quote = [["Fine, there you have it... happy?"]],
         credit = "@Rodinia",
         type = 'issued',
-        hide = TRUE,
+        realHide = TRUE,
     },
     { -- llor
         id = 'llor',
@@ -2430,6 +2430,15 @@ local d = {
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         hide = function() return GAME.completion.EX == 0 or GAME.completion.MS == 0 or GAME.completion.AS == 0 end,
     },
+    { -- Rodinia_Vanilla
+        id = 'Rodinia_Vanilla',
+        name = "The Celestial Overseer",
+        desc = [[See Rodinia's face with no mods]],
+        quote = [["Welcome, little player! ,3"]],
+        credit = "@Rodinia",
+        type = 'issued',
+        realHide = TRUE,
+    },
     { -- Rodinia_anyEasy
         id = 'Rodinia_anyEasy',
         name = "Really...?",
@@ -2437,7 +2446,16 @@ local d = {
         quote = [["C'mon man, do you really need Easy mods to get up here?"]],
         credit = "@Rodinia",
         type = 'issued',
-        hide = TRUE,
+        realHide = TRUE,
+    },
+     { -- Rodinia_uneasy
+        id = 'Rodinia_uneasy',
+        name = "???",
+        desc = [[See Rodinia's face with UNEASY on]],
+        quote = [["'Un-easy'...? uh, ok... Why not just use Expert mode, then?"]],
+        credit = "@Rodinia",
+        type = 'issued',
+        realHide = TRUE,
     },
     { -- Rodinia_Rev_anyEasy
         id = 'Rodinia_Rev_anyEasy',
@@ -2446,7 +2464,16 @@ local d = {
         quote = [["Not only do you commit heresy, but you can't even do it without help?"]],
         credit = "@Rodinia",
         type = 'issued',
-        hide = TRUE,
+        realHide = TRUE,
+    },
+    { -- patience_is_a_virtue_2
+        ex = true,
+        id = 'patience_is_a_virtue_2',
+        name = "P A T I E N C E  I S  A  V I R T U E .",
+        desc = [[HFD without manually committing, with EX GV uVL DH uAS and Slowmo]],
+        quote = [[For the most patient ones, time is meaningless.]],
+        credit = "@Rodinia",
+        rank = floorRank(1, 3, 5, 7, 9, 10, 2000),
     },
 }
 

@@ -21,9 +21,10 @@ local d = {
             { set = "eASeDHeDPeGVeINeMSeNHeVLrEX", name = '"ULTRA HARD BATH WITH A FRIEND"'},
             { set = "eASeDHeEXeGVeINeMSeNHeVLrDP", name = '"BATH WITH A STALKER"'},
             { set = "eDHeDPeGVeINeMSeNHrASrEXrVL", name = '"THE WHELMED SMITHY"'},
-            { set = "eASeDHeEXrGV", checks = {'enightcore', false}, name = '"PATIENCE IS A VIRTUE..."'},
+            { set = "eASeDHeEXrGV", checks = {'enightcore', false, 'slowmo', false}, name = '"PATIENCE IS A VIRTUE..."'},
             { set = "eASeDHeEXrGV", checks = {'enightcore', true}, name = [["BUT IT ISN'T ONE OF MINE"]], customUltraCombo = true},
             { set = "eASeDHeEXrGV", checks = {'slowmo', true}, name = [["AND IT IS ONE OF MINE"]], customUltraCombo = true},
+            { set = "DHEXGVrASrVL", checks = {'slowmo', true}, name = [["P A T I E N C E  I S  A  V I R T U E"]], customUltraCombo = true},
             -- No Named Rev Equivalent
             { set = "rASrDHrDPrEXrGVrINrMSrNHrVL", checks = {'badTime', true, 'badTimeStarted', false}, name = '"BAD TIME"', customUltraCombo = true},
             { set = "eASeDHeDPeGVeINeMSeNHrEX", checks = {'ecloseCard', true}, name = '"ULTRA HARD CRAMPED BATH WITH A FRIEND"'},

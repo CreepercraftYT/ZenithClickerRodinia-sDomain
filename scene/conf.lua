@@ -178,7 +178,7 @@ STAT.bounceTera = true
 local function refreshWidgets()
     for _, W in next, scene.widgetList do 
         W:setVisible() 
-        local tabs = {'back', 'conf', 'utils', 'album', 'zcem'}
+        local tabs = {'back', 'conf', 'utils', 'album', 'zcem', 'zcrd'}
         local zcem = {'gameplay', 'bpm', 'promotion', 'imperial', 'oldTransparentCard', 'oldHitbox', 'easyName', 'stacker', 'pieces', 'ez', 'es', 'ej', 'el', 'et', 'eo', 'ei', 'urm', 'clear', 'help2'}
         if not TABLE.find(tabs, W.name) and TABLE.find(zcem, W.name) then
             if GAME.ecloseCard then
@@ -768,7 +768,7 @@ function scene.draw()
     gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCRDpage and ZCRDclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
     setFont(30)
-    gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == ZCEMpage and "MODDED" or page == ZCRDpage and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
+    gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == (ZCEMpage or page == ZCRDpage) and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
 end
 
 function scene.overDraw()
@@ -1987,7 +1987,7 @@ pages[ZCEMpage] = {
     },
 }
 -- Page 5
-local page5 = {
+pages[ZCRDpage] = {
     -- Placeholder
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
@@ -2014,7 +2014,7 @@ local page5 = {
             --if multiple then GAME.multiplePiecesActive = true end
         end,
     },
-    WIDGET.new { -- Bounce cards
+    WIDGET.new { -- Planet cards
         name = 'planetArt', type = 'checkBox',
         fillColor = ZCRDclr.cbFill,
         frameColor = ZCRDclr.cbFrame,
@@ -2030,6 +2030,28 @@ local page5 = {
             --GAME.multiplePiecesActive = false
             SaveStat()
             --if multiple then GAME.multiplePiecesActive = true end
+        end,
+    },
+    WIDGET.new { -- Human Rodinia
+        name = 'humanRodinia', type = 'checkBox',
+        fillColor = ZCRDclr.cbFill,
+        frameColor = ZCRDclr.cbFrame,
+        textColor = ZCRDclr.T, text = "USE HUMAN RODINIA FORM IN NON-URM RUNS",
+        x = baseX + 40, y = baseY + 60*2 + 120,
+        disp = function() return STAT.useHumanRodinia end,
+        code = function()
+            MSG.clear()
+            if combo == 0 then
+                MSG('warn', "Warning: This version might have details that could make some people uncomfortable\n (It's nothing that bad tho...)\n Activate at your own risk.")
+                SFX.play('staff_warning')
+                combo = combo + 1
+                comboTimer = 10
+            else
+                STAT.useHumanRodinia = not STAT.useHumanRodinia
+                SFX.play('social_dm')
+                MSG('dark', "Human Rodinia " .. (STAT.useHumanRodinia and "ON" or "OFF"))
+                SaveStat()
+            end
         end,
     },
 }
@@ -2050,6 +2072,7 @@ local tab = {
     newTabBtn("USER   ", 140 + 90 * 1, '2'),
     newTabBtn("ALB   ", 140 + 90 * 2, '3'),
     newTabBtn("ZCEM   ", 140 + 90 * (ZCEMpage - 1), tostring(ZCEMpage), 'DG', { .15, .75, .15 }),
+    newTabBtn("ZCRD   ", 140 + 90 * (ZCRDpage - 1), tostring(ZCRDpage), ZCRDclr.D, ZCRDclr.L),
     WIDGET.new {
         name = 'back', type = 'button',
         pos = { 0, 0 }, x = 60, y = 140, w = 160, h = 60,
