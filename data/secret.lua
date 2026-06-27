@@ -56,9 +56,14 @@ local d = {
             { set = "eEXeIN", checks = {'invisCard', true}, name = '"PRESBYOPIA"'},
             { set = "eASeEX", checks = {'fastLeak', true}, name = '"CARPAL TUNNEL"'},
             { set = "eDPeEX", checks = {'invisUI', true}, name = '"PROSOPAGNOSIA"'},
+            { set = "eDHeEXeMSeVL", name = '"UNPROFESSIONAL CLEANER"'},
+            { set = "eEXeGV", {'slowmo', false}, name = '"UNCOMFORTABLE BED"'},
+            { set = "eEXeVL", checks = {'closeCard', false}, name = '"UNPROFESSIONAL WEIGHTLIFTER"'},
+            { set = "eEXeIN", checks = {'invisCard', false}, name = '"IMPERFECT VISION"'},
+            { set = "eDPeEX", checks = {'invisUI', false}, name = '"BEST FRIENDS?"'},
             { set = "eASeDHeEXeMSeNHeVL", name = '"THE GAMER TRINITY"'},
             -- Smithy
-            { set = "eASeEXeVL", name = '"THE UNEASY PRO G(R)AM(M)ING SMITHY"'},
+            { set = "eASeEXeVL", name = '"THE UNEASY SMITHY"'},
         },
         other = {
             { set = "eASeDHeEXrGV", checks = {'enightcore', true}, name = [["BUT IT ISN'T ONE OF MINE"]]},

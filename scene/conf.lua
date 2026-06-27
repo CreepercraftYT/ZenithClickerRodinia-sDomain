@@ -3,7 +3,7 @@ local scene = {}
 
 
 -- 1. Video & Audio
--- 2. Utils
+-- 2. User
 -- 3. Album
 -- 4. ZCEM
 local ZCEMpage = 4
@@ -93,7 +93,7 @@ local bgmColors = {
     terae = { COLOR.HEX 'C0C0C0' },
     teral = { COLOR.HEX 'C0C0C0' },
     terael = { COLOR.HEX 'C0C0C0' },
-    fomg = { COLOR.HEX '00437A' },
+    fomg = { COLOR.HEX '004C89' },
 }
 local bgmHeight = {
     [0] = Floors[0].top,
@@ -137,6 +137,7 @@ local rZCRDclr = {
     cbFrame = { COLOR.HEX '330000FF' },
 }
 local bpmMode = false
+local bpmModifier = 1
 local comboTimer = 0
 local combo = 0
 local stubborn = 0
@@ -260,12 +261,8 @@ local function refreshUID()
     TABLE.clear(uidList)
     uidList[0] = { uid = "Active Profile:   " .. STAT.uid, modTime = "just now" }
     for i = 1, 3 do
-        if FILE.exist('save' .. i) then
-            local dat = FILE.load('save' .. i .. "/stat.luaon")
-            uidList[i] = { uid = dat.uid, modTime = timePast(dat.modTime, os.time()) }
-        else
-            uidList[i] = false
-        end
+        local dat = FILE.safeLoad('save' .. i .. "/stat.luaon")
+        uidList[i] = dat and { uid = dat.uid, modTime = timePast(dat.modTime, os.time()) } or false
     end
 end
 
@@ -294,6 +291,7 @@ function scene.load()
     MSG.clear()
     bindBuffer = nil
     resetall_cnt, resetall_anim, lastClear = 0, 0, false
+
     SetMouseVisible(true)
     if GAME.anyRev ~= colorRev then
         colorRev = GAME.anyRev
@@ -388,7 +386,7 @@ function scene.keyDown(key, isRep)
                     CONF.keybind = bindBuffer
                     bindBuffer = nil
                     SaveConf()
-                    MSG('dark', "Keybinding updated.")
+                    MSG('dark', "Keybinding updated")
                     SFX.play('social_notify_major')
                 else
                     SFX.play('irs')
@@ -440,13 +438,13 @@ local gc_ucs_move, gc_ucs_back = GC.ucs_move, GC.ucs_back
 local gc_setAlpha, gc_mRect, gc_mStr = GC.setAlpha, GC.mRect, GC.mStr
 local gc_line, gc_circle, gc_rotate, gc_setLineWidth = gc.line, gc.circle, gc.rotate, gc.setLineWidth
 local sin, cos = math.sin, math.cos
-
+local setFont = FONT.set
 local function drawSliderComponents(y, title, t1, t2, value)
     gc_ucs_move(0, y)
     gc_setColor(0, 0, 0, .26)
     gc_mRect('fill', w / 2, 0, w - 40, 65, 5)
     gc_mRect('fill', w - 90, 0, 123, 48, 3)
-    FONT.set(30)
+    setFont(30)
     gc_setColor(clr.T)
     gc_print(title, 40, -20, 0, .85, 1)
     gc_setAlpha(.42)
@@ -474,12 +472,53 @@ function scene.update(dt)
     GAME.bgH = MATH.expApproach(GAME.bgH, GAME.height, dt * 1.6)
     StarPS:moveTo(0, -GAME.bgH * 2 * BgScale)
     StarPS:update(dt)
-    if not TASK.getLock('reset_all') then resetall_cnt = 0 end
+    if not TASK.getLock('reset_all') then
+        if resetall_cnt == 16 then IssueAchv('knifes_edge') end
+        resetall_cnt = 0
+    end
     resetall_anim = MATH.expApproach(resetall_anim, resetall_cnt / 16, dt * 12)
     comboTimer = comboTimer - dt
     if comboTimer <= 0 then
         combo = 0
     end
+end
+
+local function modifiedBPM()
+    if BGM.tell() < 0.1 then MusicBPM = nil end
+    local bpm = MusicBPM or BgmData[BgmPlaying].bpmData[1]
+    bpmModifier = 1
+    if GAME.nightcore then 
+        bpm = bpm * 2
+        bpmModifier = bpmModifier * 2
+    end
+    if GAME.enightcore then 
+        bpm = bpm * 2
+        bpmModifier = bpmModifier * 2
+    end
+    if GAME.slowmo then 
+        bpm = bpm / 2
+        bpmModifier = bpmModifier / 2
+    end
+    if GAME.eslowmo then
+        bpm = bpm * 0.70711
+        bpmModifier = bpmModifier * 0.70711
+    end
+    if GAME.mod.GV == -1 then
+        bpm = bpm * 0.70711
+        bpmModifier = bpmModifier * 0.70711
+    elseif GAME.mod.GV == 1 then
+        bpm = bpm * 1.05946
+        bpmModifier = bpmModifier * 0.70711
+    elseif GAME.mod.GV == 2 then
+        local mult = URM and 1.18921 or 1.12246
+        bpm = bpm * mult
+        bpmModifier = bpmModifier * mult
+    end
+    if GAME.uneasyMode then 
+        bpm = bpm * 1.01455 
+        bpmModifier = bpmModifier * 1.01455
+    end
+    return bpm
 end
 
 function scene.draw()
@@ -489,9 +528,10 @@ function scene.draw()
     local playTime = 0
     local beatLen = 0
     local beatBar = 0
+    local bpm = modifiedBPM()
     if bpmMode then
         playTime = BGM.tell()
-        beatLen = 60 / BgmData[BgmPlaying].bpm
+        beatLen = 60 / bpm
         beatBar = BgmData[BgmPlaying].bar
     end
 
@@ -539,7 +579,7 @@ function scene.draw()
     gc_replaceTransform(SCR.xOy)
     gc.translate(baseX, baseY)
     if bpmMode and (page == 3 or page == ZCEMpage) then
-        local dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416), -2.6, 2.6)
+        local dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416 / bpmModifier), -2.6, 2.6)
         gc.translate(0, dy)
         SCN.curScroll = -dy
     end
@@ -579,8 +619,8 @@ function scene.draw()
 
         -- Keybind
         if bindBuffer then
-            FONT.set(30)
-            gc_print("Press key for...", 600, 670, 0, .872)
+            setFont(30)
+            gc_print("Press key for..", 600, 670, 0, .872)
             gc_print(bindHint[#bindBuffer + 1], 600, 700, 0, .872)
         end
     elseif page == 2 then
@@ -597,17 +637,17 @@ function scene.draw()
         gc_setColor(1, t % .16 < .08 and .2 + resetall_anim * .6 or .2, .2, resetall_anim ^ .26 * .26)
         gc_mRect('fill', 450, 420, 520 * resetall_anim, 140, 20)
         gc_setColor(1, 1, 1, .1)
-        FONT.set(50)
+        setFont(50)
         gc_print("0", 200, 345)
-        FONT.set(30)
+        setFont(30)
         gc_setColor(clr.LT)
         gc_mStr(uidList[0].uid, 450, 360)
         for i = 1, 3 do
             local y = 220 + 330 + (i - 1) * 90
             gc_setColor(1, 1, 1, .1)
-            FONT.set(50)
+            setFont(50)
             gc_print(i, 30, y - 45)
-            FONT.set(30)
+            setFont(30)
             gc_setColor(0, 0, 0, .26)
             gc_mRect('fill', 450, y, 860, 80, 20)
             gc_setColor(clr.L)
@@ -624,13 +664,11 @@ function scene.draw()
         local len = 800
 
         local playTime = BGM.tell()
-        local beatLen = 60 / BgmData[BgmPlaying].bpm
-        local beatBar = BgmData[BgmPlaying].bar
 
         gc_ucs_move(50, 120)
 
         -- Time
-        FONT.set(30)
+        setFont(30)
         gc_setColor(clr.T)
         gc_print(STRING.time_simp(playTime), 0, 49, 0, .626)
         gc_print(playingBgmLengthStr, len - 45, 49, 0, .626)
@@ -662,10 +700,10 @@ function scene.draw()
         -- Ambient Glow
         gc.push('transform')
         gc_replaceTransform(SCR.origin)
-        if BgmPlaying == 'tera' or BgmPlaying == 'terar' then
+        if BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
             gc_setAlpha(.42)
         else
-            gc_setAlpha(.2 + .06 * math.sin(playTime / beatLen * 1.5708))
+            gc_setAlpha(.26 - .12 * MusicBeat)
         end
         gc_draw(TEXTURE.transition, 0, 0, 0, .42 / 128 * SCR.w, SCR.h)
         gc_draw(TEXTURE.transition, SCR.w, 0, 0, -.42 / 128 * SCR.w, SCR.h)
@@ -674,10 +712,10 @@ function scene.draw()
         -- Title
         gc_setAlpha(1)
         gc_mStr(playingBgmTitle, len / 2, 0)
-        if not (BgmPlaying == 'tera' or BgmPlaying == 'terar') then
-            gc_setColor(1, 1, 1, .35 - .26 * math.sin(playTime / (beatBar * beatLen) * 3.1416))
+        if not (BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael') then
+            gc_setColor(1, 1, 1, MATH.lerp(.62, .26, MusicBeat))
+            gc_mStr(playingBgmTitle, len / 2, -1.26)
         end
-        gc_mStr(playingBgmTitle, len / 2, 0)
         gc_setColor(clr.LT)
         gc_setAlpha(.26)
         gc_printf(data.meta, len / 2, 56, 2 * len, 'center', 0, .42, .42, len)
@@ -706,7 +744,7 @@ function scene.draw()
     gc_replaceTransform(SCR.xOy_ul)
     gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCRDpage and ZCRDclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
-    FONT.set(50)
+    setFont(50)
     if GAME.anyRev then
         gc_print(page == ZCEMpage and "ZCEM SETTINGS" or page == ZCRDpage and "ZCRD SETTINGS" or "CONFIG", 15, 68, 0, 1, -1)
     else
@@ -729,53 +767,32 @@ function scene.draw()
     gc_replaceTransform(SCR.xOy_dl)
     gc_setColor(page == ZCEMpage and ZCEMclr.L or page == ZCRDpage and ZCRDclr.L or clr.L)
     gc_setAlpha(GAME.einvisUI and 0.626 or 1)
-    FONT.set(30)
+    setFont(30)
     gc_print("TWEAK YOUR SETTINGS FOR A BETTER " .. (page == ZCEMpage and "MODDED" or page == ZCRDpage and "MODDED" or "CLICKING") .. " EXPERIENCE", 15, -45, 0, .85, 1)
 end
 
 function scene.overDraw()
     -- BPM/Speed Indicator
-    local data = BgmData[BgmPlaying]
-    local bpm = data.bpm
+    local bpm = modifiedBPM()
     local speedMod = 1
     if GAME.nightcore then 
-        bpm = bpm * 2
         speedMod = speedMod * 2.6
     end
-    if GAME.enightcore then 
-        bpm = bpm * 2
-    end
-    if GAME.slowmo then 
-        bpm = bpm / 2
-    end
     if GAME.eslowmo then
-        bpm = bpm * 0.70711
         speedMod = speedMod * 0.75
     end
     if GAME.ecloseCard then
         speedMod = speedMod * 2
     end
-    if GAME.mod.GV == -1 then
-        bpm = bpm * 0.70711
-    elseif GAME.mod.GV == 1 then
-        bpm = bpm * 1.05946
-    elseif GAME.mod.GV == 2 then
-        if not URM then
-            bpm = bpm * 1.12246
-        else
-            bpm = bpm * 1.18921
-        end
-    end
     local M = GAME.mod
-    if GAME.uneasyMode then bpm = bpm * 1.01455 end
     local playTime = 0
     local beatLen = 0
     local dy = 0
     local t = love.timer.getTime()
     if bpmMode and (page == ZCEMpage or page == 3) then
         playTime = BGM.tell()
-        beatLen = 60 / BgmData[BgmPlaying].bpm
-        dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416), -2.6, 2.6)
+        beatLen = 60 / bpm
+        dy = MATH.clamp(6 * math.sin(playTime / beatLen * 3.1416 / bpmModifier), -2.6, 2.6)
     end
     if page == ZCEMpage then
         if bpmMode then
@@ -785,7 +802,7 @@ function scene.overDraw()
                 gc_setColor(COLOR.rainbow_light(2.6 * t * bpm/240))
             end
             gc_setAlpha(1)
-            FONT.set(65)
+            setFont(65)
             gc_print(bpmString, 835 - (GAME.ecloseCard and 20 or 0), 110 + dy)
         else
             local speedString = "SPEED: "..tostring(MATH.floor(speedMod*100)/100) .. "x"
@@ -794,13 +811,13 @@ function scene.overDraw()
                 gc_setColor(COLOR.rainbow_light(2.6 * t * bpm/240))
             end
             gc_setAlpha(1)
-            FONT.set(65)
+            setFont(65)
             gc_print(speedString, 835 - (GAME.ecloseCard and 20 or 0), 110 + dy)
         end
         if countPiecesActive() > 1 then
             gc_setColor(COLOR.R)
             gc_setAlpha(1)
-            FONT.set(50)
+            setFont(50)
             gc_print("MULTIPLE PIECES!!!", 770 - (GAME.ecloseCard and 20 or 0), baseY + 338 + dy)
             GAME.refreshCurrentCombo()
         else
@@ -817,13 +834,11 @@ function scene.overDraw()
     end
 end
 
-local pageVisFunc = {}
-for p = 1, maxPage do pageVisFunc[p] = function() return page == p end end
+-- widget lists of each page, will be registered to scene.widgetList at the end
+local pages = {}
 
--- Page 1
 local videoY = baseY + 360
-local page1 = {
-    -- Audio
+pages[1] = {
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
         text = "AUDIO",
@@ -953,10 +968,8 @@ local page1 = {
     },
 }
 
--- Page 2
 local profY = baseY + 220
-local page2 = {
-    -- Account
+pages[2] = {
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
         text = "ACCOUNT",
@@ -990,12 +1003,12 @@ local page2 = {
                 return
             end
             if newName == STAT.uid then
-                MSG('dark', "New name is the same as the old one.")
+                MSG('dark', "New name is the same as the old one")
                 SFX.play('staffwarning')
                 return
             end
             if newName:match('^ANON[-_]') then
-                MSG('dark', "You can’t enter ANON as your new name.")
+                MSG('dark', "You can't enter ANON as your new name")
                 SFX.play('staffwarning')
                 return
             end
@@ -1043,7 +1056,7 @@ local page2 = {
                 STAT.aboutme = newText
                 SaveStat()
                 SFX.play('supporter')
-                MSG('dark', "Your About Me text has been updated.")
+                MSG('dark', "Your About Me text has been updated")
                 if SCN.cur == 'stat' then RefreshProfile() end
                 IssueAchv('identity')
                 return
@@ -1051,7 +1064,6 @@ local page2 = {
             SFX.play('staffwarning')
         end,
     },
-    -- Profile
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
         text = "PROFILE",
@@ -1094,166 +1106,14 @@ local page2 = {
             if #data <= 26 then
                 if data == '' then
                     MSG('dark', "No data in clipboard")
-                elseif data == 'cmd' then
-                    SFX.play('cutin_superlobby', 1, 0, Tone(-2))
-                    SCN.go('_console')
-                elseif data == 'old_hitbox' then
-                    CONF.oldHitbox = not CONF.oldHitbox
-                    MSG('dark', "Force old hitbox: " .. (CONF.oldHitbox and "ON" or "OFF"))
-                    SFX.play(CONF.oldHitbox and 'social_online' or 'social_offline')
-                    TEXTS.version:set(SYSTEM .. (CONF.oldHitbox and " T" or " V") .. (require 'version'.verStr))
-                elseif data == 'true_ending' then
-                    SFX.play('warp')
-                    SCN.go('ending', 'warp')
-                elseif data == 'test' then
-                    TestMode = true
-                    SFX.play('maintenance')
-                elseif data == 'dev' then
-                    MSG('dark', OverDevProgressText)
-                elseif data == 'repo' then
-                    SFX.play('menuconfirm')
-                    love.system.openURL("https://github.com/MrZ626/ZenithClicker")
-                elseif data == 'UseAltName' then
-                    UseAltName()
-                    SFX.play('social_dm')
-                elseif data == 'UseEasyName' or data == 'UseEasName' then
-                    CONF.easyName = not CONF.easyName
-                    SFX.play('social_dm')
-                    MSG('dark', "Easy Names In-Game: " .. (CONF.easyName and "ON" or "OFF"))
-                elseif data == 'imperial' or data == 'feet' then
-                    CONF.imperial = not CONF.imperial
-                    SFX.play('social_dm')
-                    MSG('dark', "Imperial Units: " .. (CONF.imperial and "ON" or "OFF"))
-                elseif data == 'promotion' then
-                    CONF.promotion = not CONF.promotion
-                    SFX.play('social_dm')
-                    MSG('dark', "Rank Promotion Gauge: " .. (CONF.promotion and "ON" or "OFF"))
-                elseif data == 'old_transparent_card' or data == 'oldTransparentCard' or data == 'oldtransparentcard' or data == 'oldeO' then
-                    CONF.oldTransparentCard = not CONF.oldTransparentCard
-                    SFX.play('social_dm')
-                    MSG('dark', "Transparent Card: " .. (CONF.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
-                elseif data == 'eZ' or data == 'ez' then
-                    if not GAME.enightcore and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.enightcore = not GAME.enightcore
-                    MSG('dark', "eZ: " .. (GAME.enightcore and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    RefreshBGM()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eS' or data == 'es' then
-                    if not GAME.eslowmo and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.eslowmo = not GAME.eslowmo
-                    MSG('dark', "eS: " .. (GAME.eslowmo and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    RefreshBGM()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eJ' or data == 'ej' then
-                    if not GAME.eglassCard and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.eglassCard = not GAME.eglassCard
-                    MSG('dark', "eJ: " .. (GAME.eglassCard and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eL' or data == 'el' then
-                    if not GAME.efastLeak and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.efastLeak = not GAME.efastLeak
-                    MSG('dark', "eL: " .. (GAME.efastLeak and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eT' or data == 'et' then
-                    if not GAME.einvisUI and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.einvisUI = not GAME.einvisUI
-                    MSG('dark', "eT: " .. (GAME.einvisUI and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eO' or data == 'eo' then
-                    if not GAME.einvisCard and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.einvisCard = not GAME.einvisCard
-                    MSG('dark', "eO: " .. (GAME.einvisCard and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eI' or data == 'ei' then
-                    if not GAME.ecloseCard and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.ecloseCard = not GAME.ecloseCard
-                    MSG('dark', "eI: " .. (GAME.ecloseCard and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    GAME.refreshCurrentCombo()
                 elseif data == 'lyrics' then
                     CONF.lyrics = not CONF.lyrics
                     SFX.play(CONF.lyrics and 'social_online' or 'social_offline')
                     MSG('dark', "In-Game Lyrics: " .. (CONF.lyrics and "Enabled" or " Disabled"))
-                elseif data == 'resubmit' then
-                    if DAILYCMD then
-                        ASYNC.runCmd('submitDaily', DAILYCMD)
-                        MSG('info', "Re-submitting Daily Challenge score...")
-                        SFX.play('social_invite')
-                    else
-                        MSG('warn', "No buffered Daily Challenge score")
-                        SFX.play('failure', 1, 0, Tone(0))
-                    end
                 else
-                    local msg = "Invalid code '" .. data .. "' in clipboard."
-                    if MATH.roll(.26) then
-                        msg = msg .. "\n" .. TABLE.getRandom {
-                            "Try 'cmd'",
-                            "Try 'cooldown'",
-                            "Try 'old_hitbox'",
-                            "Try 'test'",
-                            "Try 'dev'",
-                            "Try 'repo'",
-                            MATH.coin("Try 'mp'", "Try 'music'"),
-                            "Try 'f" .. STAT.maxFloor .. "'",
-                            "Try 'UseEasyName'",
-                            "Try 'imperial'",
-                            "Try 'promotion'",
-                            STAT.clicker and "Try 'true_ending'" or nil,
-                        }
-                    end
-                    MSG('dark', msg)
+                    MSG('dark', "Invalid data '" .. data .. "' in clipboard")
                     SFX.play('staffwarning')
-                    return
                 end
-                LOG('info', "Secret: " .. data)
                 return
             end
             if TASK.lock('import', 4.2) then
@@ -1373,9 +1233,9 @@ local page2 = {
                 lastClear = false
                 SFX.play('hyperalert')
                 if instaReset then
-                    MSG('warn', "Reset all progress? Press again to confirm.", 2.6)
+                    MSG('warn', "Reset all progress? Press again to confirm", 2.6)
                 else
-                    MSG('info', "Reset all progress? Spam to confirm.", 2.6)
+                    MSG('info', "Reset all progress? Spam to confirm", 2.6)
                 end
                 return
             end
@@ -1413,17 +1273,17 @@ local page2 = {
             SFX.play('thunder' .. math.random(6))
             MSG.clear()
             SCN._pop()
-            SCN.swapTo('joining', 'fade', true)
+            SCN.swapTo('joining', 'fade', 'reset')
         end,
     },
 }
 local function saveSlot(i)
     if TestMode then
         SFX.play('staffwarning')
-        MSG('dark', "You are not a good person.")
+        MSG('dark', "You are not a good person")
         return
     end
-    if uidList[i] and STAT.uid ~= uidList[i].uid then
+    if uidList[i] and STAT.uid ~= uidList[i].uid and not uidList[i].uid:match("^ANON%-") then
         SFX.play('staffwarning')
         MSG('dark', "For safety, you can only update a backup with same username", 4.2)
         return
@@ -1441,9 +1301,24 @@ local function saveSlot(i)
     WIDGET._reset()
 end
 local function loadSlot(i)
+    if not anonUser then
+        local hasBackup
+        for _, user in next, uidList do
+            if user and STAT.uid == user.uid then
+                hasBackup = true
+                break
+            end
+        end
+        if not hasBackup then
+            SFX.play('staffwarning')
+            MSG('dark', "For safety, you can only load a backup when current save is backed up", 4.2)
+            return
+        end
+    end
+
     if TASK.lock('load_slot' .. i, 2.6) then
         SFX.play('hyperalert')
-        MSG('warn', "Load from slot " .. i .. "? Current save will be overwritten. Press again to confirm.", 4.2)
+        MSG('warn', "Load from slot " .. i .. "? Current save will be overwritten. Press again to confirm", 4.2)
         return
     end
     TASK.unlock('load_slot' .. i)
@@ -1452,12 +1327,17 @@ local function loadSlot(i)
     FILE.copy('save' .. i .. '/best.luaon', 'best.luaon')
     SFX.play('levelup'); SFX.play('levelup')
     SCN._pop()
-    SCN.swapTo('joining', 'fade', true)
+    SCN.swapTo('joining', 'fade', 'load')
 end
 local function clearSlot(i)
+    if uidList[i] and STAT.uid ~= uidList[i].uid and not uidList[i].uid:match("^ANON%-") then
+        SFX.play('staffwarning')
+        MSG('dark', "For safety, you can only delete a backup with same username", 4.2)
+        return
+    end
     if TASK.lock('clear_slot' .. i, 2.6) then
         SFX.play('hyperalert')
-        MSG('warn', "Clear slot " .. i .. "? This action cannot be undone. Press again to confirm.", 4.2)
+        MSG('warn', "Clear slot " .. i .. "? This action cannot be undone. Press again to confirm", 4.2)
         return
     end
     TASK.unlock('clear_slot' .. i)
@@ -1473,7 +1353,7 @@ end
 local slBtnTextColor = { 0, 0, 0, .62 }
 for i = 1, 3 do
     local y = profY + 330 + (i - 1) * 90
-    TABLE.append(page2, {
+    TABLE.append(pages[2], {
         WIDGET.new {
             name = 'save' .. i, type = 'button',
             x = baseX + 355, y = y, w = 160, h = 50,
@@ -1497,10 +1377,8 @@ for i = 1, 3 do
     })
 end
 
--- Page 3
 local albumY = baseY + 250
-local page3 = {
-    -- Album
+pages[3] = {
     WIDGET.new { -- title
         type = 'text', alignX = 'left',
         text = "ALBUM",
@@ -1514,6 +1392,7 @@ local page3 = {
         color = clr.L,
         fontSize = 30, textColor = clr.LT, text = "-30s",
         onClick = function()
+            MusicBPM = nil
             TASK.removeTask_code(Task_MusicEnd)
             BGM.set('all', 'seek', math.max(BGM.tell() - 30, 0))
         end,
@@ -1524,6 +1403,7 @@ local page3 = {
         color = clr.L,
         fontSize = 30, textColor = clr.LT, text = "-5s",
         onClick = function()
+            MusicBPM = nil
             TASK.removeTask_code(Task_MusicEnd)
             BGM.set('all', 'seek', math.max(BGM.tell() - 5, 0))
         end,
@@ -1534,6 +1414,7 @@ local page3 = {
         color = clr.L,
         fontSize = 30, textColor = clr.LT, text = "+5s",
         onClick = function()
+            MusicBPM = nil
             TASK.removeTask_code(Task_MusicEnd)
             BGM.set('all', 'seek', math.min(BGM.tell() + 5, BGM.getDuration()))
         end,
@@ -1544,8 +1425,9 @@ local page3 = {
         color = clr.L,
         fontSize = 30, textColor = clr.LT, text = "+30s",
         onClick = function()
+            MusicBPM = nil
             TASK.removeTask_code(Task_MusicEnd)
-            BGM.set('all', 'seek', math.min(BGM.tell() + 30, BGM.getDuration()))
+            BGM.set('all', 'seek', math.min(BGM.tell() + 30, BGM.getDuration() - .26))
         end,
     },
     WIDGET.new { -- no loop
@@ -1559,7 +1441,7 @@ local page3 = {
     },
 }
 local function albumBtn(param)
-    table.insert(page3, WIDGET.new(TABLE.update({
+    table.insert(pages[3], WIDGET.new(TABLE.update({
         type = 'button',
         w = 65,
         fontSize = 30,
@@ -1587,7 +1469,7 @@ for i = 0, 10 do
             GAME.height = (bgmHeight[i] + bgmHeight[i + 1]) / 2
             PlayBGM('f' .. i .. 'r')
         end,
-        visibleFunc = function() return page == 3 and STAT.maxFloor >= 10 and TABLE.findAll(GAME.completion, 2) end,
+        visibleFunc = function() return page == 3 and STAT.maxFloor >= 10 and TABLE.countAll(GAME.completion, 2) > 0 end,
     }
 end
 albumBtn {
@@ -1650,8 +1532,8 @@ albumBtn {
     visibleFunc = function() return page == 3 and ACHV.programmer_gamer and ACHV.programmer_gamer >= 1650 end,
 }
 
--- Page 4
-local page4 = {
+-- ZCEM page
+pages[ZCEMpage] = {
     WIDGET.new { -- Game Play
         name = 'gameplay', type = 'button', 
         x = baseX + 220, y = baseY + 60, w = 410, h = 70,
@@ -1732,13 +1614,13 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "OLD HITBOX",
         x = baseX + 500, y = baseY + 60 + 160,
-        disp = function() return STAT.oldHitbox end,
+        disp = function() return CONF.oldHitbox end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.oldHitbox = not STAT.oldHitbox
-            MSG('dark', "Force old hitbox: " .. (STAT.oldHitbox and "ON" or "OFF"))
-            SFX.play(STAT.oldHitbox and 'social_online' or 'social_offline')
+            CONF.oldHitbox = not CONF.oldHitbox
+            MSG('dark', "Force old hitbox: " .. (CONF.oldHitbox and "ON" or "OFF"))
+            SFX.play(CONF.oldHitbox and 'social_online' or 'social_offline')
             GAME.multiplePiecesActive = false
             SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
@@ -2050,7 +1932,10 @@ local page4 = {
         color = ZCEMclr.T,
         sound_hover = 'menutap',
         fontSize = 50, text = "CYCLE PIECES", textColor = ZCEMclr.LT,
-        onClick = function()
+        onClick = function(k)
+            if (k == 3 or love.keyboard.isDown('lalt', 'ralt')) and (GAME.pieceEffectID < 7 or GAME.pieceEffectID == #PieceData) then
+                GAME.pieceEffectID = 7
+            end
             GAME.pieceEffectID = (GAME.pieceEffectID or 0) % #PieceData + 1
             if GAME.pieceEffectID <= #PieceData - 1 then
                 local piece = ('zsjltoi'):sub(GAME.pieceEffectID, GAME.pieceEffectID)
@@ -2149,15 +2034,22 @@ local page5 = {
     },
 }
 
--- Apply visibility functions if not set
-for _, W in next, page1 do W.visibleFunc = W.visibleFunc or pageVisFunc[1] end
-for _, W in next, page2 do W.visibleFunc = W.visibleFunc or pageVisFunc[2] end
-for _, W in next, page3 do W.visibleFunc = W.visibleFunc or pageVisFunc[3] end
-for _, W in next, page4 do W.visibleFunc = W.visibleFunc or pageVisFunc[4] end
-for _, W in next, page5 do W.visibleFunc = W.visibleFunc or pageVisFunc[5] end
+local function newTabBtn(text, y, key, btnClr, txtClr)
+    return WIDGET.new {
+        type = 'button',
+        pos = { 1, 0 }, x = -60, y = y, w = 160, h = 60,
+        color = btnClr or { COLOR.HEX '383838' },
+        fontSize = 30, text = text, textColor = txtClr or 'DL',
+        onClick = function() love.keypressed(key) end,
+    }
+end
 
 -- Tabs
 local tab = {
+    newTabBtn("CONF   ", 140 + 90 * 0, '1'),
+    newTabBtn("USER   ", 140 + 90 * 1, '2'),
+    newTabBtn("ALB   ", 140 + 90 * 2, '3'),
+    newTabBtn("ZCEM   ", 140 + 90 * (ZCEMpage - 1), tostring(ZCEMpage), 'DG', { .15, .75, .15 }),
     WIDGET.new {
         name = 'back', type = 'button',
         pos = { 0, 0 }, x = 60, y = 140, w = 160, h = 60,
@@ -2165,57 +2057,23 @@ local tab = {
         fontSize = 30, text = "    BACK", textColor = 'DL',
         onClick = function() love.keypressed('escape') end,
     },
-    WIDGET.new {
-        name = 'conf', type = 'button',
-        pos = { 1, 0 }, x = -60, y = 140, w = 160, h = 60,
-        color = { COLOR.HEX '383838' },
-        fontSize = 30, text = "CONF   ", textColor = 'DL',
-        onClick = function() love.keypressed('1') end,
-    },
-    WIDGET.new {
-        name = 'utils', type = 'button',
-        pos = { 1, 0 }, x = -60, y = 230, w = 160, h = 60,
-        color = { COLOR.HEX '383838' },
-        fontSize = 30, text = "UTILS  ", textColor = 'DL',
-        onClick = function() love.keypressed('2') end,
-    },
-    WIDGET.new {
-        name = 'album', type = 'button',
-        pos = { 1, 0 }, x = -60, y = 320, w = 160, h = 60,
-        color = { COLOR.HEX '383838' },
-        fontSize = 30, text = "ALBUM  ", textColor = 'DL',
-        onClick = function() love.keypressed('3') end,
-    },
-    WIDGET.new {
-        name = 'zcem', type = 'button',
-        pos = { 1, 0 }, x = -60, y = 410, w = 160, h = 60,
-        color = 'DG',
-        sound_hover = 'menutap',
-        fontSize = 30, text = "ZCEM   ", textColor = { .15, .75, .15 },
-        onPress = function() love.keypressed('4') end,
-        onClick = function() love.keyreleased('4') end,
-    },
-    WIDGET.new {
-        name = 'zcrd', type = 'button',
-        pos = { 1, 0 }, x = -60, y = 500, w = 160, h = 60,
-        color = colorRev and ZCRDclr.rD or ZCRDclr.D,
-        sound_hover = 'menutap',
-        fontSize = 30, text = "ZCRD   ", textColor = ZCRDclr.L,
-        onPress = function() love.keypressed('5') end,
-        onClick = function() love.keyreleased('5') end,
-    },
 }
 
-for _, W in next, page1 do if W.type == 'button' or W.type == 'checkBox' then W.sound_hover, W.sound_release = 'menutap', 'menuclick' end end
-for _, W in next, page2 do if W.type == 'button' or W.type == 'checkBox' then W.sound_hover, W.sound_release = 'menutap', 'menuclick' end end
-for _, W in next, page3 do if W.type == 'button' or W.type == 'checkBox' then W.sound_hover = 'menutap' end end -- Album buttons should be quiet
+-- Apply dafault visibility functions
+local pageVisFunc = {}
+for p = 1, maxPage do pageVisFunc[p] = function() return page == p end end
+for i = 1, #pages do
+    for _, W in next, pages[i] do
+        W.visibleFunc = W.visibleFunc or pageVisFunc[i]
+        if W.type == 'button' or W.type == 'checkBox' then
+            W.sound_hover = 'menutap'
+            if i ~= 3 and i ~= ZCEMpage then W.sound_release = 'menuclick' end
+        end
+    end
+end
 
 scene.widgetList = {}
-TABLE.append(scene.widgetList, page1)
-TABLE.append(scene.widgetList, page2)
-TABLE.append(scene.widgetList, page3)
-TABLE.append(scene.widgetList, page4)
-TABLE.append(scene.widgetList, page5)
+for i = 1, #pages do TABLE.append(scene.widgetList, pages[i]) end
 TABLE.append(scene.widgetList, tab)
 
 return scene

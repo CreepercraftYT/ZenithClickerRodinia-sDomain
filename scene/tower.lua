@@ -27,6 +27,7 @@ local startMin = os.date('%M')
 local startSec = os.date('%S')
 local comboTimer = 0
 local combo = 0
+local lastTimeRemain = 1e99 -- For checking if daily challenge should update
 
 ---@type Zenitha.Scene
 local scene = {}
@@ -38,7 +39,6 @@ local function switchVisitor(bool)
         love.mouse.setRelativeMode(bool)
         ZENITHA._cursor.active = not bool
         for _, W in next, scene.widgetList do W:setVisible(not bool) end
-        scene.widgetList.help2:setVisible()
         if usingTouch then scene.widgetList.help:setVisible(true) end
         if bool then IssueAchv('zenith_traveler') end
         TABLE.clear(HoldingButtons)
@@ -67,14 +67,6 @@ local function MouseOnCard(x, y)
                 return i
             end
         end
-    end
-end
-
-function SetMouseVisible(bool)
-    if CONF.syscursor then
-        love.mouse.setVisible(bool)
-    else
-        CursorHide = not bool
     end
 end
 
@@ -213,11 +205,11 @@ local function keyTrigger(key)
             if GAME.playing or GAME.badTime then
                 SFX.play('no')
             else
-                if URM and M.VL == 2 and not UltraVlCheck('achv') then return end
+                if URM and M.VL == 2 and not UltraVlCheck('chnl') then return end
                 SFX.play('menuhit1')
-                SCN.go('achv', 'none')
+                SCN.go('chnl', 'none')
             end
-            local W = scene.widgetList.achv
+            local W = scene.widgetList.chnl
             W._pressTime = W._pressTimeMax * 2
             W._hoverTime = W._hoverTimeMax
         elseif key == 'f1' then
@@ -301,8 +293,8 @@ local function keyTrigger(key)
                         GAME.fallout = true
                         scene.widgetList.stat.x = -100
                         scene.widgetList.stat:resetPos()
-                        scene.widgetList.achv.x = -100
-                        scene.widgetList.achv:resetPos()
+                        scene.widgetList.chnl.x = -100
+                        scene.widgetList.chnl:resetPos()
                         scene.widgetList.about.x = 100
                         scene.widgetList.about:resetPos()
                         scene.widgetList.conf.x = 100
@@ -498,6 +490,9 @@ function scene.load()
         applyCombo(PendingComboFromRecord)
         PendingComboFromRecord = nil
     end
+
+    TABLE.clear(revHold)
+    TABLE.clear(easyHold)
     if STAT.unlockAll and not ACHV.lazy_bastard then
         IssueAchv('lazy_bastard', true)
         MSG('achv_issued', {
@@ -745,11 +740,11 @@ function scene.update(dt)
 
     if not GAME.playing and TASK.lock('dcTimer', 1) then
         local timeRemain = 86400 - (3600 * os.date("!%H") + 60 * os.date("!%M") + os.date("!%S"))
-        if timeRemain < 0 then
+        if timeRemain > lastTimeRemain then
             RefreshDaily()
             GAME.refreshDailyChallengeText()
-            timeRemain = timeRemain + 86400
         end
+        lastTimeRemain = timeRemain
         --TEXTS.dcTimer:set(os.date("!%H:%M:%S", timeRemain))
     end
 end
@@ -956,7 +951,7 @@ function DrawBG(brightness, showRuler)
     -- gc.print(floor(GAME.bgH), 10, 10, 0, 2.6)
 end
 
-local function drawPBline(h, pb, spd, textObj)
+function DrawPBline(h, pb, spd, textObj)
     gc_replaceTransform(SCR.xOy_r)
 
     local obj = textObj or TEXTS.linePB
@@ -1021,7 +1016,7 @@ function scene.draw()
     local t = love.timer.getTime()
     if GAME.zenithTraveler then
         DrawBG(100, true)
-        drawPBline(STAT.maxHeight, true)
+        DrawPBline(STAT.maxHeight, true)
         return
     else
         DrawBG(CONF.bgBrightness, true)
@@ -1049,12 +1044,12 @@ function scene.draw()
         end
 
         -- PB line
-        drawPBline(GAME.prevPB, true)
+        DrawPBline(GAME.prevPB, true)
 
         -- KM line
         if GAME.floor >= 10 then
             gc_setColor(1, 1, 1, GAME.uiHide)
-            drawPBline(MATH.roundUnit(GAME.bgH, 1000), false, 6, TEXTS.lineKM)
+            DrawPBline(MATH.roundUnit(GAME.bgH, 1000), false, 6, TEXTS.lineKM)
         end
 
         local panelH = 697 + GAME.uiHide * (420 + GAME.height / 6.2)
@@ -1124,6 +1119,9 @@ function scene.draw()
         -- MP & ZP Preview
         if not GAME.playing and STAT.maxFloor >= 10 and not GAME.badTime then
             gc_setColor(TextColor)
+            if GAME.forceRev and GAME.getComboZP(GAME.getHand(true)) < 1.2 then
+                gc_setColor(COLOR.rainbow_light(2.6 * t))
+            end
             gc_setAlpha(.12 + abs(math.log(GAME.comboZP)) * (GAME.einvisUI and 1 or 2))
             gc_draw(TEXTS.zpPreview, 1370, 275, 0, 1, 1, TEXTS.zpPreview:getWidth())
             if GAME.comboMP >= 6 or GAME.comboMP <= -3 then
@@ -1179,7 +1177,7 @@ function scene.draw()
         gc_setColor(TextColor)
         gc_mDraw(TEXTS.dcBest, -200, 100, nil, .626)
         gc_mDraw(TEXTS.dcTimer, -200, 152, nil, .626)
-        if DailyActived then
+        if Daily.actived then
             gc_setAlpha(.42 + .1 * sin(t * 6.2))
             gc_mRect('fill', -200, 126, 200, 80, 40)
         end
@@ -1282,8 +1280,11 @@ function scene.overDraw()
             local ox, oy = TEXTS.spike:getWidth() / 2, TEXTS.spike:getHeight() / 2
             gc_setColor(1, 1, 1, GAME.spikeTimer * .62/eTAlpha)
             gc_strokeDraw('full', 2, TEXTS.spike, 0, 0, 0, 1, 1, ox, oy)
-            gc_setColor(0, 0, 0, GAME.spikeTimer * 2.6/eTAlpha)
+            gc_setColor(1, 1, 1, GAME.spikeTimer * 2.6/eTAlpha)
+            gc_setBlendMode('subtract')
             gc_draw(TEXTS.spike, 0, 0, 0, 1, 1, ox, oy)
+            gc_draw(TEXTS.spike, 0, 0, 0, 1, 1, ox, oy)
+            gc_setBlendMode('alpha')
             gc_pop()
         end
 
@@ -1855,12 +1856,20 @@ function scene.overDraw()
         end
 
         -- Speedrun Timer
-        gc_replaceTransform(SCR.xOy_dl)
-        setFont(30)
-        gc_setColor(TextColor)
-        gc_setAlpha(.42)
-        TEXTS.srTimer:set(STRING.time(STAT.srTimer_game) .. "/ " .. STRING.time(STAT.srTimer_life, 2))
-        gc_draw(TEXTS.srTimer, 7, -70 + GAME.uiHide * 30)
+        do
+            gc_replaceTransform(SCR.xOy_dl)
+            gc_translate(0, GAME.uiHide * 30)
+            setFont(30)
+            gc_setColor(GAME.badTime and COLOR.L or TextColor)
+            gc_setAlpha(.42)
+            TEXTS.srTimer:set(STRING.time(STAT.srTimer_game) .. "/ " .. STRING.time(STAT.srTimer_life, 2))
+            gc_draw(TEXTS.srTimer, 7, -70)
+            if STAT.srActive then
+                gc_setBlendMode('add')
+                gc_mDrawQ(TEXTURE.achievement.icons, TEXTURE.achievement.iconQuad.zenith_speedrun, 26, -90, 0, -.18, .18)
+                gc_setBlendMode('alpha')
+            end
+        end
 
         -- Card Info
         if not GAME.playing and FloatOnCard then
@@ -2122,7 +2131,7 @@ function scene.overDraw()
         -- Watermark
         gc_replaceTransform(SCR.xOy_u)
         gc_setColor(1, 1, 1, .26)
-        gc_mDraw(TEXTS.test, -260, 260, -.16 + sin(t * 2.6) * .0626, 8.72)
+        gc_mDraw(TEXTS.test, -260, 260, -.16 + sin(t * 2.6) * .0626, 6.26)
 
         -- Show Touch
         gc_replaceTransform(SCR.xOy)
@@ -2243,17 +2252,19 @@ scene.widgetList = {
         name = 'stat', type = 'button',
         pos = { 0, 0 }, x = 60, y = 230, w = 160, h = 60,
         color = { COLOR.HEX '1F4E2C' },
+        textColor = { COLOR.HEX '73E284' },
         sound_hover = 'menutap',
-        fontSize = 30, text = "    STAT", textColor = { COLOR.HEX '73E284' },
+        fontSize = 30, text = "    STAT",
         onPress = function() love.keypressed('`') end,
         onClick = function() love.keyreleased('`') end,
     },
     WIDGET.new {
-        name = 'achv', type = 'button',
+        name = 'chnl', type = 'button',
         pos = { 0, 0 }, x = 60, y = 320, w = 160, h = 60,
         color = { COLOR.HEX '1F4E2C' },
+        textColor = { COLOR.HEX '73E284' },
         sound_hover = 'menutap',
-        fontSize = 30, text = "    ACHV", textColor = { COLOR.HEX '73E284' },
+        fontSize = 30, text = "    CHNL",
         onPress = function() love.keypressed('tab') end,
         onClick = function() love.keyreleased('tab') end,
     },
@@ -2270,8 +2281,9 @@ scene.widgetList = {
         name = 'conf', type = 'button',
         pos = { 1, 0 }, x = -60, y = 230, w = 160, h = 60,
         color = { COLOR.HEX '253355' },
+        textColor = { COLOR.HEX '869EFF' },
         sound_hover = 'menutap',
-        fontSize = 30, text = "CONF   ", textColor = { COLOR.HEX '869EFF' },
+        fontSize = 30, text = "CONF   ",
         onPress = function() love.keypressed('f1') end,
         onClick = function() love.keyreleased('f1') end,
     },
@@ -2279,8 +2291,9 @@ scene.widgetList = {
         name = 'about', type = 'button',
         pos = { 1, 0 }, x = -60, y = 320, w = 160, h = 60,
         color = { COLOR.HEX '383838' },
+        textColor = { COLOR.HEX '909090' },
         sound_hover = 'menutap',
-        fontSize = 30, text = "ABOUT ", textColor = { COLOR.HEX '909090' },
+        fontSize = 30, text = "ABOUT ",
         onPress = function() love.keypressed('f2') end,
         onClick = function() love.keyreleased('f2') end,
     },
@@ -2341,8 +2354,9 @@ scene.widgetList = {
         floatCornerR = 26,
         floatText = "NO DATA",
         onPress = function()
-            --if not DailyAvailable then return end
+            --if not Daily.available then return end
             --applyCombo(DAILY)
+            if GAME.badTime then return end
             applyCombo(generateRandomCombo())
             if TABLE.equal(GAME.getHand(true),{'eEX','rGV','eDH','eAS'}) then -- but it isn't one of mine check
                 GAME.enightcore = true

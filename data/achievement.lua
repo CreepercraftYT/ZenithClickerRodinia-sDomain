@@ -54,6 +54,7 @@ end
 ---@field rank ('floor' | fun(score):number)?
 ---@field type ('competitive' | 'unranked' | 'issued' | 'event')?
 ---@field hide fun():boolean?
+---@field mod string?
 
 ---@type Map<Achievement>
 local d = {
@@ -1484,7 +1485,17 @@ local d = {
         hide = TRUE,
         type = 'issued',
     },
-    { title = "Easy Mode Ex-Vanilla" },
+    { -- knifes_edge
+        ex = true,
+        id = 'knifes_edge',
+        name = "Knife's Edge",
+        desc = [[Reach final save wipe animation but not delete it.]],
+        quote = [[That was a close one!]],
+        credit = "@F1e308",
+        hide = TRUE,
+        type = 'issued',
+    },
+    { title = "Easy Mode Ex-Vanilla", mod = "ZCEM" },
     { -- patience_is_a_virtue
         ex = true,
         id = 'patience_is_a_virtue',
@@ -1493,17 +1504,19 @@ local d = {
         quote = [[Opportunities always favor those who are prepared and wait.]],
         credit = "@The_111thBlitzer",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2000),
+        mod = "ZCEM",
     },
-    { title = "Easy Mode (v1.0) (No CR)" },
+    { title = "Easy Mode (v1.0) (No CR)", mod = "ZCEM" },
     { -- Programmer & Pro Gamer
         ex = true,
         id = 'programmer_gamer',
         name = "Programmer & Pro Gamer",
-        desc = [[HAR with TERASPEED active or completed WU eEX, eVL, and eAS]],
+        desc = [[HAR with TERASPEED active or completed WU eEX/ueEX, eVL, and eAS]],
         quote = [["WAH-BAAM!"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- one_of_mine
         id = 'one_of_mine',
@@ -1513,6 +1526,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- GGBW
         id = 'ggbw',
@@ -1522,6 +1536,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- perfect_speedrun_plus
         id = 'perfect_speedrun_plus',
@@ -1534,6 +1549,7 @@ local d = {
         rank = numberRankRev(905, 800, 695, 590, 485, 380, 300),
         credit = "@TrevorSmithy",
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- perfectly_balanced
         id = 'perfectly_balanced',
@@ -1543,6 +1559,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- uEX
         id = 'peasant_revolution',
@@ -1552,6 +1569,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- uNH
         id = 'holy_ascention',
@@ -1561,6 +1579,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 4000),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- uMS
         id = 'stabilized_entropy',
@@ -1570,6 +1589,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- uGV
         id = 'restrained_collapse',
@@ -1579,6 +1599,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- uVL
         id = 'restored_volition',
@@ -1588,6 +1609,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- uDH
         id = 'disproven_blasphemy',
@@ -1597,6 +1619,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 4000),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- uIN
         id = 'solved_paradox',
@@ -1606,6 +1629,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 4000),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- uAS
         id = 'demystified_grimoire',
@@ -1615,6 +1639,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- uDP
         id = 'restored_eden',
@@ -1624,6 +1649,7 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- your_too_fast
         id = 'your_too_fast',
@@ -1634,6 +1660,7 @@ local d = {
         scoreSimp = function(rank) return "Rank " .. rank end,
         rank = numberRank(27, 47, 67, 87, 107, 127, 187),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- your_long
         id = 'your_long',
@@ -1642,6 +1669,7 @@ local d = {
         quote = [["WHAT THE HEACK WAS THAT? THAT WAS SCAIRY!!!"]],
         credit = "@TrevorSmithy",
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- cheat_death
         id = 'cheat_death',
@@ -1650,6 +1678,7 @@ local d = {
         quote = [["CALL AN AMBULANCE! CALL AN AMBULANCE! But not for me!"]],
         credit = "@TrevorSmithy",
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- trip_to_hell
         id = 'trip_to_hell',
@@ -1658,8 +1687,9 @@ local d = {
         quote = [[Only those who DENY SALVATION can face the greatest challenge.]],
         credit = "@TrevorSmithy",
         type = 'issued',
+        mod = "ZCEM",
     },
-    { title = "Easy Mods (v1.1) (No CR)" },
+    { title = "Easy Mods (v1.1) (No CR)", mod = "ZCEM" },
     { -- eEX
         id = 'eEX',
         name = "Soft",
@@ -1667,6 +1697,7 @@ local d = {
         quote = [[An easier challenge, for beginners to start with.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eNH
         id = 'eNH',
@@ -1675,6 +1706,7 @@ local d = {
         quote = [[Life is easier when you've made up your mind.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eMS
         id = 'eMS',
@@ -1683,6 +1715,7 @@ local d = {
         quote = [[The odds are always in your favor.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eGV
         id = 'eGV',
@@ -1691,6 +1724,7 @@ local d = {
         quote = [[Do you imagine floating weightless?]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eVL
         id = 'eVL',
@@ -1699,6 +1733,7 @@ local d = {
         quote = [[you're safe, just right where you are.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eDH
         id = 'eDH',
@@ -1707,6 +1742,7 @@ local d = {
         quote = [[A liberating life, and a peaceful death.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eIN
         id = 'eIN',
@@ -1715,6 +1751,7 @@ local d = {
         quote = [[You won't need to remember anything, if you're being honest.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eAS
         id = 'eAS',
@@ -1723,6 +1760,7 @@ local d = {
         quote = [[Anything is possible from within the tips of your fingers.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eDP
         id = 'eDP',
@@ -1731,8 +1769,9 @@ local d = {
         quote = [[Two best pals, created for each other.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
         type = 'unranked',
+        mod = "ZCEM",
     },
-    { title = "Uneasy Mods (v1.1) (No CR)", hide = function() return not ACHV.uneasy end},
+    { title = "Uneasy Mods (v1.1) (No CR)", hide = function() return not ACHV.uneasy end, mod = "ZCEM",},
     { -- ueEX
         id = 'ueEX',
         name = "Lethargy",
@@ -1745,6 +1784,7 @@ local d = {
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eEX end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- ueEXeNH
         id = 'ueEXeNH',
@@ -1758,6 +1798,7 @@ local d = {
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eNH end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- ueEXeMS
         id = 'ueEXeMS',
@@ -1771,6 +1812,7 @@ local d = {
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eMS end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- ueEXeGV
         id = 'ueEXeGV',
@@ -1784,6 +1826,7 @@ local d = {
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eGV end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- ueEXeVL
         id = 'ueEXeVL',
@@ -1797,6 +1840,7 @@ local d = {
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eVL end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- ueEXeDH
         id = 'ueEXeDH',
@@ -1810,6 +1854,7 @@ local d = {
         rank = numberRankRev(720, 660, 600, 540, 480, 420, 360),
         hide = function() return not ACHV.uneasy or not ACHV.eDH end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- ueEXeIN
         id = 'ueEXeIN',
@@ -1823,6 +1868,7 @@ local d = {
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eIN end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- ueEXeAS
         id = 'ueEXeAS',
@@ -1836,6 +1882,7 @@ local d = {
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eAS end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- ueEXeDP
         id = 'ueEXeDP',
@@ -1849,8 +1896,9 @@ local d = {
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eDP end,
         type = 'unranked',
+        mod = "ZCEM",
     },
-    { title = "Easy Mode - Special (v1.1) (No CR)" },
+    { title = "Easy Mode - Special (v1.1) (No CR)", mod = "ZCEM" },
     { -- emperor_development
         --id = 'eDHEXeNH',
         id = 'emperor_development',
@@ -1860,6 +1908,7 @@ local d = {
         scoreSimp = function(rank) return string.format("Rank %.2f", rank) end,
         rank = numberRank(9, 10, 11, 12, 13, 13.1, 13.2),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- quest_feast
         --id = 'eEXeMS',
@@ -1872,6 +1921,7 @@ local d = {
         scoreFull = function(roundHeight) return string.format("%.2f meters/quest", roundHeight/40) end,
         rank = numberRankRev(600, 550, 500, 450, 400, 350, 300),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eDPeEX
         --id = 'eDPeEX',
@@ -1882,17 +1932,17 @@ local d = {
         scoreSimp = function(quest) return floor(quest) .. " Dunks" end,
         rank = numberRank(0, 15, 30, 50, 70, 85, 100),
         type = 'unranked',
+        mod = "ZCEM",
     }, 
     { -- eGVeIN
         id = 'humble_pupil',
         name = "The Humble Pupil",
-        desc = [[Lowest quests per second (i.e. highest seconds per quest) without taking damage upon reaching floor 10 WUT "Lift" and "Visible" mods]],
+        desc = [[Lowest quests per second without taking damage upon reaching floor 10 WUT "Lift" and "Visible" mods]],
         quote = [[Holding yourself back can be even harder then you think...]],
-        --comp = '<',
-        scoreSimp = function(spq) return string.format("%.2f seconds/quest", spq) end,
-        --scoreFull = function(qps) return string.format("%.2f quests/s", 40 / time) end,
-        rank = numberRank(0, 1, 2, 3, 3.5, 4, 4.5),
+        scoreSimp = function(qps) return string.format("%.2f quests/s", qps) end,
+        rank = numberRankRev(26, 1, 0.5, 0.34, 0.3, 0.26, 0.22),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eGVeNH
         id = 'shameless_cashgrab',
@@ -1902,6 +1952,7 @@ local d = {
         scoreSimp = function(quest) return floor(quest) .. " Mistakes" end,
         rank = numberRank(0, 20, 40, 60, 80, 100, 125),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eASeNH
         id = 'overweight_gamer',
@@ -1911,6 +1962,7 @@ local d = {
         scoreSimp = function(quest) return floor(quest) .. " Broken Chairs" end,
         rank = numberRank(0, 10, 20, 30, 40, 50, 60),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eASeDHeMS
         id = 'clean_gamer',
@@ -1920,6 +1972,7 @@ local d = {
         scoreSimp = function(quest) return floor(quest) .. " Saved Mice" end,
         rank = numberRank(0, 50, 100, 150, 200, 250, 300),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eDHeMSeNH
         id = 'clean_break',
@@ -1929,6 +1982,7 @@ local d = {
         scoreSimp = function(quest) return floor(quest) .. " Saved Keyboards" end,
         rank = numberRank(0, 50, 100, 150, 200, 250, 300),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eDHeEXeMSeVL
         id = 'professional_cleaner',
@@ -1938,6 +1992,7 @@ local d = {
         scoreSimp = function(quest) return floor(quest) .. " Cleaned Rooms" end,
         rank = numberRank(0, 20, 40, 55, 70, 85, 100),
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- eDHeDPeGVeINeMSeNH
         id = 'rold_smythy',
@@ -1949,8 +2004,9 @@ local d = {
         hide = TRUE,
         realHide = function() return (not ACHV.roll) or (not ACHV.programmer_gamer) end,
         type = 'unranked',
+        mod = "ZCEM",
     },
-    { title = "Easy Mode - Why (v1.1) (No CR)", hide = function() return TABLE.countAll(GAME.completion, 0) >= 8 end},
+    { title = "Easy Mode - Why (v1.1) (No CR)", hide = function() return TABLE.countAll(GAME.completion, 0) >= 8 end, mod = "ZCEM"},
     { -- -3
         id = '-3',
         name = "Respite",
@@ -1959,6 +2015,7 @@ local d = {
         rank = floorRank(10, 2600, 2600*2, 2600*3, 2600*4, 2600*5, 2600*10),
         hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- -4
         id = '-4',
@@ -1968,6 +2025,7 @@ local d = {
         rank = floorRank(10, 2600*2, 2600*2*2, 2600*3*2, 2600*4*2, 2600*5*2, 2600*20),
         hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- -5
         id = '-5',
@@ -1977,6 +2035,7 @@ local d = {
         rank = floorRank(10, 2600*3, 2600*2*3, 2600*3*3, 2600*4*3, 2600*5*3, 2600*30),
         hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- -6
         id = '-6',
@@ -1986,6 +2045,7 @@ local d = {
         rank = floorRank(10, 2600*4, 2600*2*4, 2600*3*4, 2600*4*4, 2600*5*4, 2600*40),
         hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- -7
         id = '-7',
@@ -1995,6 +2055,7 @@ local d = {
         rank = floorRank(10, 2600*5, 2600*2*5, 2600*3*5, 2600*4*5, 2600*5*5, 2600*50),
         hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- -8
         id = '-8',
@@ -2004,6 +2065,7 @@ local d = {
         rank = floorRank(10, 2600*6, 2600*2*6, 2600*3*6, 2600*4*6, 2600*5*6, 2600*60),
         hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
         type = 'unranked',
+        mod = "ZCEM",
     },
     { -- -9
         id = '-9',
@@ -2013,8 +2075,9 @@ local d = {
         rank = floorRank(10, 2600*7, 2600*2*7, 2600*3*7, 2600*4*7, 2600*5*7, 2600*70),
         hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
         type = 'unranked',
+        mod = "ZCEM",
     },
-    { title = "Easy Mode - Issued (v1.1) (No CR)" },
+    { title = "Easy Mode - Issued (v1.1) (No CR)", mod = "ZCEM" },
     { -- www
         id = 'www',
         name = "WWW.",
@@ -2023,6 +2086,7 @@ local d = {
         credit = "@FCSplayz",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- roll
         id = 'roll',
@@ -2032,6 +2096,7 @@ local d = {
         credit = "@TrevorSmithy",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- uneasy
         id = 'uneasy',
@@ -2041,6 +2106,7 @@ local d = {
         credit = "@TrevorSmithy",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- inefficiency
         id = 'inefficiency',
@@ -2050,6 +2116,7 @@ local d = {
         credit = "@TrevorSmithy",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- could_you_not
         id = 'could_you_not',
@@ -2059,6 +2126,7 @@ local d = {
         credit = "@TrevorSmithy",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- oh_no_you_dont
         id = 'oh_no_you_dont',
@@ -2068,6 +2136,7 @@ local d = {
         credit = "@TrevorSmithy",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- alleyoop
         id = 'alleyoop',
@@ -2077,6 +2146,7 @@ local d = {
         credit = "@Trevor Smithy",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- slamdunk
         id = 'slamdunk',
@@ -2086,6 +2156,7 @@ local d = {
         credit = "@Trevor Smithy",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- petaspeed
         id = 'peta',
@@ -2096,6 +2167,7 @@ local d = {
         hide = TRUE,
         realHide = function() return not ACHV.blazing_speed end,
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- exaspeed
         id = 'exa',
@@ -2106,6 +2178,7 @@ local d = {
         hide = TRUE,
         realHide = function() return not ACHV.peta end,
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- zettaspeed
         id = 'zetta',
@@ -2116,6 +2189,7 @@ local d = {
         hide = TRUE,
         realHide = function() return not ACHV.exa end,
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- yottaspeed
         id = 'yotta',
@@ -2126,6 +2200,7 @@ local d = {
         hide = TRUE,
         realHide = function() return not ACHV.zetta end,
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- ronnaspeed
         id = 'ronna',
@@ -2136,6 +2211,7 @@ local d = {
         hide = TRUE,
         realHide = function() return not ACHV.yotta end,
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- quettaspeed
         id = 'quetta',
@@ -2146,8 +2222,9 @@ local d = {
         hide = TRUE,
         realHide = function() return not ACHV.ronna end,
         type = 'issued',
+        mod = "ZCEM",
     },
-    { title = "Easy Mode - Issued (v1.2) (No CR)" },
+    { title = "Easy Mode - Issued (v1.2) (No CR)", mod = "ZCEM" },
     { -- multiple_pieces (1.1.1)
         id = 'multiple_pieces',
         name = "Multiple Pieces???",
@@ -2155,6 +2232,7 @@ local d = {
         quote = [["YOU THINK YOU'RE CLEVER? JUST BECAUSE I CAN'T SEE DOWN THERE? FINE."]],
         credit = "@TrevorSmithy",
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- music_man (1.1.2)
         id = 'music_man',
@@ -2164,6 +2242,7 @@ local d = {
         credit = "@TrevorSmithy",
         hide = TRUE,
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- easy_name (1.1.3)
         id = 'easy_name',
@@ -2172,6 +2251,7 @@ local d = {
         quote = [["Please, I spent 5 straight nights writing these combos :sob:"]],
         credit = "@TrevorSmithy",
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- biased (1.1.3)
         id = 'biased',
@@ -2181,6 +2261,7 @@ local d = {
         credit = "@TrevorSmithy",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- lazy_bastard (1.1.4)
         id = 'lazy_bastard',
@@ -2189,6 +2270,7 @@ local d = {
         quote = [["Fine, okay, everything is unlocked now."]],
         credit = "@TrevorSmithy",
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- what_have_you_done (1.1.5)
         id = 'what_have_you_done',
@@ -2198,6 +2280,7 @@ local d = {
         credit = "@TrevorSmithy",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- hyperplonk
         id = 'hyperplonk',
@@ -2206,6 +2289,7 @@ local d = {
         quote = [["Haha Smithy Cannon go brrrrrrrrr"]],
         credit = "@TrevorSmithy",
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- gigaplonk
         id = 'gigaplonk',
@@ -2215,6 +2299,7 @@ local d = {
         credit = "@Taha",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
     },
     { -- the_windup
         id = 'the_windup',
@@ -2223,6 +2308,7 @@ local d = {
         quote = [["WHY DO I HEAR BOSS MUSIC?!?!?"]],
         credit = "@TrevorSmithy",
         type = 'issued',
+        mod = "ZCEM",
     },
     { -- im_gonna_be
         id = 'im_gonna_be',
@@ -2232,6 +2318,36 @@ local d = {
         credit = "@TrevorSmithy",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCEM",
+    },
+    { title = "Easy Mode - Issued (v1.3) (No CR)", mod = "ZCEM" },
+    { -- glissando
+        id = 'glissando',
+        name = "Glissando",
+        desc = [[Hear all 16 combo sfx at once by using at least eGV, rNH and Stacker Mode]],
+        quote = [["Waow so satisfying~"]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+        hide = function() return GAME.completion.NH == 0 end,
+        mod = "ZCEM",
+    },
+    { -- secret_grade
+        id = 'secret_grade',
+        name = "Secret Grade",
+        desc = [[Make a stack of sequential single mod quests from left to right and back (i.e: EX, NH, MS, GV, VL, DH, IN, AS, DP, AS, IN, DH, VL, GV, MS, NH, EX)]],
+        quote = [[A (poorly guarded) secret.]],
+        type = 'issued',
+        hide = TRUE,
+        mod = "ZCEM",
+    },
+    { -- garbage_in_garbage_out
+        id = 'garbage_in_garbage_out',
+        name = "Garbage In, Garbage Out",
+        desc = [[Die with at least 41 quests on the stack]],
+        quote = [["That's good. O-ok. Alright. OK THAT'S GOOD! IT'S- IT'S ENOUGH SLICES!]],
+        type = 'issued',
+        hide = TRUE,
+        mod = "ZCEM",
     },
     { title = "Rodinia's Domain Achievements" },
     { -- rGVIN
@@ -2339,20 +2455,36 @@ local compFunc = {
     ['<'] = function(a, b) return b - a > 1e-10 end,
 }
 
+
+-- Insert empty slots at specific positions to make sure titles always appear at odd-th index and are followed by an empty slot
 do
     local i = 1
+    local zcem = 1
     repeat
         local achv = d[i]
         if achv.title then
-            if i % 2 == 0 then
-                table.insert(d, i, {})
-                i = i + 1
+            if achv.mod == 'ZCEM' then
+                if zcem % 2 == 0 then
+                    table.insert(d, i, {mod = 'ZCEM'})
+                    i = i + 1
+                    zcem = zcem + 1
+                end
+                table.insert(d, i + 1, {mod = 'ZCEM'})
+            else
+                if i % 2 == 0 then
+                    table.insert(d, i, {})
+                    i = i + 1
+                end
+                table.insert(d, i + 1, {})
             end
-            table.insert(d, i + 1, {})
+        end
+        if achv.mod == 'ZCEM'  then
+            zcem = zcem + 1
         end
         i = i + 1
     until i > #d
 end
+-- Format checks and auto-completions
 for i = 1, #d do
     local achv = d[i]
     local id = achv.id

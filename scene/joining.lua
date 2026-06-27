@@ -22,6 +22,10 @@ function scene.update(dt)
                 GAME.bgH, GAME.height = 0, 0
                 GAME.prevPB = -2600
                 GAME.finishTera = false
+                for i = #GAME.koAnim, 1, -1 do
+                    local k = GAME.koAnim[i]
+                    k.a, k.timer = -1, -1
+                end
                 for k in next, GAME.completion do
                     GAME.completion[k] = 0
                     GAME.mod[k] = 0
@@ -37,13 +41,15 @@ function scene.update(dt)
                 URM = false
                 GAME.pieceEffectID = 0
                 GAME.floor = 0
+                STAT.srActive = SCN.args[1] == 'reset'
                 Initialize(true)
                 GAME.clearResultStat()
+                collectgarbage()
             end
             if not initialized then
                 BGM.setMaxSources(42)
-                BGM.load(FILE.load('data/bgm.lua', '-luaon'))
-                SFX.load('assets/sfx.ogg', FILE.load('data/sfx.lua', '-luaon'))
+                BGM.load(FILE.isSafe('data/bgm.lua') and FILE.safeLoad('data/bgm.lua', '-luaon') or {})
+                SFX.load('assets/sfx.ogg', FILE.isSafe('data/sfx.lua') and FILE.safeLoad('data/sfx.lua', '-luaon') or {})
                 for i = 1, 9 do
                     SFX.load('garbagewindup_'..i, 'assets/windup_'..i..'.ogg')
                 end
@@ -51,6 +57,10 @@ function scene.update(dt)
                 SFX.load('aw_dang_it','assets/aw_dang_it.ogg')
                 TASK.new(Daemon_Slow)
                 TASK.new(Daemon_Fast)
+                TASK.new(function()
+                    TASK.yieldT(2.6)
+                    CurlRequest('checkUpdate')
+                end)
                 TEXTS.load:set("GETTING READY TO SPECTATE...")
 
                 ---@diagnostic disable-next-line
