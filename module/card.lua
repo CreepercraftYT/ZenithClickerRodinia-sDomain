@@ -597,8 +597,8 @@ end, function(msg)
         x - r, y + 12,
     }
 end)
-STAT.usePlanetArt = false
-STAT.useHumanRodinia = false
+CONF.usePlanetArt = false
+CONF.useHumanRodinia = false
 function Card:draw()
     local texture = TEXTURE[self.id]
     local playing = GAME.playing
@@ -611,7 +611,7 @@ function Card:draw()
             img = texture.back
         else
             faceUp = self.kx * self.ky > 0
-            img = faceUp and (STAT.usePlanetArt and texture.frontPlanet or texture.front) or texture.back
+            img = faceUp and (CONF.usePlanetArt and texture.frontPlanet or texture.front) or texture.back
         end
         if self.lock then
             img2 = texture.lock

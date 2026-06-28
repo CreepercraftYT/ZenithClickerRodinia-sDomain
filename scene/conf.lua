@@ -173,7 +173,7 @@ local startHour = os.date('%H')
 local startMin = os.date('%M')
 local startSec = os.date('%S')
 
-STAT.bounceTera = true
+CONF.bounceTera = true
 
 local function refreshWidgets()
     for _, W in next, scene.widgetList do 
@@ -2002,15 +2002,15 @@ pages[ZCRDpage] = {
         frameColor = ZCRDclr.cbFrame,
         textColor = ZCRDclr.T, text = "BOUNCE CARDS IN TERASPEED THEME",
         x = baseX + 40, y = baseY + 120,
-        disp = function() return STAT.bounceTera end,
+        disp = function() return CONF.bounceTera end,
         code = function()
             --local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.bounceTera = not STAT.bounceTera
+            CONF.bounceTera = not CONF.bounceTera
             SFX.play('social_dm')
-            MSG('dark', STAT.bounceTera and "Cards will bounce in Teraspeed claps" or [["You're boring..."]])
+            MSG('dark', CONF.bounceTera and "Cards will bounce in Teraspeed claps" or [["You're boring..."]])
             --GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             --if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -2020,15 +2020,15 @@ pages[ZCRDpage] = {
         frameColor = ZCRDclr.cbFrame,
         textColor = ZCRDclr.T, text = "USE PLANET CARD ARTS",
         x = baseX + 40, y = baseY + 60 + 120,
-        disp = function() return STAT.usePlanetArt end,
+        disp = function() return CONF.usePlanetArt end,
         code = function()
             --local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.usePlanetArt = not STAT.usePlanetArt
+            CONF.usePlanetArt = not CONF.usePlanetArt
             SFX.play('social_dm')
-            MSG('dark', "Planet Cards " .. (STAT.usePlanetArt and "ON" or "OFF"))
+            MSG('dark', "Planet Cards " .. (CONF.usePlanetArt and "ON" or "OFF"))
             --GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             --if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -2038,19 +2038,20 @@ pages[ZCRDpage] = {
         frameColor = ZCRDclr.cbFrame,
         textColor = ZCRDclr.T, text = "USE HUMAN RODINIA FORM IN NON-URM RUNS",
         x = baseX + 40, y = baseY + 60*2 + 120,
-        disp = function() return STAT.useHumanRodinia end,
+        disp = function() return CONF.useHumanRodinia end,
         code = function()
             MSG.clear()
-            if combo == 0 then
-                MSG('warn', "Warning: This version might have details that could make some people uncomfortable\n (It's nothing that bad tho...)\n Activate at your own risk.")
+            if combo == 0 and not CONF.useHumanRodinia then
+                MSG('warn', "Warning: This version might have details that could make some people uncomfortable\n (It's nothing that bad tho...)\n Activate at your own risk.", 5)
                 SFX.play('staff_warning')
                 combo = combo + 1
                 comboTimer = 10
             else
-                STAT.useHumanRodinia = not STAT.useHumanRodinia
+                CONF.useHumanRodinia = not CONF.useHumanRodinia
                 SFX.play('social_dm')
-                MSG('dark', "Human Rodinia " .. (STAT.useHumanRodinia and "ON" or "OFF"))
-                SaveStat()
+                MSG('dark', "Human Rodinia " .. (CONF.useHumanRodinia and "ON" or "OFF"))
+                combo = 0
+                SaveConf()
             end
         end,
     },

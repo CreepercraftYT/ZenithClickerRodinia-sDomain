@@ -2349,7 +2349,7 @@ local d = {
         hide = TRUE,
         mod = "ZCEM",
     },
-    { title = "Rodinia's Domain Achievements" },
+    { title = "Rodinia's Domain Achievements", mod = "ZCRD" },
     { -- rGVIN
         ex = true,
         id = 'INrGV',
@@ -2358,6 +2358,7 @@ local d = {
         quote = [["EXCELLENT, Try again to be a Grand Master!"]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         hide = function() return GAME.completion.GV == 0 end,
+        mod = "ZCRD",
     },
     { -- EXrGVrIN
         ex = true,
@@ -2367,6 +2368,7 @@ local d = {
         quote = [[She watches from the Omniverse...]],
         rank = numberRank(0, 150, 450, 850, 1350, 6200, 9999),
         hide = function() return GAME.completion.GV == 0 or GAME.completion.IN == 0 end,
+        mod = "ZCRD",
     },
     { -- is_one_of_mine
         id = 'is_one_of_mine',
@@ -2376,6 +2378,7 @@ local d = {
         credit = "@Rodinia",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
         type = 'unranked',
+        mod = "ZCRD",
     },
     { -- absolute_eye
         ex = true,
@@ -2385,6 +2388,7 @@ local d = {
         quote = [[The Absolute Eye can see the fastest objects in the darkest darkness.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         hide = function() return GAME.completion.GV == 1 or GAME.completion.IN == 1 end,
+        mod = "ZCRD",
     },
     { -- ainidor
         id = 'ainidor',
@@ -2392,7 +2396,8 @@ local d = {
         desc = [[Lowest floor discovered with uEX uGV uIN]],
         quote = [["Have you not learned your lesson!?"]],
         rank = numberRankRev(0, -150, -450, -850, -1350, -6200, -9999),
-        realHide = TRUE
+        realHide = TRUE,
+        mod = "ZCRD",
     },
     { -- stubborn
         id = 'stubborn',
@@ -2402,6 +2407,7 @@ local d = {
         credit = "@Rodinia",
         type = 'issued',
         realHide = TRUE,
+        mod = "ZCRD",
     },
     { -- llor
         id = 'llor',
@@ -2411,6 +2417,7 @@ local d = {
         credit = "@Rodinia",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCRD",
     },
     { -- sus
         id = 'sus',
@@ -2420,6 +2427,7 @@ local d = {
         credit = "@Rodinia",
         type = 'issued',
         hide = TRUE,
+        mod = "ZCRD",
     },
     { -- rEXrMSrAS
         ex = true,
@@ -2429,6 +2437,7 @@ local d = {
         quote = [["Aw, dang it!"]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         hide = function() return GAME.completion.EX == 0 or GAME.completion.MS == 0 or GAME.completion.AS == 0 end,
+        mod = "ZCRD",
     },
     { -- Rodinia_Vanilla
         id = 'Rodinia_Vanilla',
@@ -2438,6 +2447,7 @@ local d = {
         credit = "@Rodinia",
         type = 'issued',
         realHide = TRUE,
+        mod = "ZCRD",
     },
     { -- Rodinia_anyEasy
         id = 'Rodinia_anyEasy',
@@ -2447,6 +2457,7 @@ local d = {
         credit = "@Rodinia",
         type = 'issued',
         realHide = TRUE,
+        mod = "ZCRD",
     },
      { -- Rodinia_uneasy
         id = 'Rodinia_uneasy',
@@ -2456,6 +2467,7 @@ local d = {
         credit = "@Rodinia",
         type = 'issued',
         realHide = TRUE,
+        mod = "ZCRD",
     },
     { -- Rodinia_Rev_anyEasy
         id = 'Rodinia_Rev_anyEasy',
@@ -2465,6 +2477,7 @@ local d = {
         credit = "@Rodinia",
         type = 'issued',
         realHide = TRUE,
+        mod = "ZCRD",
     },
     { -- patience_is_a_virtue_2
         ex = true,
@@ -2474,6 +2487,7 @@ local d = {
         quote = [[For the most patient ones, time is meaningless.]],
         credit = "@Rodinia",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2000),
+        mod = "ZCRD",
     },
 }
 
@@ -2487,6 +2501,7 @@ local compFunc = {
 do
     local i = 1
     local zcem = 1
+    local zcrd = 1
     repeat
         local achv = d[i]
         if achv.title then
@@ -2497,6 +2512,13 @@ do
                     zcem = zcem + 1
                 end
                 table.insert(d, i + 1, {mod = 'ZCEM'})
+            elseif achv.mod == 'ZCRD' then
+                if zcrd % 2 == 0 then
+                    table.insert(d, i, {mod = 'ZCRD'})
+                    i = i + 1
+                    zcrd = zcrd + 1
+                end
+                table.insert(d, i + 1, {mod = 'ZCRD'})
             else
                 if i % 2 == 0 then
                     table.insert(d, i, {})
@@ -2507,6 +2529,8 @@ do
         end
         if achv.mod == 'ZCEM'  then
             zcem = zcem + 1
+        elseif achv.mod == 'ZCRD'  then
+            zcrd = zcrd + 1
         end
         i = i + 1
     until i > #d

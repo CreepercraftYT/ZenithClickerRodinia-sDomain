@@ -1403,10 +1403,15 @@ function Daemon_Fast()
             end
             MusicBeat = MATH.icLerp(beatS, beatE, T)
 
-            -- MS shaking (each 2 beats)
+            -- MS shaking and TERA Bounce (each 2 beats)
             if newBeat then
                 if skipNextShuffle then
-                    if M.MS == 0 then
+                    if ((BgmPlaying == 'tera' or BgmPlaying == 'teral' or BgmPlaying == 'terae' or BgmPlaying == 'terael') and T >= 68) and CONF.bounceTera or (BgmPlaying == 'terar' and T >= 52) and STAT.bounceTera then
+                    --TASK.yieldT(60 / BgmData[BgmPlaying].bpm)
+                        for i = 1, deckSize do Cards[i].visY = (BgmPlaying == 'terar' and br or b)
+                        b = -b
+                        br = -br end
+                    elseif M.MS == 0 then
                         if MSactive then
                             for i = 1, deckSize do Cards[i].visY = 0 end
                             GAME.refreshLayout()
