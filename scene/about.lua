@@ -433,7 +433,7 @@ scene.widgetList = {
         image = TEXTURE.github,
         onClick = function() 
             SFX.play('menuconfirm')
-            love.system.openURL("https://github.com/trevor-smithy/ZenithClickerEasyMode") 
+            love.system.openURL("https://github.com/CreepercraftYT/ZenithClickerRodinia-sDomain") 
         end,
     },
     --[[WIDGET.new {
