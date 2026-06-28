@@ -3577,7 +3577,9 @@ function GAME.finish(reason)
     end
 
     if GAME.height >= 9550 then
-         if GAME.anyRev and GAME.anyEasy and GAME.comboMP <= 5 then
+        if GAME.invisUI or GAME.einvisUI or CONF.bg
+            IssueAchv('Rodinia_hidden')
+        elseif GAME.anyRev and GAME.anyEasy and GAME.comboMP <= 5 then
             IssueAchv('Rodinia_Rev_anyEasy')
         elseif GAME.anyEasy and not GAME.uneasyMode then
             IssueAchv('Rodinia_anyEasy')

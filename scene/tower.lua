@@ -900,7 +900,7 @@ function DrawBG(brightness, showRuler)
                 gc_setColor(1, 1, 1, .8)
                 gc_draw(StarPS, SCR.w / 2, SCR.h / 2 + GAME.bgH * 2 * BgScale)
                 gc_mDraw(
-                (STAT.useHumanRodinia and not URM) and TEXTURE.rodiniaHuman or
+                (CONF.useHumanRodinia and not URM and not GAME.anyREV) and TEXTURE.rodiniaHuman or
                 (URM and M.EX == 2) and TEXTURE.rodiniauEX or 
                 (URM and GAME.anyRev and M.EX ~= 2) and TEXTURE.rodiniaURM or 
                 (GAME.anyEasy and GAME.anyRev and GAME.comboMP <= 5) and TEXTURE.rodiniaAnyEasyRev or 

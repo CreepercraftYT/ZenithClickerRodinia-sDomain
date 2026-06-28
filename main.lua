@@ -340,6 +340,9 @@ CONF = {
     stacker = false,
     oldTransparentCard = false,
     lyrics = false,
+    bounceTera = true,
+    usePlanetArt = false,
+    useHumanRodinia = false,
 }
 SR = {}
 LB = {}
@@ -1406,17 +1409,17 @@ function Daemon_Fast()
             -- MS shaking and TERA Bounce (each 2 beats)
             if newBeat then
                 if skipNextShuffle then
-                    if ((BgmPlaying == 'tera' or BgmPlaying == 'teral' or BgmPlaying == 'terae' or BgmPlaying == 'terael') and T >= 68) and CONF.bounceTera or (BgmPlaying == 'terar' and T >= 52) and STAT.bounceTera then
+                    if ((BgmPlaying == 'tera' or BgmPlaying == 'teral' or BgmPlaying == 'terae' or BgmPlaying == 'terael') and T >= 68) and CONF.bounceTera or (BgmPlaying == 'terar' and T >= 52) and CONF.bounceTera then
                     --TASK.yieldT(60 / BgmData[BgmPlaying].bpm)
                         for i = 1, deckSize do Cards[i].visY = (BgmPlaying == 'terar' and br or b)
                         b = -b
                         br = -br end
                     elseif M.MS == 0 then
-                        if MSactive then
+                        --if MSactive then
                             for i = 1, deckSize do Cards[i].visY = 0 end
                             GAME.refreshLayout()
-                        end
-                        MSactive = false
+                        --end
+                        --MSactive = false
                     else
                         if URM and M.MS == 2 then
                             for i = 1, deckSize do Cards[i].visY = math.random(-42, 42) end

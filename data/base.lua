@@ -592,12 +592,9 @@ RodiniaTexts = {
         mid1 = [["This is too slow..."]],
         mid2 = [["Let's speed things up!"]],
     },
-    f7 = { -- Sacreligious Ruins
-        desc = "The remains of a previously sacred chapel, the spirits of those,\nwho worshipped the gods above linger on...",
-        desc2 = [[Whispers of a missing artifact echo throughout the area...]],
-        begin = [[You pray that nothing dire becomes of you.]],
-        effStart = [[Spacetime ahead is heavily warped...]],
-        mid = [[You know you have to go as fast as possible.]],
+    f7 = { -- The Laboratory
+        begin = [["Pop!"]],
+        mid = [["...And pop!"]],
     },
     f8 = { -- Singularity Reactor
         desc = "Fueled by the power of the cosmos and the stolen artifact, powering something...",

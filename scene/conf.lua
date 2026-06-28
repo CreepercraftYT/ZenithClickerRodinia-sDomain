@@ -123,7 +123,7 @@ local ZCEMclr = {
 local ZCRDclr = {
     D = { COLOR.HEX '94B1FFFF' },
     L = { COLOR.HEX '191919FF' },
-    T = { COLOR.HEX '191919FF' },
+    T = { COLOR.HEX '191919FF', },
     LT = { COLOR.HEX '393939FF' },
     cbFill = { COLOR.HEX '191919FF' },
     cbFrame = { COLOR.HEX '191919FF' },
@@ -172,8 +172,6 @@ local pieceDescriptionTable = {
 local startHour = os.date('%H')
 local startMin = os.date('%M')
 local startSec = os.date('%S')
-
-CONF.bounceTera = true
 
 local function refreshWidgets()
     for _, W in next, scene.widgetList do 
@@ -302,16 +300,10 @@ function scene.load()
             C[1], C[3] = C[3], C[1]
         end
         for _, C in next, ZCRDclr do
-            --MSG(dark,C[1] .. ", " .. C[3])
-            C[1], C[3] = C[3], C[1]
-            --MSG(dark,C[1] .. ", " .. C[3])
+            C[1], rZCRDclr[_][1] = rZCRDclr[_][1], C[1]
+            C[2], rZCRDclr[_][2] = rZCRDclr[_][2], C[2]
+            C[3], rZCRDclr[_][3] = rZCRDclr[_][3], C[3]
         end
-        --ZCRDclr.D, ZCRDclr.rD = ZCRDclr.rD, ZCRDclr.D
-        --ZCRDclr.L, ZCRDclr.rL = ZCRDclr.rL, ZCRDclr.L
-        --ZCRDclr.T, ZCRDclr.rT = ZCRDclr.rT, ZCRDclr.T
-        --ZCRDclr.LT, ZCRDclr.rLT = ZCRDclr.rLT, ZCRDclr.LT
-        --ZCRDclr.cbFill, ZCRDclr.rCbFill = ZCRDclr.rCbFill, ZCRDclr.cbFill
-        --ZCRDclr.cbFrame, ZCRDclr.rCbFrame = ZCRDclr.rCbFrame, ZCRDclr.cbFrame
     end
     TASK.unlock('changeName')
     TASK.unlock('changeAboutme')
@@ -2026,7 +2018,7 @@ pages[ZCRDpage] = {
             MSG.clear()
             CONF.usePlanetArt = not CONF.usePlanetArt
             SFX.play('social_dm')
-            MSG('dark', "Planet Cards " .. (CONF.usePlanetArt and "ON" or "OFF"))
+            MSG('dark', "Planet Cards: " .. (CONF.usePlanetArt and "ON" or "OFF"))
             --GAME.multiplePiecesActive = false
             SaveConf()
             --if multiple then GAME.multiplePiecesActive = true end
@@ -2041,15 +2033,18 @@ pages[ZCRDpage] = {
         disp = function() return CONF.useHumanRodinia end,
         code = function()
             MSG.clear()
-            if combo == 0 and not CONF.useHumanRodinia then
+            if URM and GAME.anyRev then
+                MSG('error', "Rodinia's Human and Death forms are incompatble!")
+                SFX.play('exchange')
+            elseif combo == 0 and not CONF.useHumanRodinia then
                 MSG('warn', "Warning: This version might have details that could make some people uncomfortable\n (It's nothing that bad tho...)\n Activate at your own risk.", 5)
-                SFX.play('staff_warning')
+                SFX.play('staffwarning')
                 combo = combo + 1
                 comboTimer = 10
             else
                 CONF.useHumanRodinia = not CONF.useHumanRodinia
                 SFX.play('social_dm')
-                MSG('dark', "Human Rodinia " .. (CONF.useHumanRodinia and "ON" or "OFF"))
+                MSG('dark', "Human Rodinia: " .. (CONF.useHumanRodinia and "ON" or "OFF"))
                 combo = 0
                 SaveConf()
             end

@@ -13,6 +13,7 @@ local colorRev = false
 
 local Achievements = Achievements
 local M = GAME.mod
+local gc_stc_reset, gc_stc_rect, gc_stc_stop = GC.stc_reset, GC.stc_rect, GC.stc_stop
 
 OverDevProgressText = "Open ACHV page to refresh the over-dev progress."
 
@@ -35,8 +36,9 @@ OverDevProgressText = "Open ACHV page to refresh the over-dev progress."
 ---@type (AchvItem | EmptyAchv)[]
 local achvList = {}
 local achvListZCEM = {}
-local achvLists = {achvList, achvListZCEM}
-local mods = {{"ZCEM", achvListZCEM}}
+local achvListZCRD = {}
+local achvLists = {achvList, achvListZCEM, achvListZCRD}
+local mods = {{"ZCEM", achvListZCEM},{"ZCRD", achvListZCRD}}
 local scroll, scroll1 = 0, 0
 local maxScroll = 0
 local timer = 0
@@ -52,10 +54,14 @@ local overallProgress = {
     ptText = "0/0 Pts",
 }
 
+local page = 3
+local maxPage = 3
+local ZCEMpage = 2
+local ZCRDpage = 3
+
 local function nameSortLT(i1, i2) return i1.name < i2.name end
 local function nameSortGT(i1, i2) return i1.name > i2.name end
 
-local SPACER = { hide = FALSE }
 function RefreshAchvList(canShuffle)
 
     overallProgress.rank = TABLE.new(0, 5)
@@ -440,6 +446,12 @@ function scene.keyDown(key, isRep)
     if key == 'escape' or key == 'tab' then
         SFX.play('menuclick')
         SCN.back('none')
+    elseif MATH.between(tonumber(key) or 0, 1, maxPage) then
+        local p = tonumber(key)
+        if p and p ~= page then
+            page = p
+            SFX.play('menuclick')
+        end
     end
     ZENITHA._cursor.active = true
     return true
@@ -730,12 +742,12 @@ function scene.draw()
     gc_replaceTransform(SCR.xOy_ul)
     gc_setColor(clr.L)
     FONT.set(50)
+    local pageTitles = {"ZC", "ZCEM", "ZCRD"}
     if colorRev then
-        gc_print("ACHIEVEMENTS", 15, 68, 0, 1, -1)
+        gc_print("CHNL / ACHV / " .. pageTitles[page], 15, 68, 0, 1, -1)
     else
-        gc_print("ACHIEVEMENTS", 15, 0)
+        gc_print("CHNL / ACHV / " .. pageTitles[page], 15, 0)
     end
-
     -- Badge (wreath) count
     if STAT.maxFloor >= 10 and not whenItsReady and not TestMode then
         gc_replaceTransform(SCR.xOy_ur)
@@ -800,6 +812,18 @@ scene.widgetList = {
         fontSize = 30, text = "ZCEM   ", textColor = { .15, .75, .15 },
         onClick = function()
             love.keypressed(tostring(ZCEMpage))
+            maxScroll = max(ceil((#achvLists[page] - 12) / 2) * 140, 0)
+            if scroll > maxScroll then scroll = maxScroll end
+        end,
+    },
+    WIDGET.new {
+        name = 'zcrd', type = 'button',
+        pos = { 1, 0 }, x = -60, y = 320, w = 160, h = 60,
+        color = {148/255, 177/255, 1},
+        sound_hover = 'menutap',
+        fontSize = 30, text = "ZCRD   ", textColor = { .1, .1, .1},
+        onClick = function()
+            love.keypressed(tostring(ZCRDpage))
             maxScroll = max(ceil((#achvLists[page] - 12) / 2) * 140, 0)
             if scroll > maxScroll then scroll = maxScroll end
         end,

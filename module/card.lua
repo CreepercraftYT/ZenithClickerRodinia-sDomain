@@ -597,8 +597,6 @@ end, function(msg)
         x - r, y + 12,
     }
 end)
-CONF.usePlanetArt = false
-CONF.useHumanRodinia = false
 function Card:draw()
     local texture = TEXTURE[self.id]
     local playing = GAME.playing
