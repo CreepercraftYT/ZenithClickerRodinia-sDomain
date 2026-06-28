@@ -34,6 +34,9 @@ OverDevProgressText = "Open ACHV page to refresh the over-dev progress."
 
 ---@type (AchvItem | EmptyAchv)[]
 local achvList = {}
+local achvListZCEM = {}
+local achvLists = {achvList, achvListZCEM}
+local mods = {{"ZCEM", achvListZCEM}}
 local scroll, scroll1 = 0, 0
 local maxScroll = 0
 local timer = 0
@@ -61,13 +64,24 @@ function RefreshAchvList(canShuffle)
     overallProgress.wreath[0] = 0
     overallProgress.ptGet = 0
     overallProgress.ptAll = 0
-    TABLE.clear(achvList)
+    for _, achvList in next, achvLists do
+        TABLE.clear(achvList)
+    end
     local odCount, odCap, countSinceLastTitle = 0, 0, 0
     for i = 1, #Achievements do
         local A = Achievements[i]
+        local modAchvList = achvList
+        if A.mod then
+            for i, mod in next, mods do
+                if A.mod == mod[1] then 
+                    modAchvList = mod[2]
+                    break
+                end
+            end
+        end
         if not A.id then
-            countSinceLastTitle = 0
-            table.insert(achvList, { title = A.hide() and "???" or A.title and A.title:upper() })
+            if page == ZCEMpage then countSinceLastTitle = 0 end
+            table.insert(modAchvList, { title = A.hide() and "???" or A.title and A.title:upper() })
         else
             local rank, score, progress, wreath, overDev
             if TestMode or not ACHV[A.id] then
@@ -103,8 +117,8 @@ function RefreshAchvList(canShuffle)
             local hidden = A.hide() and not ACHV[A.id]
             local descWidth = hidden and 26 or TEXTS.temp30:getWidth()
             if not hidden or not A.realHide() then 
-                countSinceLastTitle = countSinceLastTitle + 1
-                table.insert(achvList, {
+                if A.mod == "ZCEM" then countSinceLastTitle = countSinceLastTitle + 1 end
+                table.insert((modAchvList), {
                     id = A.id,
                     name = hidden and "???" or A.name:upper(),
                     desc = hidden and "???" or A.desc,
@@ -131,15 +145,15 @@ function RefreshAchvList(canShuffle)
     OverDevProgressText = "ACHV scores better than Dev: " .. odCount .. "/" .. odCap
     if canShuffle then
         if M.NH == 2 then
-            TABLE.foreach(achvList, function(v) return not v.id end, true)
+            TABLE.foreach(achvLists[page], function(v) return not v.id end, true)
         end
 
         if M.DH == 1 then
-            for i = 1, #achvList do
-                if achvList[i].name and #achvList[i].name > 4.2 then
+            for i = 1, #achvLists[page] do
+                if achvLists[page][i].name and #achvLists[page][i].name > 4.2 then
                     local newStr
                     repeat
-                        local cList = achvList[i].name:atomize()
+                        local cList = #achvLists[page][i].name:atomize()
 
                         local mode = math.random(3)
                         if mode == 1 or MATH.roll(.26) then
@@ -161,14 +175,14 @@ function RefreshAchvList(canShuffle)
                             end
                         end
                         newStr = table.concat(cList)
-                    until achvList[i].name ~= newStr
-                    achvList[i].name = newStr
+                    until achvLists[page][i].names ~= newStr
+                    achvLists[page][i].name = newStr
                 end
             end
         elseif M.DH == 2 then
-            for i = 1, #achvList do
-                if achvList[i].name then
-                    local a = achvList[i]
+            for i = 1, #achvLists[page] do
+                if achvLists[page][i].name then
+                    local a = achvLists[page][i]
                     a.name =
                         a.name:sub(1, 1) ..
                         table.concat(TABLE.shuffle(a.name:sub(2, -2):atomize())) ..
@@ -178,23 +192,23 @@ function RefreshAchvList(canShuffle)
         end
 
         local s, e
-        for i = 1, #achvList do
+        for i = 1, #achvLists[page] do
             if not s then
-                if achvList[i].id then
+                if achvLists[page][i].id then
                     s = i
                 end
             elseif not e then
-                if not achvList[i].id then
+                if not achvLists[page][i].id then
                     e = i - 1
-                elseif i == #achvList then
+                elseif i == #achvLists[page] then
                     e = i
                 end
             end
             if e then
-                local buffer = TABLE.sub(achvList, s, e)
+                local buffer = TABLE.sub(achvLists[page], s, e)
                 if M.MS > 0 then TABLE.shuffle(buffer) end
                 if M.GV > 0 then table.sort(buffer, M.GV == 1 and nameSortLT or nameSortGT) end
-                for j, a2 in next, buffer do achvList[s + j - 1] = a2 end
+                for j, a2 in next, buffer do (achvLists[page])[s + j - 1] = a2 end
                 s, e = nil, nil
             end
         end
@@ -401,7 +415,7 @@ function scene.load()
 
     RefreshAchvList(true)
 
-    maxScroll = max(ceil((#achvList - 12) / 2) * 140, 0)
+    maxScroll = max(ceil((#achvLists[page] - 12) / 2) * 140, 0)
     clearNotice = false
 end
 
@@ -530,8 +544,8 @@ function scene.draw()
         local texture = TEXTURE.achievement
         local notAllRank5 = overallProgress.ptGet < overallProgress.ptAll
         gc_translate(0, -420 - scroll1)
-        for i = 1 + 2 * max(floor(scroll1 / 140) - 1, 0), min(2 * (floor(scroll1 / 140) + 8), #achvList) do
-            local a = achvList[i]
+        for i = 1 + 2 * max(floor(scroll1 / 140) - 1, 0), min(2 * (floor(scroll1 / 140) + 8), #achvLists[page]) do
+            local a = achvLists[page][i]
             if not a.id then
                 if a.title then
                     gc_ucs_move(i % 2 == 1 and -605 or 5, floor((i - 1) / 2) * 140)
@@ -766,6 +780,29 @@ scene.widgetList = {
         sound_hover = 'menutap',
         fontSize = 30, text = "    BACK", textColor = 'DL',
         onClick = function() love.keypressed('escape') end,
+    },
+    WIDGET.new {
+        name = 'zc', type = 'button',
+        pos = { 1, 0 }, x = -60, y = 140, w = 160, h = 60,
+        color = { COLOR.HEX '383838' },
+        fontSize = 30, text = " ZC    ", textColor = 'DL',
+        onClick = function() 
+            love.keypressed('1') 
+            maxScroll = max(ceil((#achvLists[page] - 12) / 2) * 140, 0)
+            if scroll > maxScroll then scroll = maxScroll end
+        end,
+    },
+    WIDGET.new {
+        name = 'zcem', type = 'button',
+        pos = { 1, 0 }, x = -60, y = 230, w = 160, h = 60,
+        color = 'DG',
+        sound_hover = 'menutap',
+        fontSize = 30, text = "ZCEM   ", textColor = { .15, .75, .15 },
+        onClick = function()
+            love.keypressed(tostring(ZCEMpage))
+            maxScroll = max(ceil((#achvLists[page] - 12) / 2) * 140, 0)
+            if scroll > maxScroll then scroll = maxScroll end
+        end,
     },
 }
 
