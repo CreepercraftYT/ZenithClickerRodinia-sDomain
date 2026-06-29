@@ -219,6 +219,20 @@ return {
         Named after the subtitle of "[REDACTED] The Grand Master 3: Terror-Instinct" and in honor to the M-Roll,
         which is when you play during the Master Mode Credits with fully invisible pieces.
     ]],
+    ['rNH rGV'] = STRING.trimIndent [[
+        A reference to the first TGM game. This achievement/combo has a difficulty picker!
+        You can play with or without IN, since TGM1 didn't have an invisible mode.
+        rNH is for the game's lack of hold and only 1 next preview, and rGV for the 20G.
+    ]],
+    ['rNH rGV IN'] = STRING.trimIndent [[
+        A reference to the first TGM game. This achievement/combo has a difficulty picker!
+        You can play with or without IN, since TGM1 didn't have an invisible mode.
+        rNH is for the game's lack of hold and only 1 next preview, and rGV for the 20G.
+    ]],
+    ['rNH rGV rIN'] = STRING.trimIndent [[
+        A reference to "[REDACTED] The Absolute The Grand Master 2 (PLUS)". 
+        rNH because it has no hold and 1 preview, rGV because of 20G and rIN because of the famous Invisible Roll.
+    ]],
     ['EX rGV rIN'] = STRING.trimIndent [[
         The Celestial giantess, not the Supercontinent...
     ]],

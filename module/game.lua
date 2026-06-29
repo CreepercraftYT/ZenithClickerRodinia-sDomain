@@ -3518,6 +3518,9 @@ function GAME.finish(reason)
     if M.EX == 1 and M.GV == 1 and URM and M.DH == 1 and M.AS == 2 and M.NH == 0 and M.MS == 0 and M.VL == 2 and M.IN == 0 and M.DP == 0 and GAME.slowmo then
         SubmitAchv('patience_is_a_virtue_2', GAME.roundHeight) 
     end
+    if M.EX == 0 and M.GV == 2 and M.DH == 0 and M.AS == 0 and M.NH == 2 and M.MS == 0 and M.VL == 0 and M.DP == 0 then
+        SubmitAchv('TGM1', GAME.roundHeight) 
+    end
     -- Perfectly Balanced...
     if GAME.comboMP == 4 then
         local revCount = GAME.comboStr:count('r')

@@ -139,6 +139,9 @@ d.menu = {
     { set = "EX NH MS GV VL DH IN eAS",                 name = "Spun Swamp Water"},
     { set = "EX NH MS GV VL DH IN eAS DP",                 name = "Spun Swamp Water"},
     { set = "rEX rMS rAS",           name = "LET'S GO GAMBLING!!!!!" },
+    { set = "rNH rGV",           name = "The First Grand Master" },
+    { set = "rNH rGV IN",           name = "The First Grand Master" },
+    { set = "rNH rGV rIN",           name = "The Absolute Grand Master" },
     
     --misc (no dev commentary except programming smithy)
     { set = "eNH eGV",          name = "Shameless Cashgrab"},
