@@ -13,7 +13,7 @@ AchvData = {
     { id = 'achv_diamond',  bg = COLOR.DP,          fg = COLOR.lP, fg2 = COLOR.lB },
     { id = 'achv_issued',   bg = COLOR.DM,          fg = COLOR.lM, fg2 = COLOR.lM },
 }
-
+RDclr = { COLOR.HEX '94B1FFFF' }
 GigaSpeedReq = { [0] = 7, 8, 8, 9, 9, 10, 1e99, 1e99, 1e99, 1e99, 1e99 }
 TeraMusicReq = { [0] = 9, 11, 11, 12, 12, 13, 13, 1e99, 1e99, 1e99 }
 PetaReq = { [0] = 11, 14, 14, 15, 15, 16, 16, 17, 1e99, 1e99 }
@@ -596,36 +596,325 @@ RodiniaTexts = {
         begin = [["Pop!"]],
         mid = [["...And pop!"]],
     },
-    f8 = { -- Singularity Reactor
-        desc = "Fueled by the power of the cosmos and the stolen artifact, powering something...",
-        begin = [[You are overwhelmed by the reactor's magnitude.]],
-        mid1 = [[Dizzy spells.]],
-        mid2 = [[Blurred vision.]],
-        mid3 = [[Head throbbing.]],
-        -- mid = [[The mysterious voice is growing ever nearer...]],
+    f8 = { -- The Core
+        begin = [["You're almost there! Just 2 more floors!"]],
+        mid = [[The mysterious voice is growing ever nearer...]],
     },
-    f9 = { -- Distorted Gateways
-        desc = "A hall of millions of gateways to different realities, towers and wastelands...\nThe mere thought of something like this is sickening...",
-        desc2 = [[The entrance to a false promise of paradise.]],
-        desc3 = [[You reach the bottom... or it seemed to be at first glance... one last gateway was left...]],
-        begin = [[The endless void beckons you...]],
-        mid = [[RUN.]],
-        -- begin = [[You feel nostalgia at the sight of a familiar tower.]],
+    f9 = { -- Corruption
+        begin = [["Last floor!"]],
+        mid = [["Whoops!"]],
     },
     f10 = { -- Endless Void
-        desc = "A realm of absolutely nothing, none have ever returned.",
-        desc2 = [[You look back above... yet you've already gone too far in this insane abyss for you to see anything.]],
-        -- begin = [[...and you pass the point of no return.]],
-        -- mid1 = [[Everything begins to go quiet.]],
-        end1 = [[...this is it?]],
-        end2 = [[This is what's down below all of this?]],
-        end3 = [[It's so empty... and vast...]],
-        end4 = [[Yet it feels nostalgic somehow...]],
-        end5 = [[And peaceful.]],
+        begin = [["Congratulations! You made it to the top!"]],
+        mid1 = [["But... You still have one more place to go to."]],
+        mid2 = [["Come see me."]],
+        mid3 = [["Keep climbing..."]],
+        mid4 = [["Keep going..."]],
     },
-    fo = { -- Stellar Nebula Frontier
+    fomg = { -- Stellar Nebula Frontier
+        begin = [["Welcome..."]],
+        mid1 = [["You're not done yet. Climb up to my face."]],
+        end1 = [["Hi!\n I should reward you with something..."]]
+    },
+}
+RodiniaEvents = {
+    -- F2: Zenith Hotel
+    { h = 50 }, { text = 'f2.begin', color = 'RDclr'},
 
+    -- F3: The Casino
+    { h = 150 }, { text = 'f3.begin', color = 'RDclr' },
+    { h = 160 }, { text = 'f3.mid1', color = 'RDclr' },
+    { h = 180 }, { 
+        text = 'f3.ePiecesOn', color = 'RDclr',
+        cond = function() 
+            return GAME.enightcore or GAME.eslowmo or GAME.eglassCard or GAME.einvisCard or GAME.einvisUI or GAME.ecloseCard or GAME.efastLeak end,
     },
+    { h = 185 },
+    {
+        event = function()
+            GAME.invisUI = false
+            GAME.refreshPieceFstr()
+        end
+    },
+    { h = 195 },
+    {
+        event = function()
+            GAME.invisUI = true
+            GAME.refreshPieceFstr()
+        end
+    },
+    { h = -200 },
+    { text = 'b3.noGV', color = 'lB', cond = function() return GAME.mod.GV == 0 end },
+    {
+        text = 'b3.GVoff',
+        color = 'lO',
+        cond = function() return GAME.mod.GV > 0 end,
+        event = function()
+            GAME.dmgDelay = GAME.dmgDelay + GAME.mod.GV * 4
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            GAME.mod.GV = 0
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+            RefreshBGM()
+        end,
+    },
+    { h = -200 },
+    {
+        event = function()
+            GAME.invisUI = false
+            GAME.refreshPieceFstr()
+        end
+    },
+    { h = -210 },
+    {
+        event = function()
+            GAME.invisUI = true
+            GAME.refreshPieceFstr()
+        end
+    },
+    { h = -220 }, { text = 'b3.mid2' },
+    { h = -250 },
+    {
+        event = function()
+            GAME.invisUI = false
+            GAME.refreshPieceFstr()
+        end
+    },
+    { h = -260 },
+    {
+        event = function()
+            GAME.invisUI = true
+            GAME.refreshPieceFstr()
+        end
+    },
+    { h = -280 },
+    {
+        event = function()
+            GAME.invisUI = false
+            GAME.refreshPieceFstr()
+        end
+    },
+
+    -- B4: The Bunker
+    { h = -300 }, { event = { 'dmgDelay', -1, 'dmgCycle', -.5 } },
+    { event = { 'attackMul', -.1, 'timerMul', -.1 } },
+    { h = -310 },
+    { text = 'b4.begin' },
+    { event = function() GAME.dmgWrong = math.min(GAME.dmgWrong, 2) end },
+    { h = -320 },
+    {
+        text = 'b4.effStart',
+        event = function()
+            GAME.glassCard = true
+            GAME.refreshPieceFstr()
+        end
+    },
+    { h = -380 },
+    { text = 'b4.noMS', color = 'lB', cond = function() return GAME.mod.MS == 0 end },
+    {
+        text = 'b4.MSoff',
+        color = 'lO',
+        cond = function() return GAME.mod.MS > 0 end,
+        event = function()
+            GAME.extraQuestBase = GAME.extraQuestBase - GAME.mod.MS * .2
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            GAME.mod.MS = 0
+            GAME.sortCards()
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { h = -450 },
+    {
+        event = function()
+            GAME.glassCard = false
+            GAME.refreshPieceFstr()
+        end
+    },
+
+    -- B5: The Infirmary
+    { h = -450 }, { event = { 'dmgDelay', -1, 'dmgCycle', -.5 } },
+    { event = { 'attackMul', -.1 } },
+    { event = function() GAME.dmgWrong = math.min(GAME.dmgWrong, 2) end },
+    { h = -460 }, { text = 'b5.begin' },
+    { h = -470 }, { text = 'b5.effStart' },
+    {
+        event = function()
+            GAME.slowmo = true
+            GAME.refreshPieceFstr()
+            RefreshBGM()
+        end
+    },
+    { h = -550 },
+    { text = 'b5.noDH', color = 'lB', cond = function() return GAME.mod.DH == 0 end },
+    {
+        text = 'b5.DHoff',
+        color = 'lO',
+        cond = function() return GAME.mod.DH > 0 end,
+        event = function()
+            GAME.extraQuestVar = GAME.extraQuestVar - GAME.mod.DH * .2
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            GAME.mod.DH = 0
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { h = -650 },
+    {
+        event = function()
+            GAME.slowmo = false
+            GAME.refreshPieceFstr()
+            RefreshBGM()
+        end
+    },
+
+    -- B6: Decayed Catacombs
+    { h = -650 }, { event = { 'dmgDelay', -1, 'dmgTime', 1, 'maxQuestSize', 1 } },
+    { event = { 'attackMul', -.1 } },
+    { event = function() GAME.dmgWrong = math.min(GAME.dmgWrong, 2) end },
+    { h = -660 }, { text = 'b6.begin' },
+    { h = -670 },
+    {
+        text = 'b6.effStart',
+        event = function()
+            GAME.invisCard = true
+            GAME.refreshPieceFstr()
+        end
+    },
+    { h = -720 },
+    { text = 'b6.noNH', color = 'lB', cond = function() return GAME.mod.NH == 0 end },
+    {
+        text = 'b6.NHoff',
+        color = 'lO',
+        cond = function() return GAME.mod.NH > 0 end,
+        event = function()
+            GAME.dmgHeal = GAME.dmgHeal + GAME.mod.NH * 3
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            GAME.mod.NH = 0
+            GAME.maxQuestCount = 3
+            GAME.xpLockLevelMax = 5
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { h = -850 },
+    {
+        event = function()
+            GAME.invisCard = false
+            GAME.refreshPieceFstr()
+        end
+    },
+
+    -- B7: Sacreligious Ruins
+    { h = -850 }, { event = { 'dmgDelay', -1, 'dmgCycle', -.5 } },
+    { event = { 'attackMul', -.1 } },
+    { event = function() GAME.dmgWrong = math.min(GAME.dmgWrong, 2) end },
+    { h = -860 }, { text = 'b7.begin' },
+    { h = -900 }, { text = 'b7.effStart' },
+    { h = -950 }, { text = 'b7.mid' },
+
+    -- B8: Singularity Reactor
+    { h = -1100 }, { event = { 'dmgDelay', -1, 'dmgCycle', -.5 } },
+    { event = function() GAME.dmgWrong = math.min(GAME.dmgWrong, 2) end },
+    { h = -1115 }, { text = 'b8.begin' },
+    { h = -1145 }, { text = 'b8.mid1', color = 'R', size = 1.26, sfx = 'b2bcharge_distance_3', duration = 1.26 },
+    { h = -1160 }, { text = 'b8.mid2', color = 'R', size = 1.26, sfx = 'b2bcharge_distance_3', duration = 1.26 },
+    { h = -1175 }, { text = 'b8.mid3', color = 'R', size = 1.26, sfx = 'b2bcharge_distance_3', duration = 1.26 },
+    { h = -1182 }, { sfx = 'b2bcharge_distance_2' },
+    { h = -1185 }, { sfx = 'b2bcharge_distance_2' },
+    { h = -1188 }, { sfx = 'b2bcharge_distance_2' },
+    { h = -1191 }, { sfx = 'b2bcharge_distance_1' },
+    { h = -1194 }, { sfx = 'b2bcharge_distance_1' },
+    { h = -1197 }, { sfx = 'b2bcharge_distance_1' },
+    { h = -1200 },
+    {
+        event = function()
+            GAME.nightcore = true
+            GAME.refreshPieceFstr()
+            RefreshBGM()
+        end
+    },
+
+    { h = -1350 },
+    {
+        event = function()
+            GAME.nightcore = false
+            GAME.refreshPieceFstr()
+            RefreshBGM()
+        end
+    },
+
+
+    -- B9: Distorted Gateways
+    { h = -1350 }, { event = { 'dmgDelay', -.5 } },
+    { h = -1360 }, { text = 'b9.begin' },
+    { event = function() GAME.rankLimit = math.min(GAME.rankLimit, 10) end },
+    {
+        text = 'b9.mid',
+        color = 'lR',
+        size = 2.6,
+        duration = 16,
+        event = function()
+            GAME.time = math.max(GAME.time, 419)
+        end
+    },
+
+    -- B10: Endless Void
+    { h = -1650 },
+    {
+        event = function()
+            GAME.invincible = true
+            GAME.timerMul = 0
+            GAME.lifeLeak = 0
+            GAME.dmgWrong = 1
+            GAME.invisCard = true
+            GAME.refreshPieceFstr()
+            GAME.dmgTimerMul = 1e99
+            GAME.height = -1650
+            GAME.heightBonus = 0
+            GAME.attackMul = -1
+            GAME.chain = 0
+            GAME.maxQuestCount = 1
+            if GAME.rank > 8 then
+                GAME.rank = 8
+                GAME.xp = 32
+            end
+            GAME.xpLockLevelMax = 2600
+            GAME.xpLockTimer = 2600
+            GAME.xpLockLevel = 2600
+            GAME.rankLimit = 8
+            TEXTS.rank:set("R-" .. GAME.rank)
+
+            GAME.mod.EX = 0
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+            GAME.mod.EX = 2
+        end,
+    },
+    { h = -1660 }, { text = 'b10.end1', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(CONF.bgm / 100 * .85) end },
+    { h = -1690 }, { text = 'b10.end2', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(CONF.bgm / 100 * .7) end },
+    { h = -1720 }, { text = 'b10.end3', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(CONF.bgm / 100 * .5) end },
+    { h = -1750 }, { text = 'b10.end4', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(CONF.bgm / 100 * .3) end },
+    { h = -1780 }, { text = 'b10.end5', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(CONF.bgm / 100 * 0) end },
+    { h = -1800 },
+    {
+        event = function()
+            GAME.heightBonus = 0
+            GAME.height = -1800
+            FloatOnCard = nil
+            GAME.refreshLayout()
+            local firstClear = not STAT.clicker
+            STAT.clicker = true
+            IssueSpeedrunMilestone('clicker')
+            SFX.play('warp')
+            SCN.go('ending', "warp", firstClear)
+        end
+    },
+    { h = -1e99 },
 }
 local lastH = -0
 for _, e in next, NegEvents do

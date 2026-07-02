@@ -247,7 +247,9 @@ local GAME = {
     efastLeak = false,
     einvisCard = false,
     einvisUI = false,
-    --
+    -- Creepercraft
+    -- anyePiece = false
+    -- 
 
     achv_perfectH = nil,
     achv_demoteH = nil,
