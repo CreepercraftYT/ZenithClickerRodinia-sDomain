@@ -906,6 +906,7 @@ function DrawBG(brightness, showRuler)
                 (GAME.anyEasy and GAME.anyRev and GAME.comboMP <= 5) and TEXTURE.rodiniaAnyEasyRev or -- Angry Rodinia
                 (GAME.anyEasy and GAME.comboMP <= 5) and TEXTURE.rodiniaAnyEasy or -- Disappointed Rodinia
                 TEXTURE.rodinia, SCR.w / 2, SCR.h / 2 + (GAME.bgH - 8150) * 2 * BgScale, 0, 1.2 * BgScale) -- Normal Rodinia
+                gc_mDraw((M.NH == 1 and M.GV == 1) and TEXTURE.pannotiaCTS or TEXTURE.pannotia, SCR.w / 2, SCR.h / 2 + (GAME.bgH - 14000) * 2 * BgScale, 0, 1.2 * BgScale)
                 gc_setBlendMode('alpha')
                 gc_mDraw((URM and GAME.anyRev and TEXTURE.urevmoon or GAME.anyRev and TEXTURE.revmoon or TEXTURE.moon), SCR.w / 2, SCR.h / 2 + (GAME.bgH - 2202.84) * 2 * BgScale, 0, .2 * BgScale)
 

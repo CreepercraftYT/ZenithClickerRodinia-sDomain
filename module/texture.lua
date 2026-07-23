@@ -155,6 +155,8 @@ TEXTURE = {
     rodiniaURM = assets 'tower/ZCEX_Rodinia_urev.png',
     rodiniauEX = assets 'tower/ZCEX_Rodinia_uEX.png',
     rodiniaHuman = assets 'tower/ZCEX_Rodinia_human.png',
+    pannotia = assets 'tower/ZCRD_Pannotia.png',
+    pannotiaCTS = assets 'tower/ZCRD_CTS.png',
     stars = assets 'tower/stars.png',
     warning = assets 'finalwarning.png',
 
