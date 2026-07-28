@@ -141,7 +141,7 @@ TEXTURE = {
     DH = { lock = '_lockfull_6', front = assets 'card/doublehole.png', frontPlanet = assets 'card/planet_doublehole.png', back = assets 'card/doublehole-back.png' },
     IN = { lock = '_lockfull_7', front = assets 'card/invisible.png', frontPlanet = assets 'card/planet_invisible.png', back = assets 'card/invisible-back.png' },
     AS = { lock = '_lockfull_8', front = assets 'card/allspin.png', frontPlanet = assets 'card/planet_allspin.png', back = assets 'card/allspin-back.png' },
-    DP = { lock = 'lockover?', front = assets 'card/duo.png', frontPlanet = assets 'card/planet_duo.png', back = assets 'card/duo-back.png' },
+    DP = { lock = '_lockover_?', front = assets 'card/duo.png', frontPlanet = assets 'card/planet_duo.png', back = assets 'card/duo-back.png' },
     lockfull = assets 'card/lockfull.png',
     lockover = assets 'card/lockover.png',
     towerBG = { assets 'tower/f1.jpg', assets 'tower/f2.jpg', assets 'tower/f3.jpg', assets 'tower/f4.jpg', assets 'tower/f5.jpg', assets 'tower/f6.jpg', assets 'tower/f7.jpg', assets 'tower/f8.jpg', assets 'tower/f9.jpg', assets 'tower/f10.png' },

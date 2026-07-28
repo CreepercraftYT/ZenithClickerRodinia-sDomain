@@ -2517,6 +2517,15 @@ local d = {
         hide = TRUE,
         mod = "ZCRD",
     },
+    { -- Beautiful_sky
+        id = 'Beautiful_sky',
+        name = "Beautiful Sky Tonight",
+        desc = [[No further context provided.]],
+        quote = [["[:]3"]],
+        credit = "@Rodinia",
+        type = 'issued',
+        mod = "ZCRD",
+    },
 }
 
 local compFunc = {

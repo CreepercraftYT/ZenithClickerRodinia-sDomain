@@ -86,7 +86,7 @@ function scene.update()
             elseif code:find('3434343434') then
                 MSG('dark', OverDevProgressText)
                 SFX.play('social_online')
-            elseif code:find('5656565656') then
+            elseif code:find('1212121212') then
                 if not TestMode then
                     if STAT.srActive then
                         STAT.srActive = false

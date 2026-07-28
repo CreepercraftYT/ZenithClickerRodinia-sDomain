@@ -3595,6 +3595,10 @@ function GAME.finish(reason)
         end
     end
 
+    if GAME.height >= 15455 and GAME.height <= 15490 then
+        IssueAchv('Beautiful_sky')
+    end
+
     GAME.playing = false
     if M.DH == 2 then GAME.finishTime = love.timer.getTime() end
     ins(GAME.secTime, GAME.floorTime)
